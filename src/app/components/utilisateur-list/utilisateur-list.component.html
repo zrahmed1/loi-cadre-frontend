@@ -1,0 +1,30 @@
+<div class="container">
+  <h3>Liste des utilisateurs</h3>
+  <table class="table table-bordered">
+    <thead>
+    <tr>
+      <th>Nom</th>
+      <th>Prénom</th>
+      <th>Email</th>
+      <th>Rôle</th>
+      <th>Établissement</th>
+      <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let u of utilisateurs">
+      <td>{{ u.nom }}</td>
+      <td>{{ u.prenom }}</td>
+      <td>{{ u.email }}</td>
+      <td>{{ u.role }}</td>
+      <td>{{ u.etablissement?.nom }}</td>
+      <td>
+        <a [routerLink]="['/utilisateur/edit', u.id]" class="btn btn-sm btn-secondary">Modifier</a>
+        <button class="btn btn-sm btn-danger" (click)="delete(u.id!)">Supprimer</button>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+
+  <a routerLink="/utilisateur/create" class="btn btn-success">Ajouter un utilisateur</a>
+</div>

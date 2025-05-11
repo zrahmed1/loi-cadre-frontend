@@ -1,0 +1,35 @@
+<div class="container">
+  <h3>Ajouter un mouvement à la Loi Cadre</h3>
+
+  <form (ngSubmit)="onSubmit()">
+    <div class="form-group">
+      <label>Type de Mouvement</label>
+      <select class="form-control" [(ngModel)]="mouvement.type" name="type" required>
+        <option value="CREATION">Création</option>
+        <option value="SUPPRESSION">Suppression</option>
+        <option value="TRANSFORMATION">Transformation</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label>Poste concerné</label>
+      <select class="form-control" [(ngModel)]="mouvement.posteConcerne" name="posteConcerne" required>
+        <option *ngFor="let poste of postes" [ngValue]="poste">
+          {{ poste.codePoste }} - {{ poste.etat }}
+        </option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label>Date d’effet</label>
+      <input type="date" class="form-control" [(ngModel)]="mouvement.dateEffet" name="dateEffet" required />
+    </div>
+
+    <div class="form-group">
+      <label>Description</label>
+      <textarea class="form-control" [(ngModel)]="mouvement.description" name="description"></textarea>
+    </div>
+
+    <button class="btn btn-primary">Ajouter</button>
+  </form>
+</div>

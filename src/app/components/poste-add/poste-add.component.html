@@ -1,0 +1,37 @@
+<div class="container">
+  <h3>Ajouter un poste budgétaire à la Loi Cadre</h3>
+
+  <form (ngSubmit)="onSubmit()">
+    <div class="form-group">
+      <label>Code du Poste</label>
+      <input type="text" class="form-control" [(ngModel)]="poste.codePoste" name="codePoste" required />
+    </div>
+
+    <div class="form-group">
+      <label>État</label>
+      <select class="form-control" [(ngModel)]="poste.etat" name="etat" required>
+        <option value="VACANT">Vacant</option>
+        <option value="OCCUPE">Occupé</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label>Effectif Initial</label>
+      <input type="number" class="form-control" [(ngModel)]="poste.effectifInitial" name="effectifInitial" required />
+    </div>
+
+    <div class="form-group">
+      <label>Effectif Final</label>
+      <input type="number" class="form-control" [(ngModel)]="poste.effectifFinal" name="effectifFinal" required />
+    </div>
+
+    <div class="form-group">
+      <label>Établissement</label>
+      <select class="form-control" [(ngModel)]="poste.etablissement" name="etablissement" required>
+        <option *ngFor="let e of etablissements" [ngValue]="e">{{ e.nom }}</option>
+      </select>
+    </div>
+
+    <button class="btn btn-primary">Ajouter</button>
+  </form>
+</div>

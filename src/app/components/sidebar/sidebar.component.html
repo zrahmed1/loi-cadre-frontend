@@ -1,0 +1,34 @@
+<nav class="nav flex-column bg-light p-3" style="height: 100vh;">
+  <a routerLink="/dashboard" class="nav-link">🏠 Tableau de bord</a>
+
+  <ng-container *ngIf="hasAnyRole(['ADMIN', 'RS', 'RESPONSABLE_RH'])">
+    <a routerLink="/loi-cadre" class="nav-link">📜 Lois de Cadre</a>
+    <a routerLink="/signature/loi/1" class="nav-link">✍️ Signatures</a>
+  </ng-container>
+
+  <ng-container *ngIf="hasAnyRole(['ADMIN', 'CADRE_RH', 'RESPONSABLE_RH'])">
+    <a routerLink="/mouvement/add/1" class="nav-link">🔄 Ajouter un Mouvement</a>
+    <a routerLink="/poste/add/1" class="nav-link">➕ Ajouter un Poste</a>
+  </ng-container>
+
+  <ng-container *ngIf="hasRole('ADMIN')">
+    <a routerLink="/utilisateur" class="nav-link">👥 Utilisateurs</a>
+    <a routerLink="/etablissement" class="nav-link">🏫 Établissements</a>
+  </ng-container>
+
+  <ng-container *ngIf="hasAnyRole(['RS', 'RESPONSABLE_RH'])">
+    <a routerLink="/loi-cadre/1/effectifs" class="nav-link">📊 Effectifs consolidés</a>
+    <a routerLink="/loi-cadre/1/historique" class="nav-link">📁 Historique</a>
+  </ng-container>
+
+  <a routerLink="/logout" class="nav-link text-danger mt-4">Se déconnecter</a>
+  <div class="row">
+    <div class="col-md-2">
+      <app-sidebar></app-sidebar>
+    </div>
+    <div class="col-md-10">
+      <router-outlet></router-outlet>
+    </div>
+  </div>
+
+</nav>

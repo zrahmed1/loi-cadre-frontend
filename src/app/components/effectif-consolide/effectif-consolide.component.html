@@ -1,0 +1,28 @@
+<div class="container">
+  <h3>Effectif consolidé — Loi {{ loi?.annee }} (V{{ loi?.version }})</h3>
+
+  <table class="table table-bordered mt-3">
+    <thead>
+    <tr>
+      <th>Établissement</th>
+      <th>Effectif initial</th>
+      <th>Effectif final</th>
+      <th>Écart</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let e of getEtablissements()">
+      <td>{{ e.nom }}</td>
+      <td>{{ getTotalEffectif(getPostesByEtablissement(e.id), 'initial') }}</td>
+      <td>{{ getTotalEffectif(getPostesByEtablissement(e.id), 'final') }}</td>
+      <td>{{ getTotalEffectif(getPostesByEtablissement(e.id), 'final') - getTotalEffectif(getPostesByEtablissement(e.id), 'initial') }}</td>
+    </tr>
+    </tbody>
+  </table>
+
+  <!-- Prévoir export -->
+  <button class="btn btn-outline-secondary" (click)="exportPDF()">Exporter PDF</button>
+
+  <button class="btn btn-outline-secondary" (click)="exportExcel()">Exporter Excel</button>
+
+</div>

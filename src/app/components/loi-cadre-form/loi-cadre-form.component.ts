@@ -1,11 +1,15 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { LoiCadreService } from '../../core/services/loi-cadre.service';
-import { LoiCadre } from '../../core/models/loi-cadre.model';
+import {LoiCadre} from '../../models/loi-cadre.model';
+import {LoiCadreService} from '../../services/loi-cadre.service';
+import {FormsModule} from '@angular/forms';
+
 
 @Component({
   selector: 'app-loi-cadre-form',
   templateUrl: './loi-cadre-form.component.html',
+  standalone: true,
+  imports: [FormsModule],
 })
 export class LoiCadreFormComponent implements OnInit {
   loi: LoiCadre = {
@@ -26,7 +30,7 @@ export class LoiCadreFormComponent implements OnInit {
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {
       this.editMode = true;
-      this.loiCadreService.getById(+id).subscribe((data) => {
+      this.loiCadreService.getById(+id).subscribe((data: LoiCadre) => {
         this.loi = data;
       });
     }

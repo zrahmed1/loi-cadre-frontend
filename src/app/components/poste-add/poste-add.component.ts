@@ -1,13 +1,16 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { PosteBudgetaireService } from '../../core/services/poste-budgetaire.service';
-import { PosteBudgetaire } from '../../core/models/poste-budgetaire.model';
-import { EtablissementService } from '../../core/services/etablissement.service';
-import { Etablissement } from '../../core/models/etablissement.model';
+import {PosteBudgetaire} from '../../models/poste-budgetaire.model';
+import {PosteBudgetaireService} from '../../services/poste-budgetaire.service';
+import {Etablissement} from '../../models/etablissement.model';
+import {EtablissementService} from '../../services/etablissement.service';
+import {FormsModule} from '@angular/forms';
 
 @Component({
   selector: 'app-poste-add',
-  templateUrl: './poste-add.component.html'
+  standalone: true,
+  templateUrl: './poste-add.component.html',
+  imports: [FormsModule],
 })
 export class PosteAddComponent implements OnInit {
   poste: PosteBudgetaire = {

@@ -1,3 +1,8 @@
+import {Injectable} from '@angular/core';
+import {HttpClient} from '@angular/common/http';
+import {Observable} from 'rxjs';
+import {Signature} from '../models/signature.model';
+
 @Injectable({ providedIn: 'root' })
 export class SignatureService {
   private api = 'http://localhost:8080/api/signatures';

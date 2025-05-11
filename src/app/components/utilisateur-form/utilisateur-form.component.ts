@@ -1,13 +1,17 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Utilisateur } from '../../core/models/utilisateur.model';
-import { UtilisateurService } from '../../core/services/utilisateur.service';
-import { EtablissementService } from '../../core/services/etablissement.service';
-import { Etablissement } from '../../core/models/etablissement.model';
+import {Utilisateur} from '../../models/utilisateur.model';
+import {Etablissement} from '../../models/etablissement.model';
+import {UtilisateurService} from '../../services/utilisateur.service';
+import {EtablissementService} from '../../services/etablissement.service';
+import {CommonModule} from '@angular/common';
+import {FormsModule} from '@angular/forms';
 
 @Component({
   selector: 'app-utilisateur-form',
   templateUrl: './utilisateur-form.component.html',
+  standalone: true,
+  imports: [CommonModule,FormsModule],
 })
 export class UtilisateurFormComponent implements OnInit {
   user: Utilisateur = {
@@ -35,7 +39,7 @@ export class UtilisateurFormComponent implements OnInit {
 
     if (id) {
       this.editMode = true;
-      this.utilisateurService.getById(+id).subscribe((data) => {
+      this.utilisateurService.getById(+id).subscribe((data: Utilisateur) => {
         this.user = data;
       });
     }

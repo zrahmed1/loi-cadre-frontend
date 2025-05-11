@@ -1,13 +1,17 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { MouvementService } from '../../core/services/mouvement.service';
-import { PosteBudgetaireService } from '../../core/services/poste-budgetaire.service';
-import { Mouvement } from '../../core/models/mouvement.model';
-import { PosteBudgetaire } from '../../core/models/poste-budgetaire.model';
+import {Mouvement} from '../../models/mouvement.model';
+import {PosteBudgetaire} from '../../models/poste-budgetaire.model';
+import {MouvementService} from '../../services/mouvement.service';
+import {PosteBudgetaireService} from '../../services/poste-budgetaire.service';
+import {FormsModule} from '@angular/forms';
+
 
 @Component({
   selector: 'app-mouvement-add',
-  templateUrl: './mouvement-add.component.html'
+  standalone: true,
+  templateUrl: './mouvement-add.component.html',
+  imports: [FormsModule],
 })
 export class MouvementAddComponent implements OnInit {
   mouvement: Mouvement = { type: 'CREATION', dateEffet: new Date(), description: '' };
@@ -23,7 +27,7 @@ export class MouvementAddComponent implements OnInit {
 
   ngOnInit(): void {
     this.loiCadreId = +this.route.snapshot.paramMap.get('id')!;
-    this.posteService.getAll().subscribe((data) => this.postes = data);
+    this.posteService.getAll().subscribe((data: PosteBudgetaire[]) => this.postes = data);
   }
 
   onSubmit(): void {

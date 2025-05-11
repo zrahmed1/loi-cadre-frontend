@@ -1,21 +1,23 @@
 import { Component, OnInit } from '@angular/core';
-import { LoiCadreService } from '../../core/services/loi-cadre.service';
-import { LoiCadre } from '../../core/models/loi-cadre.model';
+import {LoiCadre} from '../../models/loi-cadre.model';
+import {LoiCadreService} from '../../services/loi-cadre.service';
+import {CommonModule} from '@angular/common';
+import {FormsModule} from '@angular/forms';
+import {RouterModule} from '@angular/router';
+
 
 @Component({
   selector: 'app-loi-cadre-list',
   templateUrl: './loi-cadre-list.component.html',
+  standalone: true,
+  imports: [CommonModule,FormsModule,RouterModule],
 })
 export class LoiCadreListComponent implements OnInit {
   lois: LoiCadre[] = [];
 
   constructor(private loiCadreService: LoiCadreService) {}
 
-  ngOnInit(): void {
-    this.loiCadreService.getAll().subscribe(data => {
-      this.lois = data;
-    });
-  }
+
   anneeFilter?: number;
   statutFilter?: string;
   etablissementFilter?: string;
@@ -23,7 +25,7 @@ export class LoiCadreListComponent implements OnInit {
   filteredLois: LoiCadre[] = [];
 
   ngOnInit(): void {
-    this.loiCadreService.getAll().subscribe((data) => {
+    this.loiCadreService.getAll().subscribe((data: LoiCadre[]) => {
       this.lois = data;
       this.applyFilters();
     });

@@ -1,0 +1,56 @@
+<div class="container">
+  <h2>{{ isEditMode ? 'Modifier' : 'Créer' }} un Mouvement</h2>
+
+  <form [formGroup]="form" (ngSubmit)="submit()">
+    <mat-form-field appearance="fill">
+      <mat-label>Type de Mouvement</mat-label>
+      <mat-select formControlName="type">
+        <mat-option *ngFor="let type of types" [value]="type">{{ type }}</mat-option>
+      </mat-select>
+      <mat-error *ngIf="form.get('type')?.hasError('required')">Champ requis</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="fill">
+      <mat-label>Poste Concerné</mat-label>
+      <mat-select formControlName="posteConcerneId">
+        <mat-option *ngFor="let poste of postes" [value]="poste.id">
+          {{ poste.codePoste }} ({{ poste.etat }})
+        </mat-option>
+      </mat-select>
+      <mat-error *ngIf="form.get('posteConcerneId')?.hasError('required')">Champ requis</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="fill">
+      <mat-label>Date d'Effet</mat-label>
+      <input matInput [matDatepicker]="picker" formControlName="dateEffet">
+      <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+      <mat-datepicker #picker></mat-datepicker>
+      <mat-error *ngIf="form.get('dateEffet')?.hasError('required')">Champ requis</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="fill">
+      <mat-label>Description</mat-label>
+      <textarea matInput formControlName="description" rows="3" placeholder="Décrivez le mouvement..."></textarea>
+      <mat-error *ngIf="form.get('description')?.hasError('required')">Champ requis</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="fill" *ngIf="!isEditMode">
+      <mat-label>Loi Cadre (optionnel)</mat-label>
+      <mat-select formControlName="loiCadreId">
+        <mat-option [value]="">Aucune</mat-option>
+        <mat-option *ngFor="let loi of loisCadres" [value]="loi.id">
+          {{ loi.annee }} (Version {{ loi.version }}) - {{ loi.statut }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <div class="actions">
+      <button mat-raised-button color="primary" type="submit" [disabled]="form.invalid">
+        {{ isEditMode ? 'Modifier' : 'Créer' }}
+      </button>
+      <button mat-raised-button color="warn" type="button" [routerLink]="['/mouvements']">
+        Annuler
+      </button>
+    </div>
+  </form>
+</div>

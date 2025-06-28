@@ -1,11 +1,14 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Etablissement } from '../models/etablissement.model';
+import { environment } from '../../environments/environment';
+import { Etablissement } from '../models/etablissement';
 
-@Injectable({ providedIn: 'root' })
+@Injectable({
+  providedIn: 'root'
+})
 export class EtablissementService {
-  private apiUrl = '/api/etablissements'; // Utilise le proxy Angular (localhost:8080)
+  private apiUrl = `${environment.apiUrl}/etablissements`;
 
   constructor(private http: HttpClient) {}
 
@@ -17,12 +20,12 @@ export class EtablissementService {
     return this.http.get<Etablissement>(`${this.apiUrl}/${id}`);
   }
 
-  create(etab: Etablissement): Observable<Etablissement> {
-    return this.http.post<Etablissement>(this.apiUrl, etab);
+  create(etablissement: Etablissement): Observable<Etablissement> {
+    return this.http.post<Etablissement>(this.apiUrl, etablissement);
   }
 
-  update(id: number, etab: Etablissement): Observable<Etablissement> {
-    return this.http.put<Etablissement>(`${this.apiUrl}/${id}`, etab);
+  update(id: number, etablissement: Etablissement): Observable<Etablissement> {
+    return this.http.put<Etablissement>(`${this.apiUrl}/${id}`, etablissement);
   }
 
   delete(id: number): Observable<void> {

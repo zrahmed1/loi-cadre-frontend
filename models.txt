@@ -1,0 +1,204 @@
+public class Departement {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    private String nom;
+
+    @OneToOne
+    private Utilisateur responsable;
+
+    @OneToMany(mappedBy = "departement")
+    private List<Etablissement> etablissements;
+}
+
+public class Etablissement {
+    @Id
+    @GeneratedValue
+    private Long id;
+    private String nom;
+
+    @ManyToOne
+    private Departement departement;
+
+    @OneToMany(mappedBy = "etablissement")
+    private List<Utilisateur> utilisateurs;
+
+    @OneToMany(mappedBy = "etablissement")
+    private List<PosteBudgetaire> effectifs;
+    @Transient
+    private Long departementId;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getNom() {
+        return nom;
+    }
+
+    public void setNom(String nom) {
+        this.nom = nom;
+    }
+
+    public Departement getDepartement() {
+        return departement;
+    }
+
+    public void setDepartement(Departement departement) {
+        this.departement = departement;
+    }
+
+    public List<Utilisateur> getUtilisateurs() {
+        return utilisateurs;
+    }
+
+    public void setUtilisateurs(List<Utilisateur> utilisateurs) {
+        this.utilisateurs = utilisateurs;
+    }
+
+public class Grade {
+    @Id
+    @GeneratedValue
+    private Long id;
+    private String code;
+    private String libelle;
+}
+
+public class LoiCadre {
+    @Id
+    @GeneratedValue
+    private Long id;
+    private int annee;
+    private int version;
+
+    @Enumerated(EnumType.STRING)
+    private StatutLoiCadre statut;
+
+    @OneToMany(mappedBy = "loiCadre", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    private List<PosteBudgetaire> postes;
+
+    @OneToMany(mappedBy = "loiCadre")
+    @JsonManagedReference
+    private List<Mouvement> mouvements;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public int getAnnee() {
+        return annee;
+    }
+
+    public void setAnnee(int annee) {
+        this.annee = annee;
+    }
+
+    public int getVersion() {
+        return version;
+    }
+
+    public void setVersion(int version) {
+        this.version = version;
+    }
+
+    public StatutLoiCadre getStatut() {
+        return statut;
+    }
+
+    public void setStatut(StatutLoiCadre statut) {
+        this.statut = statut;
+    }
+
+    public List<PosteBudgetaire> getPostes() {
+        return postes;
+    }
+
+    public void setPostes(List<PosteBudgetaire> postes) {
+        this.postes = postes;
+    }
+
+    public List<Mouvement> getMouvements() {
+        return mouvements;
+    }
+
+    public void setMouvements(List<Mouvement> mouvements) {
+        this.mouvements = mouvements;
+    }
+}
+public class Mouvement {
+    @Id
+    @GeneratedValue
+    private Long id;
+
+    @Enumerated(EnumType.STRING)
+    private TypeMouvement type;
+
+    @ManyToOne
+    private PosteBudgetaire posteConcerne;
+
+    private LocalDate dateEffet;
+    private String description;
+
+public class PosteBudgetaire {
+    @Id
+    @GeneratedValue
+    private Long id;
+    private String codePoste;
+
+    @ManyToOne
+    @JoinColumn(name = "loi_cadre_id")
+    @JsonBackReference
+    private LoiCadre loiCadre;
+
+
+    @ManyToOne
+    private Grade grade;
+
+    private int effectifInitial;
+    private int effectifFinal;
+
+    @Enumerated(EnumType.STRING)
+    private EtatPoste etat;
+
+    @ManyToOne
+    private Etablissement etablissement;
+
+public class SignatureElectronique {
+    @Id
+    @GeneratedValue
+    private Long id;
+
+    @ManyToOne
+    private Utilisateur signataire;
+
+    @ManyToOne
+    private LoiCadre loiCadre;
+
+    private LocalDate dateSignature;
+
+    @Enumerated(EnumType.STRING)
+    private StatutSignature status;
+
+public class Utilisateur {
+    @Id
+    @GeneratedValue
+    private Long id;
+    private String nom;
+    private String prenom;
+    private String email;
+    private String motDePasse;
+
+    @Enumerated(EnumType.STRING)
+    private Role role;
+
+    @ManyToOne
+    private Etablissement etablissement;

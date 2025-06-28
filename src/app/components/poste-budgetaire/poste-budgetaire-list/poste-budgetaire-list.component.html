@@ -1,0 +1,49 @@
+<div class="container">
+  <h2>Liste des Postes Budgétaires</h2>
+  <div class="filter">
+    <mat-form-field appearance="fill">
+      <mat-label>Filtrer par Établissement ID</mat-label>
+      <input matInput [(ngModel)]="selectedEtablissementId" (change)="filterByEtablissement()" type="number" placeholder="1">
+    </mat-form-field>
+  </div>
+  <button mat-raised-button color="primary" [routerLink]="['/poste/create']">Créer un Poste</button>
+  <table mat-table [dataSource]="postes" class="mat-elevation-z8">
+    <ng-container matColumnDef="id">
+      <th mat-header-cell *matHeaderCellDef>ID</th>
+      <td mat-cell *matCellDef="let poste">{{ poste.id }}</td>
+    </ng-container>
+    <ng-container matColumnDef="codePoste">
+      <th mat-header-cell *matHeaderCellDef>Code Poste</th>
+      <td mat-cell *matCellDef="let poste">{{ poste.codePoste }}</td>
+    </ng-container>
+    <ng-container matColumnDef="etat">
+      <th mat-header-cell *matHeaderCellDef>État</th>
+      <td mat-cell *matCellDef="let poste">{{ poste.etat }}</td>
+    </ng-container>
+    <ng-container matColumnDef="effectifInitial">
+      <th mat-header-cell *matHeaderCellDef>Effectif Initial</th>
+      <td mat-cell *matCellDef="let poste">{{ poste.effectifInitial }}</td>
+    </ng-container>
+    <ng-container matColumnDef="effectifFinal">
+      <th mat-header-cell *matHeaderCellDef>Effectif Final</th>
+      <td mat-cell *matCellDef="let poste">{{ poste.effectifFinal }}</td>
+    </ng-container>
+    <ng-container matColumnDef="etablissementId">
+      <th mat-header-cell *matHeaderCellDef>Établissement ID</th>
+      <td mat-cell *matCellDef="let poste">{{ poste.etablissementId }}</td>
+    </ng-container>
+    <ng-container matColumnDef="actions">
+      <th mat-header-cell *matHeaderCellDef>Actions</th>
+      <td mat-cell *matCellDef="let poste">
+        <button mat-icon-button color="primary" (click)="edit(poste.id)" title="Modifier">
+          <mat-icon>edit</mat-icon>
+        </button>
+        <button mat-icon-button color="warn" (click)="delete(poste.id)" title="Supprimer">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </td>
+    </ng-container>
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  </table>
+</div>

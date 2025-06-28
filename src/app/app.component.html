@@ -1,4 +1,11 @@
-<h1>khdam!</h1>
-
-
+<mat-toolbar color="primary">
+  <span>Gestion Loi Cadre - Direction du Budget</span>
+  <span class="spacer"></span>
+  <button mat-button [routerLink]="['/dashboard']">Tableau de Bord</button>
+  <button mat-button [routerLink]="['/lois-cadres']">Lois Cadres</button>
+  <button mat-button [routerLink]="['/mouvements']">Mouvements</button>
+  <button mat-button [routerLink]="['/postes']">Postes Budgétaires</button>
+  <button mat-button [routerLink]="['/signatures']">Signatures</button>
+  <button mat-button [routerLink]="['/admin']">Administration</button>
+</mat-toolbar>
 <router-outlet></router-outlet>

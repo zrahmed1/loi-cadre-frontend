@@ -1,0 +1,40 @@
+<div class="container">
+  <h2>{{ isEditMode ? 'Modifier' : 'Créer' }} un Poste Budgétaire</h2>
+  <form [formGroup]="form" (ngSubmit)="submit()">
+    <mat-form-field appearance="fill">
+      <mat-label>Code Poste</mat-label>
+      <input matInput formControlName="codePoste" placeholder="00.99.17.02.01">
+      <mat-error *ngIf="form.get('codePoste')?.hasError('required')">Champ requis</mat-error>
+      <mat-error *ngIf="form.get('codePoste')?.hasError('pattern')">Format: 00.00.00.00.00</mat-error>
+    </mat-form-field>
+    <mat-form-field appearance="fill">
+      <mat-label>État</mat-label>
+      <mat-select formControlName="etat">
+        <mat-option *ngFor="let etat of etats" [value]="etat">{{ etat }}</mat-option>
+      </mat-select>
+      <mat-error *ngIf="form.get('etat')?.hasError('required')">Champ requis</mat-error>
+    </mat-form-field>
+    <mat-form-field appearance="fill">
+      <mat-label>Effectif Initial</mat-label>
+      <input matInput formControlName="effectifInitial" type="number" placeholder="0">
+      <mat-error *ngIf="form.get('effectifInitial')?.hasError('required')">Champ requis</mat-error>
+      <mat-error *ngIf="form.get('effectifInitial')?.hasError('min')">Doit être >= 0</mat-error>
+    </mat-form-field>
+    <mat-form-field appearance="fill">
+      <mat-label>Effectif Final</mat-label>
+      <input matInput formControlName="effectifFinal" type="number" placeholder="0">
+      <mat-error *ngIf="form.get('effectifFinal')?.hasError('required')">Champ requis</mat-error>
+      <mat-error *ngIf="form.get('effectifFinal')?.hasError('min')">Doit être >= 0</mat-error>
+    </mat-form-field>
+    <mat-form-field appearance="fill">
+      <mat-label>Établissement ID</mat-label>
+      <input matInput formControlName="etablissementId" type="number" placeholder="1">
+      <mat-error *ngIf="form.get('etablissementId')?.hasError('required')">Champ requis</mat-error>
+      <mat-error *ngIf="form.get('etablissementId')?.hasError('min')">Doit être >= 1</mat-error>
+    </mat-form-field>
+    <div class="actions">
+      <button mat-raised-button color="primary" type="submit" [disabled]="form.invalid">Enregistrer</button>
+      <button mat-raised-button color="warn" type="button" [routerLink]="['/postes']">Annuler</button>
+    </div>
+  </form>
+</div>

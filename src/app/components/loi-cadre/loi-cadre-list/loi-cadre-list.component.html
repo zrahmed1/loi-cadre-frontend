@@ -1,0 +1,41 @@
+<div class="container">
+  <h2>Liste des Lois Cadres</h2>
+  <button mat-raised-button color="primary" [routerLink]="['/loi-cadre/create']">Créer une Loi Cadre</button>
+  <table mat-table [dataSource]="loisCadres" class="mat-elevation-z8">
+    <ng-container matColumnDef="id">
+      <th mat-header-cell *matHeaderCellDef>ID</th>
+      <td mat-cell *matCellDef="let loi">{{ loi.id }}</td>
+    </ng-container>
+    <ng-container matColumnDef="exerciceBudgetaire">
+      <th mat-header-cell *matHeaderCellDef>Exercice Budgétaire</th>
+      <td mat-cell *matCellDef="let loi">{{ loi.exerciceBudgetaire }}</td>
+    </ng-container>
+    <ng-container matColumnDef="version">
+      <th mat-header-cell *matHeaderCellDef>Version</th>
+      <td mat-cell *matCellDef="let loi">{{ loi.version }}</td>
+    </ng-container>
+    <ng-container matColumnDef="statut">
+      <th mat-header-cell *matHeaderCellDef>Statut</th>
+      <td mat-cell *matCellDef="let loi">{{ loi.statut }}</td>
+    </ng-container>
+    <ng-container matColumnDef="actions">
+      <th mat-header-cell *matHeaderCellDef>Actions</th>
+      <td mat-cell *matCellDef="let loi">
+        <button mat-icon-button color="primary" (click)="viewDetails(loi.id)" title="Voir détails">
+          <mat-icon>visibility</mat-icon>
+        </button>
+        <button mat-icon-button color="accent" (click)="edit(loi.id)" title="Modifier">
+          <mat-icon>edit</mat-icon>
+        </button>
+        <button mat-icon-button color="warn" (click)="delete(loi.id)" title="Supprimer">
+          <mat-icon>delete</mat-icon>
+        </button>
+        <button mat-icon-button color="primary" (click)="valider(loi.id)" *ngIf="loi.statut !== 'VALIDEE'" title="Valider">
+          <mat-icon>check</mat-icon>
+        </button>
+      </td>
+    </ng-container>
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  </table>
+</div>

@@ -1,0 +1,14 @@
+Le code du grade est composé de 10 caractères comme défini dans le tableau suivant :
+
+OrdreDescriptionLongueur1Groupe22Catégorie23Corps24Cadre25Grade2La codification des établissements dépend du type de leur statut : soit des cadres communs de la fonction publique, soit des statuts spécifiques à chaque établissement.
+* Le groupe " 00 " est réservé aux cadres communs de la fonction publique.
+* Un groupe distinct sera créé pour chaque statut spécifique.
+Exemple :
+TypeGradeLibelleCadres communs de la fonction publique00.99.17.02.01 Ingénieur en chef grade principalCadres des Agences Urbaines01.00.00.01.01
+01 : Groupe Agences Urbaines
+00 : pas de corps
+00 : pas de catégorie 
+01 : Cadre Agents d'exécution
+01 : Echelle 8
+Agents d'exécution échelle 8
+

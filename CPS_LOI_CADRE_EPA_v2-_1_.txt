@@ -1,0 +1,262 @@
+
+
+
+Sommaire
+1. Introduction
+o 1.1 Contexte du projet
+o 1.2 Objectifs du projet
+o 1.3 Périmètre fonctionnel
+2. Description générale du système
+o 2.1 Architecture générale
+o 2.2 Composants du système
+o 2.3 Contraintes techniques et fonctionnelles
+3. Spécifications fonctionnelles détaillées
+o 3.1 Fonctions principales
+* 3.1.1 Fonctionnalité 1 (ex : Gestion des utilisateurs)
+* 3.1.2 Fonctionnalité 2 (ex : Traitement des données)
+* 3.1.3 Fonctionnalité 3 (ex : Reporting)
+o 3.2 Règles de gestion
+o 3.3 Cas d'utilisation détaillés
+4. Interfaces utilisateur
+o 4.1 Maquettes d'interface
+o 4.2 Description des écrans principaux
+o 4.3 Flux de navigation
+5. Performances attendues
+o 5.1 Critères de performance
+o 5.2 Temps de réponse
+o 5.3 Volumétrie prévue
+6. Sécurité et gestion des accès
+o 6.1 Politique de sécurité
+o 6.2 Gestion des rôles et des droits
+o 6.3 Sauvegarde et restauration des données
+7. Exigences non fonctionnelles
+o 7.1 Exigences de performance
+o 7.2 Exigences de disponibilité
+o 7.3 Exigences de compatibilité
+8. Tests et validation
+o 8.1 Stratégie de test
+o 8.2 Types de tests (unitaires, intégration, validation)
+o 8.3 Critères d'acceptation
+9. Plan de déploiement
+o 9.1 Environnement de production
+o 9.2 Plan de migration des données
+o 9.3 Formation des utilisateurs
+10. Glossaire et annexes
+o 10.1 Glossaire des termes techniques
+o 10.2 Annexes (diagrammes, documents de référence, etc.)
+
+MODIFICATIONS DU DOCUMENT
+VersionDateAuteurChangements1.001/11/2024ELKAOUMI AIMADCreation du document
+
+
+ 
+1. Introduction
+Ce document présente les spécifications fonctionnelles pour la conception et le développement d'un système destiné à la gestion de la loi cadre des établissements publics subventionnés, ainsi qu'au suivi des mouvements des effectifs en cours d'année. Ce projet s'inscrit dans le cadre du Schéma directeur de la transformation digitale 2022-2026 de la Direction du Budget, avec pour objectif de moderniser et d'automatiser la gestion des postes budgétaires et des effectifs des établissements publics.
+1.1 Contexte du projet 
+La Direction du Budget a initié une série de réformes visant à moderniser la gestion et suivi des ressources financières et humaines des établissements publics subventionnés. L'une des principales initiatives de cette stratégie est la mise en place d'un système numérique pour la gestion de la loi cadre des établissements publics, en particulier pour le suivi et la gestion des effectifs.
+Actuellement, la gestion des effectifs et des postes budgétaires repose sur des processus manuels et décentralisés, entraînant des retards, un manque de transparence, et des difficultés dans la consolidation des données. Afin de répondre aux exigences croissantes de réactivité, de transparence et d'efficacité, la Direction du Budget a décidé de développer un système automatisé qui centralisera les informations, facilitera le suivi des mouvements des effectifs et assurera une gestion plus rigoureuse des postes budgétaires.
+Ce projet s'inscrit également dans le cadre du Schéma directeur de la transformation digitale 2022-2026, qui a pour but de moderniser les outils et les processus de gestion de la fonction publique, tout en assurant une meilleure utilisation des ressources publiques.
+1.2 Objectifs du projet 
+Le projet vise à atteindre les objectifs suivants :
+1. Digitalisation complète : Digitaliser le processus d'élaboration de la loi cadre des établissements publics subventionnés, de bout en bout, pour en améliorer l'efficacité et la transparence.
+2. Gestion optimisée des postes budgétaires : Faciliter la gestion des nomenclatures des postes budgétaires.
+3. Prise en charge des mouvements des effectifs : Intégrer la gestion des mouvements des effectifs de l'année permettant un suivi rigoureux et actualisé des modifications.
+4. Gestion des versions : Assurer la gestion des différentes versions de la loi cadre, avec un suivi précis des évolutions et des modifications apportées.
+5. La codification des postes : Normaliser et unifier la codification des postes budgétaires des établissements.
+6. Automatisation des tableaux : Automatiser l'édition des tableaux de la loi cadre, réduisant ainsi le risque d'erreurs et facilitant leur production.
+7. Échange fluide d'informations : Permettre un échange fluide et sécurisé des informations avec les partenaires externes, pour une meilleure collaboration et coordination.
+1.3 Périmètre fonctionnel
+Le périmètre fonctionnel du projet couvre les aspects suivants :
+* Gestion des nomenclatures des postes budgétaires : Le système permet de définir, gérer et mettre à jour la nomenclature des postes budgétaires des établissements publics subventionnés.
+* Prise en charge des mouvements d'effectifs : Le système gère les mouvements des effectifs, incluant ceux de d'exécution et ceux spécifiques à la loi cadre en cours, afin d'assurer un suivi complet des modifications.
+* Gestion des versions de la loi cadre : Une fonctionnalité de gestion des versions de la loi cadre est incluse, permettant de suivre les révisions et d'assurer la production des lois modificatives, en garantissant un suivi rigoureux des différentes versions et des modifications apportées.
+* Génération et édition des tableaux de la loi cadre : Le système permet l'automatisation de la génération et de l'édition des tableaux relatifs à la loi cadre, facilitant ainsi la production de rapports fiables et conformes.
+* Signature électronique : Le système prend en charge la gestion de la signature électronique des différentes versions de la loi-cadre ainsi que des divers mouvements
+* Intégration et échange d'informations avec des partenaires externes : Pour s'aligner avec les objectifs de digitalisation administrative nationale, le système intègre des mécanismes d'échange de données avec des partenaires externes, garantissant une coordination fluide et la conformité aux standards en vigueur.
+Ce périmètre fonctionnel permet de couvrir l'ensemble des besoins liés à la gestion de la loi cadre et des mouvements d'effectifs au sein des établissements publics, tout en assurant une intégration fluide avec le système e-budget.
+2.  Description générale du système
+La description générale du système présente une vue d'ensemble de l'architecture du projet, les principaux composants ainsi que les contraintes techniques et fonctionnelles à prendre en compte pour la mise en œuvre.
+2.1 Architecture générale
+Le système sera développé en .NET Core, avec une architecture client-serveur, modulaire et scalable, afin de faciliter la gestion des postes budgétaires et des mouvements d'effectifs. L'architecture générale inclut :
+* Front-end (Interface utilisateur) : Développé en utilisant des technologies web compatibles avec .NET Core (Angular  last version ), l'interface permettra aux utilisateurs de gérer efficacement les informations liées à la loi cadre.
+* Back-end (Serveur applicatif .NET Core) : Le back-end, construit sur la plateforme .NET Core, gérera toute la logique métier, notamment les mouvements d'effectifs, les versions de la loi cadre et l'édition des tableaux. Le back-end interagira avec la base de données SQL Server pour la gestion des données.
+* Base de données SQL Server : Le système s'appuiera sur une base de données SQL Server pour stocker les informations sur les établissements publics, les postes budgétaires, les effectifs et les différentes versions de la loi cadre. SQL Server assurera la gestion des transactions, l'intégrité des données, ainsi que la performance des requêtes pour les tableaux et rapports.
+* API REST : Des API REST seront développées en .NET Core pour permettre l'échange d'informations avec des systèmes externes, tels que les partenaires ou autres services publics, afin de synchroniser les données en temps réel.
+2.2 Composants du système
+Les composants principaux du système comprennent :
+* Module de gestion des postes budgétaires : Ce module permettra de créer, modifier et gérer les référentielles des postes budgétaires.
+* Module de gestion des mouvements des effectifs : Ce composant assurera la prise en charge des mouvements de personnel sur l'exécution et les mouvements liés à la loi cadre.
+* Module de gestion des versions de la loi cadre : Ce module permettra la gestion des différentes versions de la loi cadre.
+* Module d'édition des tableaux : Générer les tableaux et les rapports liés à la loi cadre, il s'assurera que les données soient disponibles sous différents formats pour une consultation et une analyse rapides.
+* Module Signature électronique : Gestion de la signature électronique des différentes versions de la loi-cadre ainsi que des divers mouvements
+* Module d'échange d'informations : Ce module interagira avec les API REST pour échanger les informations avec les partenaires externes, garantissant la cohérence et la mise à jour des données.
+* Module d'administration :
+2.3 Contraintes techniques et fonctionnelles
+
+Contraintes techniques
+1. Technologie de développement : Le système doit être développé en .NET Core pour garantir sa portabilité, sa performance et sa compatibilité multiplateforme.
+2. Base de données : Utilisation obligatoire de SQL Server pour le stockage et la gestion des données. Cela implique la nécessité d'optimiser les requêtes pour garantir une performance adéquate, même avec un volume élevé de données.
+3. Authentification et sécurité : L'authentification des utilisateurs doit être gérée via un token émis par le système e-budget. Toutes les API doivent vérifier la validité du token avant d'exécuter des actions, assurant ainsi la sécurité des données.
+4. Intégration avec e-budget : Le module doit s'intégrer de manière fluide avec le système existant e-budget, pour assurer la synchronisation des données et des droits d'accès.
+5. Scalabilité : Le système doit être conçu pour être scalable, capable de gérer un nombre croissant d'utilisateurs et de données sans compromettre les performances.
+6. Interopérabilité : Les API doivent respecter des standards ouverts (REST, JSON) pour faciliter l'intégration avec d'autres systèmes externes ou partenaires.
+Contraintes fonctionnelles
+1. Gestion des rôles et droits d'accès : Le système doit être capable de gérer les droits d'accès pour différents types d'utilisateurs (Responsable RH, Cadre RH, RS, Admin) selon leurs responsabilités. Chaque rôle doit avoir des permissions spécifiques clairement définies.
+2. Types de mouvements : La gestion des deux types de mouvements (après la clôture de la loi cadre et pour valider la loi cadre) doit être clairement différenciée dans le système, avec des processus de validation appropriés pour chacun.
+3. Conformité réglementaire : Les fonctionnalités doivent être conformes aux exigences réglementaires en matière de gestion budgétaire et de gestion des effectifs dans le secteur public.
+4. Traçabilité et audit : Le système doit garantir la traçabilité des actions effectuées par les utilisateurs, permettant ainsi de réaliser des audits des mouvements et des modifications apportées à la loi cadre.
+5. Reporting et édition des tableaux : Le module doit être capable de générer des rapports et des tableaux conformes aux normes en vigueur, facilitant la prise de décision et la transparence des processus budgétaires.
+6. Flexibilité des données : Les postes budgétaires doivent pouvoir être définis comme vacants ou occupés, avec un suivi précis de l'effectif initial et final après chaque mouvement. Le système doit également permettre des ajustements en fonction des changements dans les besoins des établissements publics.
+3. Spécifications fonctionnelles détaillées
+
+3.1 Gestion des utilisateurs et des droits d'accès
+* Authentification via e-budget : Le système doit vérifier les droits d'accès des utilisateurs via un token émis par le système e-budget. Tous les utilisateurs doivent être authentifiés avant d'accéder aux fonctionnalités du module.
+* Gestion des rôles : Quatre types d'utilisateurs doivent être gérés :
+o Responsable RH : Accès aux fonctionnalités de saisie, validation et signature électronique.
+o Cadre RH : Accès aux fonctionnalités de saisie et validation des mouvements d'effectifs.
+o RS (Responsable sectorielle) : Gestion complète des mouvements pour plusieurs établissements, avec possibilité de saisie, validation et signature finale.
+o Admin : Gestion administrative du module, y compris la configuration et la gestion des utilisateurs.
+o Consultation : Accès aux fonctionnalités en mode consultation.
+3.2 Gestion des établissements et des départements
+* Relation établissement - département : Chaque établissement public doit être rattaché à un département unique. Un utilisateur RS doit pouvoir gérer plusieurs établissements, tandis qu'un Responsable RH ne peut gérer qu'un seul établissement.
+* Affectation des utilisateurs : Les utilisateurs doivent être associés à un ou plusieurs établissements, en fonction de leur rôle, et le système doit restreindre les actions aux établissements auxquels ils sont rattachés.
+3.3 Gestion de la loi cadre
+* Création d'une loi-cadre : La loi cadre doit être créée pour chaque exercice budgétaire. Elle inclut des postes budgétaires (vacants ou occupés).
+* Saisie des effectifs : Chaque poste budgétaire doit inclure l'effectif initial et l'effectif final, en tenant compte des mouvements réalisés.
+> Le système doit permettre de saisir l'effectif initial réel (l'effectif des postes occupés) et l'effectif initial théorique.
+* Types de mouvements : Le système doit permettre trois types de mouvements sur les postes budgétaires :
+> Création de poste : La création d'un nouveau poste budgétaire (Mouvement exclusive dans la loi de cadre).
+> Suppression de poste : Retrait d'un poste budgétaire existant (Mouvement exclusive dans la loi de cadre).
+> Transformation de poste : Ce type de mouvement est pris en compte soit dans la loi-cadre, soit après celle-ci. Dans le cas où ces mouvements sont reçus en fin d'année, ils doivent être inclus dans le calcul de l'effectif de l'année prochaine.
+> Chaque type de mouvement aura plusieurs sous-types pour décrire l'opération effectuée, par exemple Créations normales, Transformation des postes vacants, Départs à la Retraite....
+> Le système doit mentionner dans la loi cadre en cours, la date d'effet pour les mouvements qui ont eu lieu dans les années précédentes.
+
+* Situation du poste : Un poste budgétaire est caractérisé par un grade. Chaque poste budgétaire peut être occupé ou vacant :
+Poste vacant : Le poste est prévu existe dans la loi, mais aucune personne n'y est encore affectée. Cela peut être dû à :
+? Une absence de recrutement ou un retard dans le processus du concours.
+? Un départ récent (retraite, démission, mutation, etc.).
+? Un poste prévu pour de futurs besoins, mais encore inutilisé.
+Poste occupé : Le poste est non seulement prévu dans la loi, mais aussi effectivement pourvu.
+
+* Grades : 
+Le code du grade est composé de 10 caractères comme défini dans le tableau suivant :
+
+OrdreDescriptionLongueur1Groupe22Catégorie23Corps24Cadre25Grade2La codification des établissements dépend du type de leur statut : soit des cadres communs de la fonction publique, soit des statuts spécifiques à chaque établissement.
+* Le groupe " 00 " est réservé aux cadres communs de la fonction publique.
+* Un groupe distinct sera créé pour chaque statut spécifique.
+
+
+
+
+Exemple :
+TypeGradeLibelleCadres communs de la fonction publique00.99.17.02.01 Ingénieur en chef grade principalCadres des Agences Urbaines01.00.00.01.01
+01 : Groupe Agences Urbaines
+00 : pas de corps
+00 : pas de catégorie 
+01 : Cadre Agents d'exécution
+01 : Echelle 8
+Agents d'exécution échelle 8
+
+* Consultation de la loi cadre : Le système doit permettre la consultation des effectifs en temps réel en prendre en considération toutes les opérations et les versions de la loi cadre.
+
+3.4 Gestion des mouvements d'effectifs
+* Mouvements après la clôture de la loi cadre : Une fois la loi cadre clôturée, les mouvements d'effectifs effectués (transformation) doivent être pris en compte dans une version modificative de la loi cadre. Chaque mouvement doit être validé et traçable.
+* Mouvements pour valider la loi cadre : Les mouvements validés avant la clôture doivent être intégrés dans la nouvelle version de la loi cadre.
+3.5 Gestion des versions de la loi cadre
+* Création d'une version modificative : La version modificative de la loi cadre doit être créée pour prendre en compte les mouvements postérieurs à la clôture de la loi cadre précédente.
+* Validation des versions : Chaque version de la loi cadre, qu'elle soit initiale ou modificative, doit passer par un processus de validation et de signature électronique avant d'être officiellement adoptée.
+3.6 Signature électronique
+* Processus de signature : Le système doit permettre la signature électronique des versions de la loi cadre (initiale ou modificative) une fois validées. Le Responsable RH et/ou le RS doivent pouvoir apposer leur signature selon leurs droits d'accès.
+3.7 Reporting et édition des tableaux
+* Génération de rapports : Le module doit permettre la génération automatique de rapports sur les effectifs et les mouvements, en tenant compte des postes budgétaires et des services pour chaque établissement.
+* Édition des tableaux : Les tableaux liés à la loi cadre (effectifs par poste, mouvements validés, etc.) doivent pouvoir être édités en plusieurs formats (PDF, Excel) pour faciliter l'analyse et la présentation.
+3.8 Échanges avec les partenaires externes
+* API d'échange d'informations : Le système doit inclure des API REST permettant d'échanger des informations avec des partenaires externes, notamment pour synchroniser les données budgétaires et les mouvements d'effectifs.
+* Vérification des droits via token : Toutes les API doivent vérifier la validité du token avant d'exécuter les actions demandées par les utilisateurs externes.
+
+4. Interfaces utilisateur
+Les interfaces utilisateur du module de gestion de la loi cadre doivent être intuitives et adaptées aux différents rôles (Responsable RH, Cadre RH, RS, Admin, Consultation). Chaque interface doit permettre à l'utilisateur d'accéder rapidement aux fonctionnalités essentielles en fonction de ses droits.
+4.1 Interface d'accueil
+* Tableau de bord personnalisé : Chaque utilisateur doit voir un tableau de bord résumant ses tâches en cours, ses notifications (mouvements à valider, lois cadres en attente de signature, etc.), et un aperçu des établissements qu'il gère.
+o Responsable RH : Vue des mouvements à saisir/valider, lois cadres à signer.
+o Cadre RH : Vue des mouvements à saisir/valider pour les établissements gérés.
+o RS : Vue des établissements sous gestion et des versions de lois cadres.
+o Admin : Vue des statistiques globales et gestion des utilisateurs.
+
+L'écran est composé d'un menu à gauche permet de naviguer entre les différentes parties du système avec le Logo de l'application Loi Cadre et/ou de l'application Ebudget, un bandeau haut et une zone de travail permet de consulter et de modifier les informations souhaitées correspondants à la partie sélectionnée.
+
+Les paramètres globaux sont disponibles sur le menu en haut :
+* Le profile (nom d'utilisateur) et L'application sélectionnée :
+
+    
+* Le système doit permettre Un accès rapide aux autres applications.
+Les nouvelles notifications qui concernent l'utilisateur connecté ou qui concernent tous les utilisateurs de même département que l'utilisateur connecté.
+* Un filtre pour les départements autorisés pour l'utilisateur, l'année de la loi de finances (Exercice budgétaire) et l'établissement public sélectionné.
+
+Les valeurs par défaut des filtres sont sélectionnées selon l'année et l'utilisateur authentifié.
+4.3 Interface de gestion des établissements
+* Sélection de l'établissement : L'utilisateur doit pouvoir sélectionner l'établissement public à partir d'une liste filtrée selon ses droits d'accès. Chaque établissement est associé à un département, visible dans l'interface.
+* Vue détaillée de l'établissement : Chaque établissement doit avoir une vue détaillée qui affiche :
+o Les services de l'établissement.
+o Les postes budgétaires (vacants/occupés).
+o Les mouvements en cours ou validés.
+o Les effectifs initiaux et finaux après les mouvements.
+4.4 Interface de gestion de la loi cadre
+
+
+* Création et gestion de la loi cadre : Cette interface permet de :
+o Consulter les étapes de la LC : Initial - Envoyer DB - Définitive ... (A configurer dans la partie Administration)
+o Consulter les opérations en cours
+o Afficher les détails des postes
+o Imprimer ou changer l'état de la LC selon les actions autorisées.
+o Créer une nouvelle loi cadre pour l'exercice en cours.
+o Consulter les lois cadres passées et leurs versions modificatives.
+o Saisir les effectifs par poste budgétaire (vacants ou occupés).
+o Ajouter, modifier ou supprimer des mouvements (création, suppression, transfert, transformation de postes).
+o Générer les versions modificatives de la loi cadre en fonction des mouvements réalisés après la clôture.
+
+4.5 Interface des mouvements
+
+
+
+Les utilisateurs doivent avoir une vue récapitulative des mouvements autorisés (transformations des postes occupés, transformation des postes vacants, Suppressions, Transferts...).
+
+L'utilisateur pourra choisir le mouvement à partir de la liste. Le système affiche les détails du mouvement sous forme d'un tableau : 
+
+
+Les détails affichés dans le tableau renseignent en particulier sur l'entité concernée, les postes d'origine et de destination, ainsi que sur l'effectif concerné par ce mouvement.
+
+4.6 Interface de signature électronique
+* Liste des lois cadres à signer : Les utilisateurs ayant le droit de signature (Responsable RH, RS) doivent pouvoir visualiser les lois cadres prêtes à être signées.
+* Processus de signature : Chaque utilisateur doit pouvoir apposer une signature électronique sur la version validée de la loi cadre ou de la loi cadre modificative.
+
+4.7 Interface de reporting, édition des tableaux et Signature Electronique
+* Génération des rapports : Les utilisateurs peuvent accéder à une interface pour générer des rapports sur les effectifs et les mouvements :
+o Rapports par service, par établissement, ou par département.
+o Rapport comparant l'effectif initial et final après mouvements.
+* Exportation : Possibilité d'exporter les rapports et les tableaux au format PDF ou Excel pour faciliter l'analyse externe.
+
+Le système doit permettre :
+* Consulter le N° de loi en cours
+* Consulter état de signature du document
+* Visualiser le Tableau des effectifs
+* Ajouter/Supprimer un document annexe (qui sera imprimé automatiquement avec le document)
+* Signer le document :
+o Le document doit être signer par les responsables selon l'ordre du circuit (le responsable sectoriel de la Direction du Budget et le responsable RH du EPA ...)
+o Le circuit de signature est configuré dans la partie administration
+4.9 Interface Admin
+
+Le partie " Administration " permet de gérer les autorisations d'accès en prenant en charge les utilisateurs (nom, prénom, département, EPA ...), les actions et les interfaces dont ils ont le droit d'accès et les et fonctionnalités qui lui sont permises.
+Les fonctionnalités gérées par l'administrateur :
+? Gestion des grades : ajouter, modifier et supprimer les grades
+? La gestion du circuit de la signature électronique
+? La gestion des mouvements avec leurs autorisations pour chaque utilisateur/EPA
+
+4.8 Interface des API d'échange d'informations
+* Accès aux API : Les administrateurs doivent disposer d'une interface permettant de configurer et surveiller les échanges d'informations avec les partenaires externes via des API REST. Cette interface doit afficher :
+o Les tokens actifs.
+o Les appels API effectués.
+o Les éventuelles erreurs d'échange de données.
+
+
+

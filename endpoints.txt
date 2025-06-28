@@ -1,0 +1,288 @@
+@RequestMapping("/api/departements")
+public class DepartementController {
+
+    private final DepartementService departementService;
+
+    public DepartementController(DepartementService departementService) {
+        this.departementService = departementService;
+    }
+
+    @PostMapping
+    public ResponseEntity<Departement> create(@RequestBody Departement departement) {
+        return ResponseEntity.ok(departementService.createDepartement(departement));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Departement> update(@PathVariable Long id, @RequestBody Departement departement) {
+        return ResponseEntity.ok(departementService.updateDepartement(id, departement));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        departementService.deleteDepartement(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Departement> getById(@PathVariable Long id) {
+        return ResponseEntity.ok(departementService.getDepartementById(id));
+    }
+
+    @GetMapping
+    public ResponseEntity<List<Departement>> getAll() {
+        return ResponseEntity.ok(departementService.getAllDepartements());
+    }
+
+    @GetMapping("/responsable/{responsableId}")
+    public ResponseEntity<List<Departement>> getByResponsable(@PathVariable Long responsableId) {
+        return ResponseEntity.ok(departementService.getDepartementsByResponsable(responsableId));
+    }
+}
+
+@RestController
+@RequestMapping("/api/etablissements")
+public class EtablissementController {
+
+    private final EtablissementService etablissementService;
+
+    public EtablissementController(EtablissementService etablissementService) {
+        this.etablissementService = etablissementService;
+    }
+
+    @PostMapping
+    public ResponseEntity<Etablissement> create(@RequestBody Etablissement etablissement) {
+        return ResponseEntity.ok(etablissementService.createEtablissement(etablissement));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Etablissement> update(@PathVariable Long id, @RequestBody Etablissement etablissement) {
+        return ResponseEntity.ok(etablissementService.updateEtablissement(id, etablissement));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        etablissementService.deleteEtablissement(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Etablissement> getById(@PathVariable Long id) {
+        return ResponseEntity.ok(etablissementService.getEtablissementById(id));
+    }
+
+    @GetMapping
+    public ResponseEntity<List<Etablissement>> getAll() {
+        return ResponseEntity.ok(etablissementService.getAllEtablissements());
+    }
+}
+
+@RestController
+@RequestMapping("/api/lois-cadres")
+
+public class LoiCadreController {
+
+    private final LoiCadreService loiCadreService;
+    public LoiCadreController(LoiCadreService loiCadreService) {
+        this.loiCadreService = loiCadreService;
+    }
+
+    @PostMapping
+    public ResponseEntity<LoiCadre> create(@RequestBody LoiCadre loi) {
+        return ResponseEntity.ok(loiCadreService.createLoiCadre(loi));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<LoiCadre> update(@PathVariable Long id, @RequestBody LoiCadre loi) {
+        return ResponseEntity.ok(loiCadreService.updateLoiCadre(id, loi));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        loiCadreService.deleteLoiCadre(id);
+        return ResponseEntity.noContent().build();
+    }
+    @GetMapping("/{id}")
+    public ResponseEntity<LoiCadre> getById(@PathVariable Long id) {
+        return ResponseEntity.ok(loiCadreService.getLoiCadreById(id));
+    }
+    @GetMapping
+    public ResponseEntity<List<LoiCadre>> getAll() {
+        return ResponseEntity.ok(loiCadreService.getAllLoisCadres());
+    }
+    @PostMapping("/{id}/mouvements")
+    public ResponseEntity<LoiCadre> addMouvement(@PathVariable Long id, @RequestBody Mouvement mouvement) {
+        return ResponseEntity.ok(loiCadreService.addMouvement(id, mouvement));
+    }
+    @PostMapping("/{id}/postes")
+    public ResponseEntity<LoiCadre> addPoste(@PathVariable Long id, @RequestBody PosteBudgetaire poste) {
+        return ResponseEntity.ok(loiCadreService.addPosteBudgetaire(id, poste));
+    }
+    @PutMapping("/{id}/valider")
+    public ResponseEntity<LoiCadre> valider(@PathVariable Long id) {
+        return ResponseEntity.ok(loiCadreService.validerLoiCadre(id));
+    }
+    @PutMapping("/{id}/statut")
+    public ResponseEntity<LoiCadre> changerStatut(@PathVariable Long id, @RequestParam StatutLoiCadre statut) {
+        return ResponseEntity.ok(loiCadreService.modifierStatut(id, statut));
+    }
+}
+
+
+@RestController
+@RequestMapping("/api/mouvements")
+@RequiredArgsConstructor
+@AllArgsConstructor
+public class MouvementController {
+
+
+    @Autowired
+    private MouvementService mouvementService;
+
+    @PostMapping("/loi/{loiCadreId}")
+    public ResponseEntity<Mouvement> create(@PathVariable Long loiCadreId, @RequestBody Mouvement mouvement) {
+        return ResponseEntity.ok(mouvementService.createMouvement(loiCadreId, mouvement));
+    }
+    @GetMapping
+    public ResponseEntity<List<Mouvement>> getAll() {
+    return ResponseEntity.ok(mouvementService.getAllMouvements());
+}
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Mouvement> update(@PathVariable Long id, @RequestBody Mouvement mouvement) {
+        return ResponseEntity.ok(mouvementService.updateMouvement(id, mouvement));
+    }
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        mouvementService.deleteMouvement(id);
+        return ResponseEntity.noContent().build();
+    }
+    @GetMapping("/{id}")
+    public ResponseEntity<Mouvement> getById(@PathVariable Long id) {
+        return ResponseEntity.ok(mouvementService.getMouvementById(id));
+    }
+    @GetMapping("/loi/{loiCadreId}")
+    public ResponseEntity<List<Mouvement>> getByLoiCadre(@PathVariable Long loiCadreId) {
+        return ResponseEntity.ok(mouvementService.getMouvementsByLoiCadre(loiCadreId));
+    }
+}
+
+@RestController
+@RequestMapping("/api/postes")
+@RequiredArgsConstructor
+public class PosteBudgetaireController {
+
+    @Autowired
+    private PosteBudgetaireService posteService;
+
+    @PostMapping
+    public ResponseEntity<PosteBudgetaire> create(@RequestBody PosteBudgetaire poste) {
+        return ResponseEntity.ok(posteService.createPoste(poste));
+    }
+    @PutMapping("/{id}")
+    public ResponseEntity<PosteBudgetaire> update(@PathVariable Long id, @RequestBody PosteBudgetaire poste) {
+        return ResponseEntity.ok(posteService.updatePoste(id, poste));
+    }
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        posteService.deletePoste(id);
+        return ResponseEntity.noContent().build();
+    }
+    @GetMapping("/{id}")
+    public ResponseEntity<PosteBudgetaire> getById(@PathVariable Long id) {
+        return ResponseEntity.ok(posteService.getPosteById(id));
+    }
+    @GetMapping
+    public ResponseEntity<List<PosteBudgetaire>> getAll() {
+        return ResponseEntity.ok(posteService.getAllPostes());
+    }
+    @GetMapping("/etablissement/{etablissementId}")
+    public ResponseEntity<List<PosteBudgetaire>> getByEtablissement(@PathVariable Long etablissementId) {
+        return ResponseEntity.ok(posteService.getPostesByEtablissement(etablissementId));
+    }
+    @GetMapping("/etat")
+    public ResponseEntity<List<PosteBudgetaire>> getByEtat(@RequestParam EtatPoste etat) {
+        return ResponseEntity.ok(posteService.getPostesByEtat(etat));
+    }
+    @GetMapping("/disponibles")
+    public ResponseEntity<List<PosteBudgetaire>> getDisponibles() {
+        return ResponseEntity.ok(posteService.getPostesDisponiblesPourMouvement());
+    }
+}
+
+@RestController
+@RequestMapping("/api/signatures")
+@RequiredArgsConstructor
+public class SignatureController {
+
+    @Autowired
+    private SignatureService signatureService;
+    @PostMapping("/loi/{loiCadreId}/utilisateur/{utilisateurId}")
+    public ResponseEntity<SignatureElectronique> createSignature(
+            @PathVariable Long loiCadreId,
+            @PathVariable Long utilisateurId) {
+        return ResponseEntity.ok(signatureService.addSignature(loiCadreId, utilisateurId));
+    }
+    @PutMapping("/{signatureId}/signer")
+    public ResponseEntity<SignatureElectronique> validateSignature(@PathVariable Long signatureId) {
+        return ResponseEntity.ok(signatureService.validerSignature(signatureId));
+    }
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        signatureService.supprimerSignature(id);
+        return ResponseEntity.noContent().build();
+    }
+    @GetMapping("/loi/{loiCadreId}")
+    public ResponseEntity<List<SignatureElectronique>> getByLoiCadre(@PathVariable Long loiCadreId) {
+        return ResponseEntity.ok(signatureService.getSignaturesByLoiCadre(loiCadreId));
+    }
+    @GetMapping("/utilisateur/{utilisateurId}")
+    public ResponseEntity<List<SignatureElectronique>> getByUtilisateur(@PathVariable Long utilisateurId) {
+        return ResponseEntity.ok(signatureService.getSignaturesByUtilisateur(utilisateurId));
+    }
+    @GetMapping("/{id}")
+    public ResponseEntity<SignatureElectronique> getById(@PathVariable Long id) {
+        return ResponseEntity.ok(signatureService.getSignatureById(id));
+    }
+}
+
+@RestController
+@RequestMapping("/api/utilisateurs")
+@RequiredArgsConstructor
+public class UtilisateurController {
+
+    @Autowired
+    private UtilisateurService utilisateurService;
+    @PostMapping
+    public ResponseEntity<Utilisateur> create(@RequestBody Utilisateur utilisateur) {
+        return ResponseEntity.ok(utilisateurService.createUtilisateur(utilisateur));
+    }
+    @PutMapping("/{id}")
+    public ResponseEntity<Utilisateur> update(@PathVariable Long id, @RequestBody Utilisateur utilisateur) {
+        return ResponseEntity.ok(utilisateurService.updateUtilisateur(id, utilisateur));
+    }
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        utilisateurService.deleteUtilisateur(id);
+        return ResponseEntity.noContent().build();
+    }
+    @GetMapping("/{id}")
+    public ResponseEntity<Utilisateur> getById(@PathVariable Long id) {
+        return ResponseEntity.ok(utilisateurService.getUtilisateurById(id));
+    }
+    @GetMapping
+    public ResponseEntity<List<Utilisateur>> getAll() {
+        return ResponseEntity.ok(utilisateurService.getAllUtilisateurs());
+    }
+    @GetMapping("/etablissement/{etablissementId}")
+    public ResponseEntity<List<Utilisateur>> getByEtablissement(@PathVariable Long etablissementId) {
+        return ResponseEntity.ok(utilisateurService.getUtilisateursByEtablissement(etablissementId));
+    }
+    @GetMapping("/role")
+    public ResponseEntity<List<Utilisateur>> getByRole(@RequestParam Role role) {
+        return ResponseEntity.ok((List<Utilisateur>) utilisateurService.getUtilisateursByRole(role));
+    }
+    @GetMapping("/email")
+    public ResponseEntity<Utilisateur> getByEmail(@RequestParam String email) {
+        return ResponseEntity.ok(utilisateurService.findByEmail(email));
+    }
+}

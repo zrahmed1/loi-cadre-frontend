@@ -1,0 +1,22 @@
+<div class="container">
+  <h2>Ajouter une Signature Électronique</h2>
+  <form [formGroup]="form" (ngSubmit)="submit()">
+    <mat-form-field appearance="fill">
+      <mat-label>Loi Cadre</mat-label>
+      <mat-select formControlName="loiCadreId">
+        <mat-option *ngFor="let loi of loisCadres" [value]="loi.id">{{ loi.annee }} (Version {{ loi.version }})</mat-option>
+      </mat-select>
+      <mat-error *ngIf="form.get('loiCadreId')?.hasError('required')">Champ requis</mat-error>
+    </mat-form-field>
+    <mat-form-field appearance="fill">
+      <mat-label>Utilisateur ID</mat-label>
+      <input matInput formControlName="utilisateurId" type="number" placeholder="1">
+      <mat-error *ngIf="form.get('utilisateurId')?.hasError('required')">Champ requis</mat-error>
+      <mat-error *ngIf="form.get('utilisateurId')?.hasError('min')">Doit être >= 1</mat-error>
+    </mat-form-field>
+    <div class="actions">
+      <button mat-raised-button color="primary" type="submit" [disabled]="form.invalid">Enregistrer</button>
+      <button mat-raised-button color="warn" type="button" [routerLink]="['/signatures']">Annuler</button>
+    </div>
+  </form>
+</div>

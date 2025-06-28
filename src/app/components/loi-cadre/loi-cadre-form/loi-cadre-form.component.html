@@ -1,0 +1,29 @@
+<div class="container">
+  <h2>{{ isEditMode ? 'Modifier' : 'Créer' }} une Loi Cadre</h2>
+  <form [formGroup]="form" (ngSubmit)="submit()">
+    <mat-form-field appearance="fill">
+      <mat-label>Exercice Budgétaire</mat-label>
+      <input matInput formControlName="annee" type="number" placeholder="2025">
+      <mat-error *ngIf="form.get('annee')?.hasError('required')">Champ requis</mat-error>
+      <mat-error *ngIf="form.get('annee')?.hasError('min')">Année doit être >= 2000</mat-error>
+      <mat-error *ngIf="form.get('annee')?.hasError('max')">Année doit être <= 2100</mat-error>
+    </mat-form-field>
+    <mat-form-field appearance="fill">
+      <mat-label>Version</mat-label>
+      <input matInput formControlName="version" type="number" placeholder="1">
+      <mat-error *ngIf="form.get('version')?.hasError('required')">Champ requis</mat-error>
+      <mat-error *ngIf="form.get('version')?.hasError('min')">Version doit être >= 1</mat-error>
+    </mat-form-field>
+    <mat-form-field appearance="fill">
+      <mat-label>Statut</mat-label>
+      <mat-select formControlName="statut">
+        <mat-option *ngFor="let statut of statuts" [value]="statut">{{ statut }}</mat-option>
+      </mat-select>
+      <mat-error *ngIf="form.get('statut')?.hasError('required')">Champ requis</mat-error>
+    </mat-form-field>
+    <div class="actions">
+      <button mat-raised-button color="primary" type="submit" [disabled]="form.invalid">Enregistrer</button>
+      <button mat-raised-button color="warn" type="button" [routerLink]="['/lois-cadres']">Annuler</button>
+    </div>
+  </form>
+</div>

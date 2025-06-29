@@ -27,10 +27,13 @@
       <mat-error *ngIf="form.get('effectifFinal')?.hasError('min')">Doit être >= 0</mat-error>
     </mat-form-field>
     <mat-form-field appearance="fill">
-      <mat-label>Établissement ID</mat-label>
-      <input matInput formControlName="etablissementId" type="number" placeholder="1">
+      <mat-label>Établissement</mat-label>
+      <mat-select formControlName="etablissementId">
+        <mat-option *ngFor="let etablissement of etablissements" [value]="etablissement.id">
+          {{ etablissement.nom }}
+        </mat-option>
+      </mat-select>
       <mat-error *ngIf="form.get('etablissementId')?.hasError('required')">Champ requis</mat-error>
-      <mat-error *ngIf="form.get('etablissementId')?.hasError('min')">Doit être >= 1</mat-error>
     </mat-form-field>
     <div class="actions">
       <button mat-raised-button color="primary" type="submit" [disabled]="form.invalid">Enregistrer</button>

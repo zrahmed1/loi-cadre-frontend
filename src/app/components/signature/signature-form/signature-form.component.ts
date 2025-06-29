@@ -7,8 +7,10 @@ import { MatButtonModule } from '@angular/material/button';
 import { RouterLink } from '@angular/router';
 import { SignatureService } from '../../../services/signature.service';
 import { LoiCadreService } from '../../../services/loi-cadre.service';
+import { UtilisateurService } from '../../../services/utilisateur.service';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { Utilisateur } from '../../../models/utilisateur';
 
 @Component({
   selector: 'app-signature-form',
@@ -20,23 +22,32 @@ import { CommonModule } from '@angular/common';
 export class SignatureFormComponent implements OnInit {
   form: FormGroup;
   loisCadres: any[] = [];
+  utilisateurs: Utilisateur[] = [];
 
   constructor(
     private fb: FormBuilder,
     private signatureService: SignatureService,
     private loiCadreService: LoiCadreService,
+    private utilisateurService: UtilisateurService,
     private router: Router
   ) {
     this.form = this.fb.group({
       loiCadreId: ['', Validators.required],
-      utilisateurId: ['', [Validators.required, Validators.min(1)]]
+      utilisateurId: ['', Validators.required]
     });
   }
 
   ngOnInit(): void {
+    // Load lois cadres
     this.loiCadreService.getAll().subscribe({
       next: (data) => this.loisCadres = data,
       error: (err) => console.error('Erreur lors du chargement des lois cadres:', err)
+    });
+
+    // Load utilisateurs
+    this.utilisateurService.getAll().subscribe({
+      next: (data) => this.utilisateurs = data,
+      error: (err) => console.error('Erreur lors du chargement des utilisateurs:', err)
     });
   }
 

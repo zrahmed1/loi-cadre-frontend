@@ -31,4 +31,7 @@ export class SignatureService {
   delete(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
+  getAll(): Observable<SignatureElectronique[]> {
+    return this.http.get<SignatureElectronique[]>(this.apiUrl);
+  }
 }

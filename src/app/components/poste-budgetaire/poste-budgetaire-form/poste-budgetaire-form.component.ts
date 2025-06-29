@@ -6,8 +6,10 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
 import { RouterLink } from '@angular/router';
 import { PosteBudgetaireService } from '../../../services/poste-budgetaire.service';
+import { EtablissementService } from '../../../services/etablissement.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PosteBudgetaire, EtatPoste } from '../../../models/poste-budgetaire';
+import { Etablissement } from '../../../models/etablissement';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -21,11 +23,13 @@ export class PosteBudgetaireFormComponent implements OnInit {
   form: FormGroup;
   id?: number;
   etats = Object.values(EtatPoste);
+  etablissements: Etablissement[] = [];
   isEditMode = false;
 
   constructor(
     private fb: FormBuilder,
     private posteService: PosteBudgetaireService,
+    private etablissementService: EtablissementService,
     private route: ActivatedRoute,
     private router: Router
   ) {
@@ -34,11 +38,17 @@ export class PosteBudgetaireFormComponent implements OnInit {
       etat: ['', Validators.required],
       effectifInitial: ['', [Validators.required, Validators.min(0)]],
       effectifFinal: ['', [Validators.required, Validators.min(0)]],
-      etablissementId: ['', [Validators.required, Validators.min(1)]]
+      etablissementId: ['', Validators.required]
     });
   }
 
   ngOnInit(): void {
+    // Load etablissements list
+    this.etablissementService.getAll().subscribe({
+      next: (data) => this.etablissements = data,
+      error: (err) => console.error('Erreur lors du chargement des établissements:', err)
+    });
+
     const idParam = this.route.snapshot.paramMap.get('id');
     if (idParam) {
       this.id = +idParam;

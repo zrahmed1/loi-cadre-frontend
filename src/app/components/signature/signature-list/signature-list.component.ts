@@ -42,7 +42,7 @@ export class SignatureListComponent implements OnInit {
   loadSignatures(): void {
     const serviceCall = this.selectedLoiCadreId
       ? this.signatureService.getByLoiCadre(this.selectedLoiCadreId)
-      : this.signatureService.getByUtilisateur(1);
+      : this.signatureService.getAll();
     serviceCall.subscribe({
       next: (data) => this.signatures = data,
       error: (err) => console.error('Erreur lors du chargement des signatures:', err)

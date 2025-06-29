@@ -6,3 +6,4 @@ export interface Etablissement {
   departementId?: number;
   departement?: Departement;
 }
+

@@ -10,6 +10,7 @@ import { LoiCadreService } from '../../services/loi-cadre.service';
 import { UtilisateurService } from '../../services/utilisateur.service';
 import { DepartementService } from '../../services/departement.service';
 import { PosteBudgetaireService } from '../../services/poste-budgetaire.service';
+import { EtablissementService } from '../../services/etablissement.service';
 
 @Component({
   selector: 'app-admin',
@@ -72,6 +73,17 @@ import { PosteBudgetaireService } from '../../services/poste-budgetaire.service'
             <button mat-button [routerLink]="['/postes']">Voir tout</button>
           </mat-card-actions>
         </mat-card>
+
+        <mat-card class="stat-card">
+  <mat-card-header>
+    <mat-icon mat-card-avatar>location_city</mat-icon>
+    <mat-card-title>{{ totalEtablissements }}</mat-card-title>
+    <mat-card-subtitle>Établissements</mat-card-subtitle>
+  </mat-card-header>
+  <mat-card-actions>
+    <button mat-button [routerLink]="['/etablissements']">Gérer</button>
+  </mat-card-actions>
+</mat-card>
       </div>
       
       <!-- Management Cards -->
@@ -227,10 +239,12 @@ export class AdminComponent implements OnInit {
 
   constructor(
     private loiCadreService: LoiCadreService,
-    private utilisateurService: UtilisateurService,
-    private departementService: DepartementService,
-    private posteService: PosteBudgetaireService
+  private utilisateurService: UtilisateurService,
+  private departementService: DepartementService,
+  private posteService: PosteBudgetaireService,
+  private etablissementService: EtablissementService
   ) {}
+  totalEtablissements = 0;
 
   ngOnInit(): void {
     this.loadStatistics();
@@ -252,9 +266,9 @@ export class AdminComponent implements OnInit {
       error: (err) => console.error('Erreur lors du chargement des départements:', err)
     });
 
-    this.posteService.getAll().subscribe({
-      next: (data) => this.totalPostes = data.length,
-      error: (err) => console.error('Erreur lors du chargement des postes:', err)
+    this.etablissementService.getAll().subscribe({
+      next: (data) => this.totalEtablissements = data.length,
+      error: (err) => console.error('Erreur lors du chargement des établissements:', err)
     });
   }
 }

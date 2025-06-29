@@ -1,0 +1,57 @@
+.container {
+    padding: 24px;
+  }
+  
+  .spacer {
+    flex: 1 1 auto;
+  }
+  
+  mat-toolbar {
+    margin-bottom: 24px;
+    border-radius: 4px;
+  }
+  
+  mat-toolbar span {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .table-container {
+    overflow-x: auto;
+  }
+  
+  .full-width {
+    width: 100%;
+  }
+  
+  .no-data {
+    text-align: center;
+    padding: 48px 24px;
+    color: #666;
+  }
+  
+  .no-data mat-icon {
+    font-size: 48px;
+    height: 48px;
+    width: 48px;
+    margin-bottom: 16px;
+    opacity: 0.5;
+  }
+  
+  .no-data p {
+    margin: 16px 0;
+    font-size: 16px;
+  }
+  
+  mat-card {
+    margin-top: 0;
+  }
+  
+  td.mat-cell, th.mat-header-cell {
+    padding: 12px;
+  }
+  
+  button[mat-icon-button] {
+    margin-right: 8px;
+  }

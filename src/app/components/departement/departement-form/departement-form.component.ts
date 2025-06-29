@@ -35,14 +35,15 @@ import { Utilisateur } from '../../../models/utilisateur';
         </mat-form-field>
         
         <mat-form-field appearance="fill">
-          <mat-label>Responsable</mat-label>
-          <mat-select formControlName="responsableId">
-            <mat-option [value]="">Aucun responsable</mat-option>
-            <mat-option *ngFor="let user of utilisateurs" [value]="user.id">
-              {{ user.prenom }} {{ user.nom }} ({{ user.role }})
-            </mat-option>
-          </mat-select>
-        </mat-form-field>
+  <mat-label>Responsable (Optionnel)</mat-label>
+  <mat-select formControlName="responsableId">
+    <mat-option [value]="">Aucun responsable pour le moment</mat-option>
+    <mat-option *ngFor="let user of utilisateurs" [value]="user.id">
+      {{ user.prenom }} {{ user.nom }} ({{ user.role }})
+    </mat-option>
+  </mat-select>
+  <mat-hint>Vous pourrez assigner un responsable plus tard</mat-hint>
+</mat-form-field>
         
         <div class="actions">
           <button mat-raised-button color="primary" type="submit" [disabled]="form.invalid">

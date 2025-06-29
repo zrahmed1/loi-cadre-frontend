@@ -19,6 +19,8 @@ import {DepartementListComponent} from './components/departement/departement-lis
 import {UtilisateurListComponent} from './components/utilisateur/utilisateur-list/utilisateur-list.component';
 import { DepartementFormComponent } from './components/departement/departement-form/departement-form.component';
 import { UtilisateurFormComponent } from './components/utilisateur/utilisateur-form/utilisateur-form.component';
+import { EtablissementListComponent } from './components/etablissement/etablissement-list/etablissement-list.component';
+import { EtablissementFormComponent } from './components/etablissement/etablissement-form/etablissement-form.component';
 
 
 export const appConfig: ApplicationConfig = {
@@ -29,7 +31,7 @@ export const appConfig: ApplicationConfig = {
       { path: 'lois-cadres', component: LoiCadreListComponent },
       { path: 'loi-cadre/create', component: LoiCadreFormComponent },
       { path: 'loi-cadre/edit/:id', component: LoiCadreFormComponent },
-      { path: 'loi-cadre/view/:id', component: LoiCadreViewComponent }, // Create this component
+      { path: 'loi-cadre/view/:id', component: LoiCadreViewComponent },
       { path: 'mouvements', component: MouvementListComponent },
       { path: 'mouvement/create', component: MouvementFormComponent },
       { path: 'mouvement/edit/:id', component: MouvementFormComponent },
@@ -38,8 +40,7 @@ export const appConfig: ApplicationConfig = {
       { path: 'poste/edit/:id', component: PosteBudgetaireFormComponent },
       { path: 'signatures', component: SignatureListComponent },
       { path: 'signature/create', component: SignatureFormComponent },
-      { path: 'admin', component: AdminComponent }, // Create this component
-      // Add these routes:
+      { path: 'admin', component: AdminComponent },
       { path: 'grades', component: GradeListComponent },
       { path: 'grade/create', component: GradeFormComponent },
       { path: 'grade/edit/:id', component: GradeFormComponent },
@@ -49,7 +50,9 @@ export const appConfig: ApplicationConfig = {
       { path: 'utilisateurs', component: UtilisateurListComponent },
       { path: 'utilisateur/create', component: UtilisateurFormComponent },
       { path: 'utilisateur/edit/:id', component: UtilisateurFormComponent },
-
+      { path: 'etablissements', component: EtablissementListComponent },
+      { path: 'etablissement/create', component: EtablissementFormComponent },
+      { path: 'etablissement/edit/:id', component: EtablissementFormComponent },
     ]),
     provideHttpClient(),
     provideAnimations()

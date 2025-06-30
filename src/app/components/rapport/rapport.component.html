@@ -1,0 +1,30 @@
+<div class="rapport">
+  <h1>Rapports</h1>
+  <form [formGroup]="rapportForm" class="filters">
+    <select formControlName="selectedLoiCadre">
+      <option [value]="null">Toutes les lois</option>
+      <option *ngFor="let loi of lois" [value]="loi.id">{{ loi.annee }} - {{ loi.version }}</option>
+    </select>
+    <select formControlName="selectedAnnee">
+      <option *ngFor="let year of [2022, 2023, 2024, 2025, 2026]" [value]="year">{{ year }}</option>
+    </select>
+  </form>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Loi Cadre</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let mouvement of mouvements">
+        <td>{{ mouvement.type }}</td>
+        <td>{{ mouvement.description }}</td>
+        <td>{{ mouvement.loiCadre?.annee }} - {{ mouvement.loiCadre?.version }}</td>
+      </tr>
+    </tbody>
+  </table>
+  <button (click)="exportPDF()">Exporter PDF</button>
+  <button (click)="exportExcel()">Exporter Excel</button>
+</div>

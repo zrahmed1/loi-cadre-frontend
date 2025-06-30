@@ -1,0 +1,31 @@
+<div class="signature-workflow">
+  <h1>Circuit de Signature</h1>
+  <form [formGroup]="workflowForm">
+    <table>
+      <thead>
+        <tr>
+          <th>Utilisateur</th>
+          <th>Ordre</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let step of steps.controls; let i = index" [formGroup]="$any(step)">
+          <td>
+            <select formControlName="utilisateurId">
+              <option *ngFor="let user of utilisateurs" [value]="user.id">{{ user.nom }} {{ user.prenom }}</option>
+            </select>
+          </td>
+          <td>
+            <input formControlName="ordre" type="number" min="1">
+          </td>
+          <td>
+            <button (click)="removeStep(i)">Supprimer</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </form>
+  <button (click)="addStep()">Ajouter Étape</button>
+  <button (click)="save()">Enregistrer</button>
+</div>

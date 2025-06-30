@@ -1,0 +1,39 @@
+<div class="etablissement-detail" *ngIf="etablissement">
+  <h1>{{ etablissement.nom }}</h1>
+  <p>Département: {{ etablissement.departement?.nom || 'Aucun' }}</p>
+  <h2>Postes Budgétaires</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Code Poste</th>
+        <th>Grade</th>
+        <th>État</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let poste of postes">
+        <td>{{ poste.codePoste }}</td>
+        <td>{{ poste.grade?.libelle }}</td>
+        <td>{{ poste.etat }}</td>
+      </tr>
+    </tbody>
+  </table>
+  <h2>Mouvements</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Date d'effet</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let mouvement of mouvements">
+        <td>{{ mouvement.type }}</td>
+        <td>{{ mouvement.description }}</td>
+        <td>{{ mouvement.dateEffet }}</td>
+      </tr>
+    </tbody>
+  </table>
+  <button (click)="addMouvement()">Ajouter Mouvement</button>
+</div>

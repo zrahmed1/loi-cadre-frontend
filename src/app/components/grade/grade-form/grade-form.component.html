@@ -1,1 +1,11 @@
-<p>grade-form works!</p>
+<form [formGroup]="gradeForm" (ngSubmit)="save()" class="grade-form">
+  <div>
+    <label>Code (XX.XX.XX.XX.XX)</label>
+    <input formControlName="code" required pattern="[0-9]{2}\.[0-9]{2}\.[0-9]{2}\.[0-9]{2}\.[0-9]{2}">
+  </div>
+  <div>
+    <label>Libellé</label>
+    <input formControlName="libelle" required>
+  </div>
+  <button type="submit" [disabled]="gradeForm.invalid">Enregistrer</button>
+</form>

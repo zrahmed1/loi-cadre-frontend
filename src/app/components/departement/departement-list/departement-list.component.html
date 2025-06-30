@@ -1,1 +1,23 @@
-<p>departement-list works!</p>
+<div class="departement-list">
+  <h1>Départements</h1>
+  <table>
+    <thead>
+      <tr>
+        <th>Nom</th>
+        <th>Responsable</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let dep of departements">
+        <td>{{ dep.nom }}</td>
+        <td>{{ dep.responsableId ? 'Utilisateur ' + dep.responsableId : 'Aucun' }}</td>
+        <td>
+          <button [routerLink]="['/departement/edit', dep.id]">Modifier</button>
+          <button *ngIf="dep.id !== undefined" (click)="delete(dep.id)">Supprimer</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <button [routerLink]="['/departement/create']">Nouveau Département</button>
+</div>

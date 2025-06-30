@@ -8,6 +8,9 @@ import { Utilisateur, Role } from '../models/utilisateur';
   providedIn: 'root'
 })
 export class UtilisateurService {
+  validateToken() {
+      return true; // Placeholder for actual token validation logic
+  }
   private apiUrl = `${environment.apiUrl}/utilisateurs`;
 
   constructor(private http: HttpClient) {}
@@ -44,5 +47,17 @@ export class UtilisateurService {
 
   delete(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  }
+  getCurrentUser(): Utilisateur {
+    // Mock admin user for testing
+    return {
+      id: 1,
+      nom: 'Admin',
+      prenom: 'Test',
+      email: 'admin@example.com',
+      motDePasse: '',
+      role: Role.CONSULTATION,
+      etablissement: { id: 1, nom: 'Etablissement A', departement: {id: 1, nom: 'res', responsableId:1} }
+    };
   }
 }

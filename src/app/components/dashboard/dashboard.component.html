@@ -1,1 +1,82 @@
-<p>dashboard works!</p>
+<div class="dashboard">
+  <h1>Tableau de Bord</h1>
+  <form [formGroup]="filterForm" class="filters">
+    <select formControlName="departementId">
+      <option [value]="null">Tous les départements</option>
+      <option *ngFor="let dept of departements" [value]="dept.id">{{ dept.nom }}</option>
+    </select>
+    <select formControlName="etablissementId">
+      <option [value]="null">Tous les établissements</option>
+      <option *ngFor="let etab of etablissements" [value]="etab.id">{{ etab.nom }}</option>
+    </select>
+    <select formControlName="annee">
+      <option *ngFor="let year of [2022, 2023, 2024, 2025, 2026]" [value]="year">{{ year }}</option>
+    </select>
+  </form>
+  <div class="stats" *ngIf="utilisateur?.role === 'ADMIN'">
+    <div class="stat-card">
+      <h3>Utilisateurs</h3>
+      <p>{{ stats.utilisateurs }}</p>
+    </div>
+    <div class="stat-card">
+      <h3>Établissements</h3>
+      <p>{{ stats.etablissements }}</p>
+    </div>
+    <div class="stat-card">
+      <h3>Lois Cadres</h3>
+      <p>{{ stats.loisCadres }}</p>
+    </div>
+    <div class="stat-card">
+      <h3>Mouvements</h3>
+      <p>{{ stats.mouvements }}</p>
+    </div>
+  </div>
+  <div class="notifications">
+    <h2>Notifications</h2>
+    <ul>
+      <li *ngFor="let notif of notifications">{{ notif.message }}</li>
+    </ul>
+  </div>
+  <div class="lois-pending">
+    <h2>Lois Cadres en attente</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Année</th>
+          <th>Version</th>
+          <th>Statut</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let loi of loisCadres | slice:0:5">
+          <td>{{ loi.annee }}</td>
+          <td>{{ loi.version }}</td>
+          <td>{{ loi.statut }}</td>
+          <td><a [routerLink]="['/loi-cadre', loi.id]">Détails</a></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="mouvements-pending">
+    <h2>Mouvements</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Établissement</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let mouvement of mouvements | slice:0:5">
+          <td>{{ mouvement.type }}</td>
+          <td>{{ mouvement.description }}</td>
+          <td>{{ getEtablissementNomByMouvement(mouvement) }}</td>
+          <td><a [routerLink]="['/mouvement/edit', mouvement.id]">Modifier</a></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

@@ -21,39 +21,12 @@ import { DepartementFormComponent } from './components/departement/departement-f
 import { UtilisateurFormComponent } from './components/utilisateur/utilisateur-form/utilisateur-form.component';
 import { EtablissementListComponent } from './components/etablissement/etablissement-list/etablissement-list.component';
 import { EtablissementFormComponent } from './components/etablissement/etablissement-form/etablissement-form.component';
+import { routes } from './app.routes';
 
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    provideRouter([
-      { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
-      { path: 'dashboard', component: DashboardComponent },
-      { path: 'lois-cadres', component: LoiCadreListComponent },
-      { path: 'loi-cadre/create', component: LoiCadreFormComponent },
-      { path: 'loi-cadre/edit/:id', component: LoiCadreFormComponent },
-      { path: 'loi-cadre/view/:id', component: LoiCadreViewComponent },
-      { path: 'mouvements', component: MouvementListComponent },
-      { path: 'mouvement/create', component: MouvementFormComponent },
-      { path: 'mouvement/edit/:id', component: MouvementFormComponent },
-      { path: 'postes', component: PosteBudgetaireListComponent },
-      { path: 'poste/create', component: PosteBudgetaireFormComponent },
-      { path: 'poste/edit/:id', component: PosteBudgetaireFormComponent },
-      { path: 'signatures', component: SignatureListComponent },
-      { path: 'signature/create', component: SignatureFormComponent },
-      { path: 'admin', component: AdminComponent },
-      { path: 'grades', component: GradeListComponent },
-      { path: 'grade/create', component: GradeFormComponent },
-      { path: 'grade/edit/:id', component: GradeFormComponent },
-      { path: 'departements', component: DepartementListComponent },
-      { path: 'departement/create', component: DepartementFormComponent },
-      { path: 'departement/edit/:id', component: DepartementFormComponent },
-      { path: 'utilisateurs', component: UtilisateurListComponent },
-      { path: 'utilisateur/create', component: UtilisateurFormComponent },
-      { path: 'utilisateur/edit/:id', component: UtilisateurFormComponent },
-      { path: 'etablissements', component: EtablissementListComponent },
-      { path: 'etablissement/create', component: EtablissementFormComponent },
-      { path: 'etablissement/edit/:id', component: EtablissementFormComponent },
-    ]),
+    provideRouter(routes),
     provideHttpClient(),
     provideAnimations()
   ]

@@ -1,1 +1,14 @@
-<p>departement-form works!</p>
+<form [formGroup]="departementForm" (ngSubmit)="save()" class="departement-form">
+  <div>
+    <label>Nom</label>
+    <input formControlName="nom" required>
+  </div>
+  <div>
+    <label>Responsable</label>
+    <select formControlName="responsableId">
+      <option [value]="null">Aucun</option>
+      <option *ngFor="let user of utilisateurs" [value]="user.id">{{ user.nom }} {{ user.prenom }}</option>
+    </select>
+  </div>
+  <button type="submit" [disabled]="departementForm.invalid">Enregistrer</button>
+</form>

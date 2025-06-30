@@ -1,73 +1,82 @@
-
 import { Component, OnInit } from '@angular/core';
-import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
-import { MatButtonModule } from '@angular/material/button';
-import { RouterLink } from '@angular/router';
-import { LoiCadreService } from '../../../services/loi-cadre.service';
-import { ActivatedRoute, Router } from '@angular/router';
-import { LoiCadre, StatutLoiCadre } from '../../../models/loi-cadre';
 import { CommonModule } from '@angular/common';
+import { RouterModule, ActivatedRoute, Router } from '@angular/router';
+import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { StatutLoiCadre, LoiCadre } from '../../../models/loi-cadre';
+import { Mouvement } from '../../../models/mouvement';
+import { PosteBudgetaire } from '../../../models/poste-budgetaire';
+import { LoiCadreService } from '../../../services/loi-cadre.service';
+import { MouvementService } from '../../../services/mouvement.service';
+import { PosteBudgetaireService } from '../../../services/poste-budgetaire.service';
 
 @Component({
   selector: 'app-loi-cadre-form',
   standalone: true,
-  imports: [ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatSelectModule, MatButtonModule, RouterLink,CommonModule],
+  imports: [CommonModule, RouterModule, ReactiveFormsModule],
   templateUrl: './loi-cadre-form.component.html',
   styleUrls: ['./loi-cadre-form.component.scss']
 })
 export class LoiCadreFormComponent implements OnInit {
-  form: FormGroup;
-  id?: number;
+  loiCadreForm: FormGroup;
+  postes: PosteBudgetaire[] = [];
+  mouvements: Mouvement[] = [];
   statuts = Object.values(StatutLoiCadre);
-  isEditMode = false;
+  id: number | null = null;
 
   constructor(
-    private fb: FormBuilder,
     private loiCadreService: LoiCadreService,
+    private posteBudgetaireService: PosteBudgetaireService,
+    private mouvementService: MouvementService,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private fb: FormBuilder
   ) {
-    this.form = this.fb.group({
-      annee: ['', [Validators.required, Validators.min(2000), Validators.max(2100)]], // Changed from exerciceBudgetaire
+    this.loiCadreForm = this.fb.group({
+      annee: [new Date().getFullYear(), [Validators.required, Validators.min(2000)]],
       version: [1, [Validators.required, Validators.min(1)]],
       statut: [StatutLoiCadre.INITIALE, Validators.required]
     });
   }
 
-  ngOnInit(): void {
-    const idParam = this.route.snapshot.paramMap.get('id');
-    if (idParam) {
-      this.id = +idParam;
-      this.isEditMode = true;
-      this.loiCadreService.getById(this.id).subscribe({
-        next: (data) => this.form.patchValue({
-          annee: data.annee, // Use backend field name
-          version: data.version,
-          statut: data.statut
-        }),
-        error: (err) => console.error('Erreur lors du chargement de la loi cadre:', err)
+  ngOnInit() {
+    this.id = this.route.snapshot.params['id'];
+    if (this.id) {
+      this.loiCadreService.getById(this.id).subscribe(loi => {
+        this.loiCadreForm.patchValue(loi);
+        this.postes = loi.postes || [];
+        this.mouvements = loi.mouvements || [];
       });
     }
   }
 
-  submit(): void {
-    if (this.form.valid) {
-      const loi: LoiCadre = {
-        id: this.id,
-        annee: this.form.value.annee, // Use backend field name
-        version: this.form.value.version,
-        statut: this.form.value.statut
-      };
-      const operation = this.isEditMode
-        ? this.loiCadreService.update(this.id!, loi)
-        : this.loiCadreService.create(loi);
-      operation.subscribe({
-        next: () => this.router.navigate(['/lois-cadres']),
-        error: (err) => console.error('Erreur lors de l\'enregistrement:', err)
-      });
+  save() {
+    if (this.loiCadreForm.valid) {
+      const loiToSave = this.loiCadreForm.value as LoiCadre;
+      if (this.id) {
+        this.loiCadreService.update(this.id, loiToSave).subscribe(() => this.router.navigate(['/lois-cadres']));
+      } else {
+        this.loiCadreService.create(loiToSave).subscribe(loi => {
+          this.id = loi.id !== undefined ? loi.id : null;
+          this.addExistingPostesAndMouvements();
+        });
+      }
     }
+  }
+
+  addExistingPostesAndMouvements() {
+    this.postes.forEach(poste => {
+      this.loiCadreService.addPoste(this.id!, poste).subscribe();
+    });
+    this.mouvements.forEach(mouvement => {
+      this.loiCadreService.addMouvement(this.id!, mouvement).subscribe();
+    });
+  }
+
+  addPoste() {
+    this.router.navigate(['/poste/create'], { queryParams: { loiCadreId: this.id } });
+  }
+
+  addMouvement() {
+    this.router.navigate(['/mouvement/create'], { queryParams: { loiCadreId: this.id } });
   }
 }

@@ -1,1 +1,23 @@
-<p>grade-list works!</p>
+<div class="grade-list">
+  <h1>Grades</h1>
+  <table>
+    <thead>
+      <tr>
+        <th>Code</th>
+        <th>Libellé</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let grade of grades">
+        <td>{{ grade.code }}</td>
+        <td>{{ grade.libelle }}</td>
+        <td>
+          <button [routerLink]="['/admin/grade/edit', grade.id]">Modifier</button>
+          <button *ngIf="grade.id !== undefined" (click)="delete(grade.id)">Supprimer</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <button [routerLink]="['/admin/grade/create']">Nouveau Grade</button>
+</div>

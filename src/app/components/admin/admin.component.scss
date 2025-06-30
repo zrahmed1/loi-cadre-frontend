@@ -1,0 +1,14 @@
+.admin {
+  padding: 20px;
+}
+.tabs {
+  margin-bottom: 20px;
+}
+.tabs button {
+  padding: 10px;
+  margin-right: 5px;
+}
+.tabs button.active {
+  background: #007bff;
+  color: white;
+}

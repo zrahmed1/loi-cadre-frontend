@@ -1,0 +1,39 @@
+<div class="mouvement-permissions">
+  <h1>Permissions des Mouvements</h1>
+  <form [formGroup]="permissionsForm">
+    <table>
+      <thead>
+        <tr>
+          <th>Utilisateur</th>
+          <th>Établissement</th>
+          <th>Type de Mouvement</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let perm of permissions.controls; let i = index" [formGroup]="$any(perm)">
+          <td>
+            <select formControlName="utilisateurId">
+              <option *ngFor="let user of utilisateurs" [value]="user.id">{{ user.nom }} {{ user.prenom }}</option>
+            </select>
+          </td>
+          <td>
+            <select formControlName="etablissementId">
+              <option *ngFor="let etab of etablissements" [value]="etab.id">{{ etab.nom }}</option>
+            </select>
+          </td>
+          <td>
+            <select formControlName="mouvementType">
+              <option *ngFor="let type of types" [value]="type">{{ type }}</option>
+            </select>
+          </td>
+          <td>
+            <button (click)="removePermission(i)">Supprimer</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </form>
+  <button (click)="addPermission()">Ajouter Permission</button>
+  <button (click)="save()">Enregistrer</button>
+</div>

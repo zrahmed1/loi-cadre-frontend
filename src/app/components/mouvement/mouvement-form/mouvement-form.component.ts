@@ -1,128 +1,64 @@
 import { Component, OnInit } from '@angular/core';
-import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
-import { MatButtonModule } from '@angular/material/button';
-import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatNativeDateModule } from '@angular/material/core';
-import { RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { MouvementService } from '../../../services/mouvement.service';
-import { LoiCadreService } from '../../../services/loi-cadre.service';
-import { PosteBudgetaireService } from '../../../services/poste-budgetaire.service';
-import { ActivatedRoute, Router } from '@angular/router';
-import { Mouvement, TypeMouvement } from '../../../models/mouvement';
+import { RouterModule, ActivatedRoute, Router } from '@angular/router';
+import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { LoiCadre } from '../../../models/loi-cadre';
+import { TypeMouvement, Mouvement } from '../../../models/mouvement';
 import { PosteBudgetaire } from '../../../models/poste-budgetaire';
+import { LoiCadreService } from '../../../services/loi-cadre.service';
+import { MouvementService } from '../../../services/mouvement.service';
+import { PosteBudgetaireService } from '../../../services/poste-budgetaire.service';
 
 @Component({
   selector: 'app-mouvement-form',
   standalone: true,
-  imports: [
-    ReactiveFormsModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatSelectModule,
-    MatButtonModule,
-    MatDatepickerModule,
-    MatNativeDateModule,
-    RouterLink,
-    CommonModule
-  ],
+  imports: [CommonModule, RouterModule, ReactiveFormsModule],
   templateUrl: './mouvement-form.component.html',
   styleUrls: ['./mouvement-form.component.scss']
 })
 export class MouvementFormComponent implements OnInit {
-  form: FormGroup;
-  id?: number;
-  types = Object.values(TypeMouvement);
-  loisCadres: LoiCadre[] = [];
+  mouvementForm: FormGroup;
   postes: PosteBudgetaire[] = [];
-  isEditMode = false;
+  lois: LoiCadre[] = [];
+  types = Object.values(TypeMouvement);
+  id: number | null = null;
 
   constructor(
-    private fb: FormBuilder,
     private mouvementService: MouvementService,
+    private posteBudgetaireService: PosteBudgetaireService,
     private loiCadreService: LoiCadreService,
-    private posteService: PosteBudgetaireService,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private fb: FormBuilder
   ) {
-    this.form = this.fb.group({
-      type: ['', Validators.required],
-      posteConcerneId: ['', Validators.required],
+    this.mouvementForm = this.fb.group({
+      type: [TypeMouvement.CREATION, Validators.required],
+      posteConcerneId: [null],
       dateEffet: ['', Validators.required],
       description: ['', Validators.required],
-      loiCadreId: [''] // Optional, can be set when creating
+      loiCadreId: [null]
     });
   }
 
-  ngOnInit(): void {
-    this.loadData();
-
-    const idParam = this.route.snapshot.paramMap.get('id');
-    if (idParam) {
-      this.id = +idParam;
-      this.isEditMode = true;
-      this.loadMouvement();
-    }
-  }
-
-  loadData(): void {
-    this.loiCadreService.getAll().subscribe({
-      next: (data) => this.loisCadres = data,
-      error: (err) => console.error('Erreur lors du chargement des lois cadres:', err)
-    });
-
-    this.posteService.getAll().subscribe({
-      next: (data) => this.postes = data,
-      error: (err) => console.error('Erreur lors du chargement des postes:', err)
-    });
-  }
-
-  loadMouvement(): void {
+  ngOnInit() {
+    this.id = this.route.snapshot.params['id'];
     if (this.id) {
-      this.mouvementService.getById(this.id).subscribe({
-        next: (data) => {
-          this.form.patchValue({
-            type: data.type,
-            posteConcerneId: data.posteConcerneId,
-            dateEffet: data.dateEffet,
-            description: data.description,
-            loiCadreId: data.loiCadreId
-          });
-        },
-        error: (err) => console.error('Erreur lors du chargement du mouvement:', err)
-      });
+      this.mouvementService.getById(this.id).subscribe(mouv => this.mouvementForm.patchValue(mouv));
     }
+    this.posteBudgetaireService.getAll().subscribe(postes => this.postes = postes);
+    this.loiCadreService.getAll().subscribe(lois => this.lois = lois);
+    const loiCadreId = this.route.snapshot.queryParams['loiCadreId'];
+    if (loiCadreId) this.mouvementForm.patchValue({ loiCadreId: +loiCadreId });
   }
 
-  submit(): void {
-  if (this.form.valid) {
-    const mouvement: Mouvement = {
-      id: this.id,
-      type: this.form.value.type,
-      posteConcerneId: this.form.value.posteConcerneId,
-      dateEffet: this.form.value.dateEffet,
-      description: this.form.value.description
-    };
-
-    const loiCadreId = this.form.value.loiCadreId;
-    
-    if (!loiCadreId && !this.isEditMode) {
-      console.error('Loi Cadre ID is required for creating movements');
-      return;
+  save() {
+    if (this.mouvementForm.valid) {
+      const mouvement = this.mouvementForm.value as Mouvement;
+      if (this.id) {
+        this.mouvementService.update(this.id, mouvement).subscribe(() => this.router.navigate(['/mouvements']));
+      } else {
+        this.mouvementService.create(mouvement.loiCadreId!, mouvement).subscribe(() => this.router.navigate(['/mouvements']));
+      }
     }
-
-    const operation = this.isEditMode
-      ? this.mouvementService.update(this.id!, mouvement)
-      : this.mouvementService.create(loiCadreId, mouvement);
-
-    operation.subscribe({
-      next: () => this.router.navigate(['/mouvements']),
-      error: (err) => console.error('Erreur lors de l\'enregistrement:', err)
-    });
   }
-}
 }

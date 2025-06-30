@@ -1,75 +1,75 @@
 import { Component, OnInit } from '@angular/core';
-import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
-import { MatButtonModule } from '@angular/material/button';
-import { RouterLink } from '@angular/router';
-import { PosteBudgetaireService } from '../../../services/poste-budgetaire.service';
-import { EtablissementService } from '../../../services/etablissement.service';
-import { ActivatedRoute, Router } from '@angular/router';
-import { PosteBudgetaire, EtatPoste } from '../../../models/poste-budgetaire';
-import { Etablissement } from '../../../models/etablissement';
 import { CommonModule } from '@angular/common';
-
+import { RouterModule, ActivatedRoute, Router } from '@angular/router';
+import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Etablissement } from '../../../models/etablissement';
+import { Grade } from '../../../models/grade';
+import { LoiCadre } from '../../../models/loi-cadre';
+import { EtatPoste, PosteBudgetaire } from '../../../models/poste-budgetaire';
+import { EtablissementService } from '../../../services/etablissement.service';
+import { GradeService } from '../../../services/grade.service';
+import { LoiCadreService } from '../../../services/loi-cadre.service';
+import { PosteBudgetaireService } from '../../../services/poste-budgetaire.service';
 @Component({
   selector: 'app-poste-budgetaire-form',
   standalone: true,
-  imports: [ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatSelectModule, MatButtonModule, RouterLink,CommonModule],
+  imports: [CommonModule, RouterModule, ReactiveFormsModule],
   templateUrl: './poste-budgetaire-form.component.html',
   styleUrls: ['./poste-budgetaire-form.component.scss']
 })
 export class PosteBudgetaireFormComponent implements OnInit {
-  form: FormGroup;
-  id?: number;
-  etats = Object.values(EtatPoste);
+  posteForm: FormGroup;
+  grades: Grade[] = [];
   etablissements: Etablissement[] = [];
-  isEditMode = false;
+  lois: LoiCadre[] = [];
+  etats = Object.values(EtatPoste);
+  id: number | null = null;
 
   constructor(
-    private fb: FormBuilder,
-    private posteService: PosteBudgetaireService,
+    private posteBudgetaireService: PosteBudgetaireService,
+    private gradeService: GradeService,
     private etablissementService: EtablissementService,
+    private loiCadreService: LoiCadreService,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private fb: FormBuilder
   ) {
-    this.form = this.fb.group({
-      codePoste: ['', [Validators.required, Validators.pattern(/^\d{2}\.\d{2}\.\d{2}\.\d{2}\.\d{2}$/)]],
-      etat: ['', Validators.required],
-      effectifInitial: ['', [Validators.required, Validators.min(0)]],
-      effectifFinal: ['', [Validators.required, Validators.min(0)]],
-      etablissementId: ['', Validators.required]
+    this.posteForm = this.fb.group({
+      codePoste: ['', Validators.required],
+      gradeId: [null],
+      etat: [EtatPoste.VACANT, Validators.required],
+      effectifInitial: [0, [Validators.required, Validators.min(0)]],
+      effectifFinal: [0, [Validators.required, Validators.min(0)]],
+      etablissementId: [null],
+      loiCadreId: [null]
     });
   }
 
-  ngOnInit(): void {
-    // Load etablissements list
-    this.etablissementService.getAll().subscribe({
-      next: (data) => this.etablissements = data,
-      error: (err) => console.error('Erreur lors du chargement des établissements:', err)
-    });
+  ngOnInit() {
+    this.id = this.route.snapshot.params['id'];
+    if (this.id) {
+      this.posteBudgetaireService.getById(this.id).subscribe(poste => this.posteForm.patchValue(poste));
+    }
+    this.gradeService.getAll().subscribe(grades => this.grades = grades);
+    this.etablissementService.getAll().subscribe(etabs => this.etablissements = etabs);
+    this.loiCadreService.getAll().subscribe(lois => this.lois = lois);
+    const loiCadreId = this.route.snapshot.queryParams['loiCadreId'];
+    if (loiCadreId) this.posteForm.patchValue({ loiCadreId: +loiCadreId });
+  }
 
-    const idParam = this.route.snapshot.paramMap.get('id');
-    if (idParam) {
-      this.id = +idParam;
-      this.isEditMode = true;
-      this.posteService.getById(this.id).subscribe({
-        next: (data) => this.form.patchValue(data),
-        error: (err) => console.error('Erreur lors du chargement du poste:', err)
-      });
+  save() {
+    if (this.posteForm.valid) {
+      const poste = this.posteForm.value as PosteBudgetaire;
+      if (this.id) {
+        this.posteBudgetaireService.update(this.id, poste).subscribe(() => this.navigateBack());
+      } else {
+        this.posteBudgetaireService.create(poste).subscribe(() => this.navigateBack());
+      }
     }
   }
 
-  submit(): void {
-    if (this.form.valid) {
-      const poste: PosteBudgetaire = this.form.value;
-      const operation = this.isEditMode
-        ? this.posteService.update(this.id!, poste)
-        : this.posteService.create(poste);
-      operation.subscribe({
-        next: () => this.router.navigate(['/postes']),
-        error: (err) => console.error('Erreur lors de l\'enregistrement:', err)
-      });
-    }
+  navigateBack() {
+    const loiCadreId = this.route.snapshot.queryParams['loiCadreId'];
+    this.router.navigate(loiCadreId ? ['/loi-cadre', loiCadreId] : ['/lois-cadres']);
   }
 }

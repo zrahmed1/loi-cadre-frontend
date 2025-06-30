@@ -1,1 +1,39 @@
-<p>utilisateur-list works!</p>
+<div class="utilisateur-list">
+  <h1>Utilisateurs</h1>
+  <form [formGroup]="filterForm" class="filters">
+    <select formControlName="selectedRole">
+      <option [value]="null">Tous les rôles</option>
+      <option *ngFor="let role of roles" [value]="role">{{ role }}</option>
+    </select>
+    <select formControlName="selectedEtablissement">
+      <option [value]="null">Tous les établissements</option>
+      <option *ngFor="let etab of etablissements" [value]="etab.id">{{ etab.nom }}</option>
+    </select>
+  </form>
+  <table>
+    <thead>
+      <tr>
+        <th>Nom</th>
+        <th>Prénom</th>
+        <th>Email</th>
+        <th>Rôle</th>
+        <th>Établissement</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let user of utilisateurs">
+        <td>{{ user.nom }}</td>
+        <td>{{ user.prenom }}</td>
+        <td>{{ user.email }}</td>
+        <td>{{ user.role }}</td>
+        <td>{{ user.etablissement?.nom || 'Aucun' }}</td>
+        <td>
+          <button [routerLink]="['/utilisateur/edit', user.id]">Modifier</button>
+          <button *ngIf="user.id !== undefined"  (click)="delete(user.id)">Supprimer</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <button [routerLink]="['/utilisateur/create']">Nouveau Utilisateur</button>
+</div>

@@ -1,11 +1,44 @@
-<mat-toolbar color="primary">
-  <span>Gestion Loi Cadre - Direction du Budget</span>
-  <span class="spacer"></span>
-  <button mat-button [routerLink]="['/dashboard']">Tableau de Bord</button>
-  <button mat-button [routerLink]="['/lois-cadres']">Lois Cadres</button>
-  <button mat-button [routerLink]="['/mouvements']">Mouvements</button>
-  <button mat-button [routerLink]="['/postes']">Postes Budgétaires</button>
-  <button mat-button [routerLink]="['/signatures']">Signatures</button>
-  <button mat-button [routerLink]="['/admin']">Administration</button>
-</mat-toolbar>
-<router-outlet></router-outlet>
+<div class="app-container">
+  <aside class="sidebar" [class.closed]="!sidebarOpen">
+    <div class="sidebar-header">
+      <h2>Menu</h2>
+      <button class="toggle-btn" (click)="toggleSidebar()">
+        <span *ngIf="sidebarOpen">✕</span>
+        <span *ngIf="!sidebarOpen">☰</span>
+      </button>
+    </div>
+    <nav>
+      <ul>
+        <li *ngFor="let link of navLinks" [class.hidden]="!hasAccess(link.roles || [])">
+          <a [routerLink]="link.path" routerLinkActive="active">{{ link.label }}</a>
+        </li>
+      </ul>
+    </nav>
+  </aside>
+  
+  <!-- Overlay for mobile -->
+  <div class="sidebar-overlay" 
+       [class.active]="sidebarOpen" 
+       (click)="toggleSidebar()"></div>
+  
+  <div class="main-content" [class.sidebar-closed]="!sidebarOpen">
+    <header class="top-bar">
+      <!-- Mobile menu button -->
+      <button class="mobile-menu-btn" (click)="toggleSidebar()" *ngIf="!sidebarOpen">
+        ☰
+      </button>
+      <div class="user-info">
+        <span>{{ utilisateur?.nom }} {{ utilisateur?.prenom }} ({{ utilisateur?.role }})</span>
+      </div>
+      <div class="notifications">
+        <span>{{ notifications.length }} Notifications</span>
+        <ul>
+          <li *ngFor="let notif of notifications">{{ notif.message }}</li>
+        </ul>
+      </div>
+    </header>
+    <main>
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+</div>

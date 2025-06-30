@@ -1,48 +1,33 @@
-<div class="container">
-  <h2>Liste des Signatures Électroniques</h2>
-  <div class="filter">
-    <mat-form-field appearance="fill">
-      <mat-label>Filtrer par Loi Cadre</mat-label>
-      <mat-select [(ngModel)]="selectedLoiCadreId" (selectionChange)="filterByLoiCadre()">
-        <mat-option [value]="undefined">Toutes</mat-option>
-        <mat-option *ngFor="let loi of loisCadres" [value]="loi.id">{{ loi.annee }} (Version {{ loi.version }})</mat-option>
-      </mat-select>
-    </mat-form-field>
-  </div>
-  <button mat-raised-button color="primary" [routerLink]="['/signature/create']">Ajouter une Signature</button>
-  <table mat-table [dataSource]="signatures" class="mat-elevation-z8">
-    <ng-container matColumnDef="id">
-      <th mat-header-cell *matHeaderCellDef>ID</th>
-      <td mat-cell *matCellDef="let signature">{{ signature.id }}</td>
-    </ng-container>
-    <ng-container matColumnDef="loiCadreId">
-      <th mat-header-cell *matHeaderCellDef>Loi Cadre ID</th>
-      <td mat-cell *matCellDef="let signature">{{ signature.loiCadreId }}</td>
-    </ng-container>
-    <ng-container matColumnDef="utilisateurId">
-      <th mat-header-cell *matHeaderCellDef>Signataire</th>
-      <td mat-cell *matCellDef="let signature">{{ signature.signataire?.nom }} {{ signature.signataire?.prenom }}</td>
-    </ng-container>
-    <ng-container matColumnDef="estValide">
-      <th mat-header-cell *matHeaderCellDef>Statut</th>
-      <td mat-cell *matCellDef="let signature">{{ signature.status }}</td>
-    </ng-container>
-    <ng-container matColumnDef="dateSignature">
-      <th mat-header-cell *matHeaderCellDef>Date Signature</th>
-      <td mat-cell *matCellDef="let signature">{{ signature.dateSignature | date:'shortDate' }}</td>
-    </ng-container>
-    <ng-container matColumnDef="actions">
-      <th mat-header-cell *matHeaderCellDef>Actions</th>
-      <td mat-cell *matCellDef="let signature">
-        <button mat-icon-button color="primary" (click)="validate(signature.id)" *ngIf="signature.status === 'EN_ATTENTE'" title="Valider">
-          <mat-icon>check</mat-icon>
-        </button>
-        <button mat-icon-button color="warn" (click)="delete(signature.id)" title="Supprimer">
-          <mat-icon>delete</mat-icon>
-        </button>
-      </td>
-    </ng-container>
-    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+<div class="signature-list">
+  <h1>Signatures</h1>
+  <form [formGroup]="filterForm" class="filters">
+    <select formControlName="selectedLoiCadre">
+      <option [value]="null">Toutes les lois</option>
+      <option *ngFor="let loi of lois" [value]="loi.id">{{ loi.annee }} - {{ loi.version }}</option>
+    </select>
+  </form>
+  <table>
+    <thead>
+      <tr>
+        <th>Loi Cadre</th>
+        <th>Signataire</th>
+        <th>Statut</th>
+        <th>Date</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let sig of signatures">
+        <td>{{ sig.loiCadreId }}</td>
+        <td>{{ sig.signataire?.nom || 'N/A' }}</td>
+        <td>{{ sig.status }}</td>
+        <td>{{ sig.dateSignature }}</td>
+        <td>
+          <button *ngIf="sig.status === 'EN_ATTENTE' && sig.id !== undefined" (click)="validate(sig.id)">Signer</button>
+          <button *ngIf="sig.id !== undefined" (click)="delete(sig.id)">Supprimer</button>
+        </td>
+      </tr>
+    </tbody>
   </table>
+  <button [routerLink]="['/signature/create']">Nouvelle Signature</button>
 </div>

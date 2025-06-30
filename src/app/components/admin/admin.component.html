@@ -1,1 +1,21 @@
-<p>admin works!</p>
+<div class="admin">
+  <h1>Administration</h1>
+  <div class="tabs">
+    <button *ngFor="let tab of tabs" (click)="activeTab = tab" [class.active]="activeTab === tab">{{ tab }}</button>
+  </div>
+  <div *ngIf="activeTab === 'Utilisateurs'">
+    <app-utilisateur-list></app-utilisateur-list>
+  </div>
+  <div *ngIf="activeTab === 'Grades'">
+    <app-grade-list></app-grade-list>
+  </div>
+  <div *ngIf="activeTab === 'Signature Workflow'">
+    <app-signature-workflow></app-signature-workflow>
+  </div>
+  <div *ngIf="activeTab === 'Mouvement Permissions'">
+    <app-mouvement-permissions></app-mouvement-permissions>
+  </div>
+  <div *ngIf="activeTab === 'API Monitoring'">
+    <app-api-monitoring></app-api-monitoring>
+  </div>
+</div>

@@ -1,92 +1,53 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterModule, ActivatedRoute, Router } from '@angular/router';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
-import { MatButtonModule } from '@angular/material/button';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { EtablissementService } from '../../../services/etablissement.service';
-import { DepartementService } from '../../../services/departement.service';
-import { Etablissement } from '../../../models/etablissement';
 import { Departement } from '../../../models/departement';
-import { MatCardModule } from '@angular/material/card';
-import { MatIcon } from '@angular/material/icon';
+import { Etablissement } from '../../../models/etablissement';
+import { DepartementService } from '../../../services/departement.service';
+import { EtablissementService } from '../../../services/etablissement.service';
 
 @Component({
   selector: 'app-etablissement-form',
   standalone: true,
-  imports: [
-    CommonModule,
-    ReactiveFormsModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatSelectModule,
-    MatButtonModule,
-    RouterLink,
-    MatCardModule,
-    MatIcon
-  ],
+  imports: [CommonModule, RouterModule, ReactiveFormsModule],
   templateUrl: './etablissement-form.component.html',
-  styleUrl: './etablissement-form.component.scss'
+  styleUrls: ['./etablissement-form.component.scss']
 })
 export class EtablissementFormComponent implements OnInit {
-  form: FormGroup;
-  id?: number;
+  etablissementForm: FormGroup;
   departements: Departement[] = [];
-  isEditMode = false;
+  id: number | null = null;
 
   constructor(
-    private fb: FormBuilder,
     private etablissementService: EtablissementService,
     private departementService: DepartementService,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private fb: FormBuilder
   ) {
-    this.form = this.fb.group({
+    this.etablissementForm = this.fb.group({
       nom: ['', Validators.required],
-      departementId: ['']
+      departementId: [null]
     });
   }
 
-  ngOnInit(): void {
-    this.loadDepartements();
-    
-    this.id = Number(this.route.snapshot.paramMap.get('id'));
+  ngOnInit() {
+    this.id = this.route.snapshot.params['id'];
     if (this.id) {
-      this.isEditMode = true;
-      this.loadEtablissement();
+      this.etablissementService.getById(this.id).subscribe(etab => this.etablissementForm.patchValue(etab));
     }
+    this.departementService.getAll().subscribe(depts => this.departements = depts);
   }
 
-  loadDepartements(): void {
-    this.departementService.getAll().subscribe({
-      next: (data) => this.departements = data,
-      error: (err) => console.error('Erreur lors du chargement des départements:', err)
-    });
-  }
-
-  loadEtablissement(): void {
-    if (this.id) {
-      this.etablissementService.getById(this.id).subscribe({
-        next: (data) => this.form.patchValue(data),
-        error: (err) => console.error('Erreur lors du chargement de l\'établissement:', err)
-      });
-    }
-  }
-
-  submit(): void {
-    if (this.form.valid) {
-      const etablissement: Etablissement = this.form.value;
-      
-      const operation = this.isEditMode
-        ? this.etablissementService.update(this.id!, etablissement)
-        : this.etablissementService.create(etablissement);
-
-      operation.subscribe({
-        next: () => this.router.navigate(['/etablissements']),
-        error: (err) => console.error('Erreur lors de la sauvegarde:', err)
-      });
+  save() {
+    if (this.etablissementForm.valid) {
+      const etablissement = this.etablissementForm.value as Etablissement;
+      if (this.id) {
+        this.etablissementService.update(this.id, etablissement).subscribe(() => this.router.navigate(['/etablissements']));
+      } else {
+        this.etablissementService.create(etablissement).subscribe(() => this.router.navigate(['/etablissements']));
+      }
     }
   }
 }

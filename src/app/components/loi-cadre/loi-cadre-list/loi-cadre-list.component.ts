@@ -1,64 +1,57 @@
-
 import { Component, OnInit } from '@angular/core';
-import { RouterLink } from '@angular/router';
-import { MatTableModule } from '@angular/material/table';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { LoiCadreService } from '../../../services/loi-cadre.service';
-import { LoiCadre, StatutLoiCadre } from '../../../models/loi-cadre';
-import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
+import { ReactiveFormsModule, FormBuilder, FormGroup } from '@angular/forms';
+import { LoiCadre, StatutLoiCadre } from '../../../models/loi-cadre';
+import { LoiCadreService } from '../../../services/loi-cadre.service';
 
 @Component({
   selector: 'app-loi-cadre-list',
   standalone: true,
-  imports: [MatTableModule, MatButtonModule, MatIconModule, RouterLink,CommonModule],
+  imports: [CommonModule, RouterModule, ReactiveFormsModule],
   templateUrl: './loi-cadre-list.component.html',
   styleUrls: ['./loi-cadre-list.component.scss']
 })
 export class LoiCadreListComponent implements OnInit {
-  loisCadres: LoiCadre[] = [];
-  displayedColumns: string[] = ['id', 'exerciceBudgetaire', 'version', 'statut', 'actions'];
+  lois: LoiCadre[] = [];
+  filterForm: FormGroup;
+  statuts = Object.values(StatutLoiCadre);
+StatutLoiCadre: any;
 
-  constructor(private loiCadreService: LoiCadreService, private router: Router) {}
-
-  ngOnInit(): void {
-    this.loadLoisCadres();
-  }
-
-  loadLoisCadres(): void {
-    this.loiCadreService.getAll().subscribe({
-      next: (data) => {
-        this.loisCadres = data.map(item => ({
-          ...item,
-          exerciceBudgetaire: item.annee // Map backend's annee to exerciceBudgetaire
-        }));
-      },
-      error: (err) => console.error('Erreur lors du chargement des lois cadres:', err)
+  constructor(
+    private loiCadreService: LoiCadreService,
+    private fb: FormBuilder
+  ) {
+    this.filterForm = this.fb.group({
+      selectedAnnee: [null],
+      selectedStatut: [null]
     });
   }
 
-  edit(id: number): void {
-    this.router.navigate(['/loi-cadre/edit', id]);
+  ngOnInit() {
+    this.loadLois();
+    this.filterForm.valueChanges.subscribe(() => this.loadLois());
   }
 
-  delete(id: number): void {
-    if (confirm('Confirmer la suppression de la loi cadre ?')) {
-      this.loiCadreService.delete(id).subscribe({
-        next: () => this.loadLoisCadres(),
-        error: (err) => console.error('Erreur lors de la suppression:', err)
-      });
-    }
-  }
-
-  valider(id: number): void {
-    this.loiCadreService.valider(id).subscribe({
-      next: () => this.loadLoisCadres(),
-      error: (err) => console.error('Erreur lors de la validation:', err)
+  loadLois() {
+    const { selectedAnnee, selectedStatut } = this.filterForm.value;
+    this.loiCadreService.getAll().subscribe(lois => {
+      this.lois = lois.filter(l =>
+        (!selectedAnnee || l.annee === selectedAnnee) &&
+        (!selectedStatut || l.statut === selectedStatut)
+      );
     });
   }
 
-  viewDetails(id: number): void {
-    this.router.navigate(['/loi-cadre/view', id]);
+  changeStatut(id: number, statut: StatutLoiCadre) {
+    this.loiCadreService.changerStatut(id, statut).subscribe(() => this.loadLois());
+  }
+
+  valider(id: number) {
+    this.loiCadreService.valider(id).subscribe(() => this.loadLois());
+  }
+
+  delete(id: number) {
+    this.loiCadreService.delete(id).subscribe(() => this.loadLois());
   }
 }

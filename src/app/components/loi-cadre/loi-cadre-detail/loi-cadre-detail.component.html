@@ -1,0 +1,49 @@
+<div class="loi-cadre-detail" *ngIf="loiCadre">
+  <h1>Loi Cadre {{ loiCadre.annee }} - Version {{ loiCadre.version }}</h1>
+  <p>Statut: {{ loiCadre.statut }}</p>
+  <h2>Postes</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Code Poste</th>
+        <th>Grade</th>
+        <th>État</th>
+        <th>Effectif Initial</th>
+        <th>Effectif Final</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let poste of loiCadre.postes">
+        <td>{{ poste.codePoste }}</td>
+        <td>{{ poste.grade?.libelle }}</td>
+        1
+        <td>{{ poste.effectifInitial }}</td>
+        <td>{{ poste.effectifFinal }}</td>
+      </tr>
+    </tbody>
+  </table>
+  <h2>Mouvements</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Date d'effet</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let mouvement of loiCadre.mouvements">
+        <td>{{ mouvement.type }}</td>
+        <td>{{ mouvement.description }}</td>
+        <td>{{ mouvement.dateEffet }}</td>
+      </tr>
+    </tbody>
+  </table>
+  <div>
+    <button *ngFor="let statut of statuts" (click)="changeStatut(statut)">{{ statut }}</button>
+    <button (click)="valider()">Valider</button>
+    <button (click)="signer()">Signer</button>
+    <button (click)="exportPDF()">Exporter PDF</button>
+    <button (click)="exportExcel()">Exporter Excel</button>
+  </div>
+</div>

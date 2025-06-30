@@ -1,1 +1,32 @@
-<p>utilisateur-form works!</p>
+<form [formGroup]="utilisateurForm" (ngSubmit)="save()" class="utilisateur-form">
+  <div>
+    <label>Nom</label>
+    <input formControlName="nom" required>
+  </div>
+  <div>
+    <label>Prénom</label>
+    <input formControlName="prenom" required>
+  </div>
+  <div>
+    <label>Email</label>
+    <input formControlName="email" type="email" required>
+  </div>
+  <div *ngIf="!id">
+    <label>Mot de passe</label>
+    <input formControlName="motDePasse" type="password" required>
+  </div>
+  <div>
+    <label>Rôle</label>
+    <select formControlName="role" required>
+      <option *ngFor="let role of roles" [value]="role">{{ role }}</option>
+    </select>
+  </div>
+  <div>
+    <label>Établissement</label>
+    <select formControlName="etablissementId">
+      <option [value]="null">Aucun</option>
+      <option *ngFor="let etab of etablissements" [value]="etab.id">{{ etab.nom }}</option>
+    </select>
+  </div>
+  <button type="submit" [disabled]="utilisateurForm.invalid">Enregistrer</button>
+</form>

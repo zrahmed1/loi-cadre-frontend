@@ -1,0 +1,32 @@
+h2 {
+  margin-bottom: 15px;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+input {
+  width: 100%;
+  padding: 8px;
+  border-radius: 4px;
+}
+select, input {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 10px;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}

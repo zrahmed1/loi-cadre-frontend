@@ -13,11 +13,11 @@
         <td>{{ dep.nom }}</td>
         <td>{{ dep.responsableId ? 'Utilisateur ' + dep.responsableId : 'Aucun' }}</td>
         <td>
-          <button [routerLink]="['/departement/edit', dep.id]">Modifier</button>
-          <button *ngIf="dep.id !== undefined" (click)="delete(dep.id)">Supprimer</button>
+          <button (click)="openDepartementModal(dep)">Modifier</button>
+          <button (click)="dep.id && delete(dep.id)">Supprimer</button>
         </td>
       </tr>
     </tbody>
   </table>
-  <button [routerLink]="['/departement/create']">Nouveau Département</button>
+  <button (click)="openDepartementModal()">Nouveau Département Modal</button>
 </div>

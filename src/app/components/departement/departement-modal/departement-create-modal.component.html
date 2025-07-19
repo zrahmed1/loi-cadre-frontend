@@ -1,0 +1,23 @@
+<h2>{{ isEditMode ? 'Modifier le Département' : 'Créer un nouveau Département' }}</h2>
+
+<form [formGroup]="departementForm" (ngSubmit)="onSubmit()">
+  <div>
+    <label>Nom du Département :</label>
+    <input type="text" formControlName="nom" />
+  </div>
+
+  <div>
+    <label>Responsable :</label>
+    <select formControlName="responsableId">
+      <option value="" disabled>-- Sélectionner un utilisateur --</option>
+      <option *ngFor="let user of utilisateurs" [value]="user.id">{{ user.nom }}</option>
+    </select>
+  </div>
+
+  <div class="actions">
+    <button type="submit" [disabled]="departementForm.invalid">
+      {{ isEditMode ? 'Modifier' : 'Créer' }}
+    </button>
+    <button type="button" (click)="onCancel()">Annuler</button>
+  </div>
+</form>

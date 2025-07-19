@@ -24,7 +24,7 @@ export class EtablissementListComponent implements OnInit {
   constructor(
     private etablissementService: EtablissementService,
     private departementService: DepartementService,
-    private fb: FormBuilder,private dialog: MatDialog
+    private fb: FormBuilder, private dialog: MatDialog
   ) {
     this.filterForm = this.fb.group({
       selectedDepartement: [null]
@@ -41,7 +41,7 @@ export class EtablissementListComponent implements OnInit {
       width: '600px',
       data: {} // si besoin de passer des données
     });
-  
+
     dialogRef.afterClosed().subscribe(result => {
       if (result === 'refresh') {
         this.loadEtablissements(); // recharge la liste après ajout

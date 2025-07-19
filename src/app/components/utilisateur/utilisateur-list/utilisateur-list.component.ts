@@ -22,11 +22,11 @@ export class UtilisateurListComponent implements OnInit {
   filterForm: FormGroup;
   roles = Object.values(Role);
   dialog = inject(MatDialog);
-op: any;
+  op: any;
 
   openDialog(): void {
     const dialogRef = this.dialog.open(DialogComponent, {
-      width: '400px',
+      width: '580px',
       data: { name: '', email: '' }
     });
 

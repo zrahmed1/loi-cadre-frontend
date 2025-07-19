@@ -6,6 +6,8 @@ import { Departement } from '../../../models/departement';
 import { Etablissement } from '../../../models/etablissement';
 import { DepartementService } from '../../../services/departement.service';
 import { EtablissementService } from '../../../services/etablissement.service';
+import { MatDialog } from '@angular/material/dialog';
+import { EtablissementCreateModalComponent } from '../etablissement-modal/etablissement-create-modal.component';
 
 @Component({
   selector: 'app-etablissement-list',
@@ -22,7 +24,7 @@ export class EtablissementListComponent implements OnInit {
   constructor(
     private etablissementService: EtablissementService,
     private departementService: DepartementService,
-    private fb: FormBuilder
+    private fb: FormBuilder,private dialog: MatDialog
   ) {
     this.filterForm = this.fb.group({
       selectedDepartement: [null]
@@ -34,7 +36,18 @@ export class EtablissementListComponent implements OnInit {
     this.departementService.getAll().subscribe(depts => this.departements = depts);
     this.filterForm.valueChanges.subscribe(() => this.loadEtablissements());
   }
-
+  openCreateEtablissementModal(): void {
+    const dialogRef = this.dialog.open(EtablissementCreateModalComponent, {
+      width: '600px',
+      data: {} // si besoin de passer des données
+    });
+  
+    dialogRef.afterClosed().subscribe(result => {
+      if (result === 'refresh') {
+        this.loadEtablissements(); // recharge la liste après ajout
+      }
+    });
+  }
   loadEtablissements() {
     const { selectedDepartement } = this.filterForm.value;
     this.etablissementService.getAll().subscribe(etabs => {

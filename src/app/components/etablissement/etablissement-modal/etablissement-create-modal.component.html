@@ -1,0 +1,20 @@
+<h2>Créer un nouvel Établissement</h2>
+<form [formGroup]="etablissementFormed" (ngSubmit)="onSubmit()">
+  <div>
+    <label>Nom de l’établissement :</label>
+    <input type="text" formControlName="nom" />
+  </div>
+
+  <div>
+    <label>Département :</label>
+    <select formControlName="departementId">
+      <option [value]="null">Tous les départements</option>
+      <option *ngFor="let dep of departements" [value]="dep.id">{{ dep.nom }}</option>
+    </select>
+  </div>
+
+  <div class="actions">
+    <button type="submit" [disabled]="etablissementFormed.invalid">Créer</button>
+    <button type="button" (click)="onCancel()">Annuler</button>
+  </div>
+</form>

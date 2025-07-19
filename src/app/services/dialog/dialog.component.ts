@@ -7,7 +7,9 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
-import { appConfig } from '../../app.config';
+import { ApiService } from '../api.service';
+import { EtablissementService } from '../etablissement.service';
+import { Etablissement } from '../../models/etablissement';
 
 interface DialogData {
   nom: string;
@@ -69,10 +71,10 @@ interface DialogData {
         <mat-label>Établissement</mat-label>
         <mat-select [(ngModel)]="data.etablissementId">
           <mat-option [value]="null">Tous les établissements</mat-option>
-          <mat-option *ngFor="let etab of etablissements" [value]="">
-        
+          <mat-option *ngFor="let etab of etablissements" [value]="etab.id">{{ etab.nom }}
           </mat-option>
         </mat-select>
+
       </mat-form-field>
     </mat-dialog-content>
 
@@ -95,8 +97,14 @@ export class DialogComponent {
   data: DialogData = inject(MAT_DIALOG_DATA);
 
   roles: string[] = ['Administrateur', 'Responsable', 'Utilisateur'];
-  etablissements = [
-  ];
+  etablissements: Etablissement[] = [];
+
+
+  
+  constructor(private apiService: ApiService,private etablissementService: EtablissementService) {
+    this.etablissementService.getAll().subscribe(etabs => this.etablissements = etabs);
+  }
+
   ngOnInit(): void {
     // ici tu pourras appeler l’API pour charger les établissements dynamiquement
   }
@@ -106,7 +114,16 @@ export class DialogComponent {
   }
 
   onSave(): void {
-    
+       this.apiService.postData('/utilisateurs',this.data )
+       .then(response => {
+         console.log('Success:', response.data);
+         alert('Form submitted successfully!');
+       })
+       .catch(error => {
+         console.error('Error:', error);
+         alert('Error submitting form');
+       });
+
     this.dialogRef.close(this.data);
   }
 }

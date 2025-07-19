@@ -1,5 +1,9 @@
 <div class="utilisateur-list">
   <h1>Utilisateurs</h1>
+  <button [routerLink]="['/utilisateur/create']">Nouveau Utilisateur</button>
+
+  <button (click)="op">Nouveau Utilisateur</button>
+
   <form [formGroup]="filterForm" class="filters">
     <select formControlName="selectedRole">
       <option [value]="null">Tous les rôles</option>
@@ -35,5 +39,4 @@
       </tr>
     </tbody>
   </table>
-  <button [routerLink]="['/utilisateur/create']">Nouveau Utilisateur</button>
 </div>

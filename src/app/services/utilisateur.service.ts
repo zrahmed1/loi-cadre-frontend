@@ -56,7 +56,7 @@ export class UtilisateurService {
       prenom: 'Test',
       email: 'admin@example.com',
       motDePasse: '',
-      role: Role.CONSULTATION,
+      role: Role.ADMIN,
       etablissement: { id: 1, nom: 'Etablissement A', departement: {id: 1, nom: 'res', responsableId:1} }
     };
   }

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { ReactiveFormsModule, FormBuilder, FormGroup } from '@angular/forms';
@@ -6,6 +6,8 @@ import { Etablissement } from '../../../models/etablissement';
 import { Utilisateur, Role } from '../../../models/utilisateur';
 import { EtablissementService } from '../../../services/etablissement.service';
 import { UtilisateurService } from '../../../services/utilisateur.service';
+import { MatDialog } from '@angular/material/dialog';
+import { DialogComponent } from '../../../services/dialog/dialog.component';
 
 @Component({
   selector: 'app-utilisateur-list',
@@ -19,6 +21,21 @@ export class UtilisateurListComponent implements OnInit {
   etablissements: Etablissement[] = [];
   filterForm: FormGroup;
   roles = Object.values(Role);
+  dialog = inject(MatDialog);
+op: any;
+
+  openDialog(): void {
+    const dialogRef = this.dialog.open(DialogComponent, {
+      width: '400px',
+      data: { name: '', email: '' }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('The dialog was closed');
+      console.log(result)
+      
+    });
+  }
 
   constructor(
     private utilisateurService: UtilisateurService,

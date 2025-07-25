@@ -29,10 +29,5 @@ describe('DepartementCreateModalComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  // it('should call onSubmit when form is valid', () => {
-  //   component.departementFormed.setValue({ nom: 'Test', departementId: 1 });
-  //   spyOn(component['departementFormed'], 'create').and.returnValue(of({}));
-  //   component.onSubmit();
-  //   expect(component['dialogRef'].close).toHaveBeenCalledWith('refresh');
-  // });
+ s
 });

@@ -106,7 +106,7 @@ export class DialogComponent {
   data: DialogData = inject(MAT_DIALOG_DATA);
   cdr = inject(ChangeDetectorRef);
 
-  roles: string[] = ['Administrateur', 'Responsable', 'Utilisateur'];
+  roles: string[] = ['ADMIN', 'RESPONSABLE_RH', 'CADRE_RH', 'RS', 'CONSULTATION '];
   etablissements: Etablissement[] = [];
   errors: Record<string, string> = {};
 
@@ -120,6 +120,8 @@ export class DialogComponent {
   validate(): boolean {
     this.errors = {}; 
     const result = userSchema.safeParse(this.data);
+    console.log(result);
+    
     if (!result.success) {
       result.error.issues.forEach((err: z.ZodIssue) => {
         const field = err.path[0] as string;
@@ -128,6 +130,7 @@ export class DialogComponent {
       this.cdr.detectChanges(); // ✅ Force UI update
       return false;
     }
+    console.log(this.errors)
     return true;
   }
 
@@ -136,7 +139,7 @@ export class DialogComponent {
   }
 
   onSave(): void {
-    if (!this.validate()) {
+    if (!this.validate()) {      
       alert('Veuillez corriger les erreurs avant de soumettre.');
       return;
     }

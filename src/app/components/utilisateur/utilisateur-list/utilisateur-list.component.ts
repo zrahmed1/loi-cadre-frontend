@@ -56,7 +56,10 @@ export class UtilisateurListComponent implements OnInit {
 
   loadUtilisateurs() {
     const { selectedRole, selectedEtablissement } = this.filterForm.value;
+    console.log('selectedRole11',selectedRole)
+
     if (selectedRole) {
+      console.log('selectedRole==',selectedRole)
       this.utilisateurService.getByRole(selectedRole).subscribe(users => this.utilisateurs = users);
     } else if (selectedEtablissement) {
       this.utilisateurService.getByEtablissement(selectedEtablissement).subscribe(users => this.utilisateurs = users);
@@ -65,6 +68,7 @@ export class UtilisateurListComponent implements OnInit {
     }
   }
 
+  
   delete(id: number) {
     this.utilisateurService.delete(id).subscribe(() => this.loadUtilisateurs());
   }

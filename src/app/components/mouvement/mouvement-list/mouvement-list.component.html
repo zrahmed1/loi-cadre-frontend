@@ -1,43 +1,119 @@
 <div class="mouvement-list">
-  <h1>Mouvements</h1>
-  <form [formGroup]="filterForm" class="filters">
-    <select formControlName="selectedLoiCadre">
-      <option [value]="null">Toutes les lois</option>
-      <option *ngFor="let loi of lois" [value]="loi.id">{{ loi.annee }} - {{ loi.version }}</option>
-    </select>
-    <select formControlName="selectedPoste">
-      <option [value]="null">Tous les postes</option>
-      <option *ngFor="let poste of postes" [value]="poste.id">{{ poste.codePoste }}</option>
-    </select>
-    <select formControlName="selectedType">
-      <option [value]="null">Tous les types</option>
-      <option *ngFor="let type of types" [value]="type">{{ type }}</option>
-    </select>
-  </form>
-  <table>
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Poste</th>
-        <th>Description</th>
-        <th>Date d'effet</th>
-        <th>Loi Cadre</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let mouvement of mouvements">
-        <td>{{ mouvement.type }}</td>
-        <td>{{ mouvement.posteConcerne?.codePoste }}</td>
-        <td>{{ mouvement.description }}</td>
-        <td>{{ mouvement.dateEffet }}</td>
-        <td>{{ mouvement.loiCadre?.annee }} - {{ mouvement.loiCadre?.version }}</td>
-        <td>
-          <button [routerLink]="['/mouvement/edit', mouvement.id]">Modifier</button>
-          <button *ngIf="mouvement.id !== undefined" (click)="delete(mouvement.id)">Supprimer</button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
-  <button [routerLink]="['/mouvement/create']">Nouveau Mouvement</button>
+	<h1>Mouvements</h1>
+
+	<form [formGroup]="filterForm" class="filters">
+		<mat-form-field appearance="outline">
+			<mat-label>Loi Cadre</mat-label>
+			<mat-select formControlName="selectedLoiCadre">
+				<mat-option [value]="null">Toutes les lois</mat-option>
+				<mat-option *ngFor="let loi of lois" [value]="loi.id">
+					{{ loi.annee }} - {{ loi.version }}
+				</mat-option>
+			</mat-select>
+		</mat-form-field>
+
+		<mat-form-field appearance="outline">
+			<mat-label>Poste</mat-label>
+			<mat-select formControlName="selectedPoste">
+				<mat-option [value]="null">Tous les postes</mat-option>
+				<mat-option *ngFor="let poste of postes" [value]="poste.id">
+					{{ poste.codePoste }}
+				</mat-option>
+			</mat-select>
+		</mat-form-field>
+
+		<mat-form-field appearance="outline">
+			<mat-label>Type</mat-label>
+			<mat-select formControlName="selectedType">
+				<mat-option [value]="null">Tous les types</mat-option>
+				<mat-option *ngFor="let type of types" [value]="type">
+					{{ type }}
+				</mat-option>
+			</mat-select>
+		</mat-form-field>
+	</form>
+
+	<div class="actions">
+		<button mat-raised-button color="primary" (click)="openMouvementModal()">
+			Nouveau Mouvement
+		</button>
+	</div>
+
+	<table mat-table [dataSource]="mouvements" class="mat-elevation-z2">
+		<ng-container matColumnDef="type">
+			<th mat-header-cell *matHeaderCellDef>Type</th>
+			<td mat-cell *matCellDef="let mouvement">{{ mouvement.type }}</td>
+		</ng-container>
+
+		<ng-container matColumnDef="poste">
+			<th mat-header-cell *matHeaderCellDef>Poste</th>
+			<td mat-cell *matCellDef="let mouvement">
+				{{ mouvement.posteConcerne?.codePoste }}
+			</td>
+		</ng-container>
+
+		<ng-container matColumnDef="description">
+			<th mat-header-cell *matHeaderCellDef>Description</th>
+			<td mat-cell *matCellDef="let mouvement">{{ mouvement.description }}</td>
+		</ng-container>
+
+		<ng-container matColumnDef="dateEffet">
+			<th mat-header-cell *matHeaderCellDef>Date d'effet</th>
+			<td mat-cell *matCellDef="let mouvement">{{ mouvement.dateEffet }}</td>
+		</ng-container>
+
+		<ng-container matColumnDef="loiCadre">
+			<th mat-header-cell *matHeaderCellDef>Loi Cadre</th>
+			<td mat-cell *matCellDef="let mouvement">
+				{{ mouvement.loiCadre?.annee }} - {{ mouvement.loiCadre?.version }}
+			</td>
+		</ng-container>
+
+		<ng-container matColumnDef="actions">
+			<th mat-header-cell *matHeaderCellDef>Actions</th>
+			<td mat-cell *matCellDef="let mouvement">
+				<button
+					mat-button
+					color="primary"
+					(click)="openMouvementModal(mouvement)">
+					Modifier
+				</button>
+				<button
+					mat-button
+					color="warn"
+					*ngIf="mouvement.id !== undefined"
+					(click)="delete(mouvement.id)">
+					Supprimer
+				</button>
+			</td>
+		</ng-container>
+
+		<tr
+			mat-header-row
+			*matHeaderRowDef="[
+				'type',
+				'poste',
+				'description',
+				'dateEffet',
+				'loiCadre',
+				'actions'
+			]"></tr>
+		<tr
+			mat-row
+			*matRowDef="
+				let row;
+				columns: [
+					'type',
+					'poste',
+					'description',
+					'dateEffet',
+					'loiCadre',
+					'actions'
+				]
+			"></tr>
+	</table>
+
+	<mat-paginator
+		[pageSize]="10"
+		[pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>
 </div>

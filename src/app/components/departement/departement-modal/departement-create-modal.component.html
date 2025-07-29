@@ -1,23 +1,43 @@
-<h2>{{ isEditMode ? 'Modifier le Département' : 'Créer un nouveau Département' }}</h2>
-
+<h2 mat-dialog-title>
+  {{ isEditMode ? "Modifier le Département" : "Créer un nouveau Département" }}
+</h2>
 <form [formGroup]="departementForm" (ngSubmit)="onSubmit()">
-  <div>
-    <label>Nom du Département :</label>
-    <input type="text" formControlName="nom" />
-  </div>
+  <mat-dialog-content [formGroup]="departementForm">
+    <mat-form-field appearance="outline">
+      <mat-label>Nom du Département</mat-label>
+      <input matInput formControlName="nom" />
+      <mat-error *ngIf="departementForm.get('nom')?.hasError('required')">
+        Le nom est requis.
+      </mat-error>
+    </mat-form-field>
 
-  <div>
-    <label>Responsable :</label>
-    <select formControlName="responsableId">
-      <option value="" disabled>-- Sélectionner un utilisateur --</option>
-      <option *ngFor="let user of utilisateurs" [value]="user.id">{{ user.nom }}</option>
-    </select>
-  </div>
+    <mat-form-field appearance="outline">
+      <mat-label>Responsable</mat-label>
+      <mat-select formControlName="userID">
+        <mat-option value="" disabled
+          >-- Sélectionner un utilisateur --</mat-option
+        >
+        <mat-option *ngFor="let user of utilisateurs" [value]="user.id">
+          {{ user.nom }}
+        </mat-option>
+      </mat-select>
+      <mat-error *ngIf="departementForm.get('userID')?.hasError('required')">
+        Le responsable est requis.
+      </mat-error>
+    </mat-form-field>
+  </mat-dialog-content>
 
-  <div class="actions">
-    <button type="submit" [disabled]="departementForm.invalid">
-      {{ isEditMode ? 'Modifier' : 'Créer' }}
+  <mat-dialog-actions align="end">
+    <button mat-button type="button" color="warn" (click)="onCancel()">
+      Annuler
     </button>
-    <button type="button" (click)="onCancel()">Annuler</button>
-  </div>
+    <button
+      mat-button
+      color="primary"
+      type="submit"
+      [disabled]="departementForm.invalid"
+    >
+      {{ isEditMode ? "Modifier" : "Créer" }}
+    </button>
+  </mat-dialog-actions>
 </form>

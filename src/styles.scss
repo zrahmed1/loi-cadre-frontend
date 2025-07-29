@@ -1,5 +1,14 @@
-@import '@angular/material/prebuilt-themes/indigo-pink.css';
+@import "@angular/material/prebuilt-themes/indigo-pink.css";
 body {
   margin: 0;
-  font-family: Roboto, 'Helvetica Neue', sans-serif;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  .snackbar-success {
+    background-color: #4caf50 !important;
+    color: #fff !important;
+  }
+
+  .snackbar-error {
+    background-color: #f44336 !important;
+    color: #fff !important;
+  }
 }

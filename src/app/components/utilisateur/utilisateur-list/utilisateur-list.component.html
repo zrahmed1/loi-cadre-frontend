@@ -1,41 +1,66 @@
 <div class="utilisateur-list">
   <h1>Utilisateurs</h1>
-
-  <button (click)="openDialog()">Nouveau Utilisateur</button>
+  <div class="buttonWrapper">
+    <button (click)="openDialog()">Nouveau Utilisateur</button>
+  </div>
 
   <form [formGroup]="filterForm" class="filters">
     <select formControlName="selectedRole">
-      <option [value]="null">Tous les rôles</option>
-      <option *ngFor="let role of roles" [value]="role">{{ role }}</option>
-    </select>
-    <select formControlName="selectedEtablissement">
-      <option [value]="null">Tous les établissements</option>
-      <option *ngFor="let etab of etablissements" [value]="etab.id">{{ etab.nom }}</option>
+      <option [ngValue]="null" disabled selected hidden>
+        Filtrer par rôle
+      </option>
+      <option [ngValue]="null">Tous les rôles</option>
+      <option *ngFor="let role of roles" [ngValue]="role">{{ role }}</option>
     </select>
   </form>
-  <table>
-    <thead>
-      <tr>
-        <th>Nom</th>
-        <th>Prénom</th>
-        <th>Email</th>
-        <th>Rôle</th>
-        <th>Établissement</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let user of utilisateurs">
-        <td>{{ user.nom }}</td>
-        <td>{{ user.prenom }}</td>
-        <td>{{ user.email }}</td>
-        <td>{{ user.role }}</td>
-        <td>{{ user.etablissement?.nom || 'Aucun' }}</td>
-        <td>
-          <button [routerLink]="['/utilisateur/edit', user.id]">Modifier</button>
-          <button *ngIf="user.id !== undefined"  (click)="delete(user.id)">Supprimer</button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
+  <div class="tableWrapper">
+    <table>
+      <thead>
+        <tr>
+          <th>Nom</th>
+          <th>Prénom</th>
+          <th>Email</th>
+          <th>Rôle</th>
+
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let user of utilisateurs">
+          <td data-label="Nom">{{ user.nom }}</td>
+          <td data-label="Prénom">{{ user.prenom }}</td>
+          <td data-label="Email">{{ user.email }}</td>
+          <td data-label="Rôle">{{ user.role }}</td>
+          <td data-label="Actions">
+            <button [routerLink]="['/utilisateur/edit', user.id]">
+              Modifier
+            </button>
+            <button *ngIf="user.id !== undefined" (click)="delete(user.id)">
+              Supprimer
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="pagination">
+      <button (click)="previousPage()" [disabled]="currentPage === 1">
+        Précédent
+      </button>
+
+      <ng-container
+        *ngFor="let page of [].constructor(totalPages); let i = index"
+      >
+        <button
+          [class.active]="currentPage === i + 1"
+          (click)="goToPage(i + 1)"
+        >
+          {{ i + 1 }}
+        </button>
+      </ng-container>
+
+      <button (click)="nextPage()" [disabled]="currentPage === totalPages">
+        Suivant
+      </button>
+    </div>
+  </div>
 </div>

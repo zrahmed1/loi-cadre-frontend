@@ -15,18 +15,6 @@
     <label>Mot de passe</label>
     <input formControlName="motDePasse" type="password" required>
   </div>
-  <div>
-    <label>Rôle</label>
-    <select formControlName="role" required>
-      <option *ngFor="let role of roles" [value]="role">{{ role }}</option>
-    </select>
-  </div>
-  <div>
-    <label>Établissement</label>
-    <select formControlName="etablissementId">
-      <option [value]="null">Aucun</option>
-      <option *ngFor="let etab of etablissements" [value]="etab.id">{{ etab.nom }}</option>
-    </select>
-  </div>
+ 
   <button type="submit" [disabled]="utilisateurForm.invalid">Enregistrer</button>
 </form>

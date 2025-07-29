@@ -1,13 +1,15 @@
-.container {
-  padding: 20px;
-  max-width: 600px;
-  margin: 0 auto;
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1rem;
 }
-mat-form-field {
+
+.section-card {
+  margin-top: 2rem;
+}
+
+table {
   width: 100%;
-  margin-bottom: 20px;
-}
-.actions {
-  display: flex;
-  gap: 10px;
+  overflow: auto;
 }

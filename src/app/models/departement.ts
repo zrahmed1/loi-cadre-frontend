@@ -1,5 +1,6 @@
 export interface Departement {
   id?: number;
   nom: string;
-  responsableId?: number;
+  userID?: number;
+  responsable?: { id: number };
 }

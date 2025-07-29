@@ -1,37 +1,91 @@
 <form [formGroup]="loiCadreForm" (ngSubmit)="save()" class="loi-cadre-form">
-  <div>
-    <label>Année</label>
-    <input formControlName="annee" type="number" required>
-  </div>
-  <div>
-    <label>Version</label>
-    <input formControlName="version" type="number" required>
-  </div>
-  <div>
-    <label>Statut</label>
-    <select formControlName="statut" required>
-      <option *ngFor="let statut of statuts" [value]="statut">{{ statut }}</option>
-    </select>
-  </div>
-  <button type="submit" [disabled]="loiCadreForm.invalid">Enregistrer</button>
+  <mat-card>
+    <mat-card-title>Informations de la Loi Cadre</mat-card-title>
+    <mat-card-content>
+      <div class="form-grid">
+        <mat-form-field appearance="outline">
+          <mat-label>Année</mat-label>
+          <input matInput formControlName="annee" type="number" required />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Version</mat-label>
+          <input matInput formControlName="version" type="number" required />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Statut</mat-label>
+          <mat-select formControlName="statut" required>
+            <mat-option *ngFor="let statut of statuts" [value]="statut">
+              {{ statut }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+    </mat-card-content>
+    <mat-card-actions align="end">
+      <button
+        mat-raised-button
+        color="primary"
+        type="submit"
+        [disabled]="loiCadreForm.invalid"
+      >
+        Enregistrer
+      </button>
+    </mat-card-actions>
+  </mat-card>
 </form>
-<div>
-  <h2>Postes</h2>
-  <table>
-    <tr *ngFor="let poste of postes">
-      <td>{{ poste.codePoste }}</td>
-      <td>{{ poste.grade?.libelle }}</td>
-    </tr>
-  </table>
-  <button (click)="addPoste()">Ajouter Poste</button>
-</div>
-<div>
-  <h2>Mouvements</h2>
-  <table>
-    <tr *ngFor="let mouvement of mouvements">
-      <td>{{ mouvement.type }}</td>
-      <td>{{ mouvement.description }}</td>
-    </tr>
-  </table>
-  <button (click)="addMouvement()">Ajouter Mouvement</button>
-</div>
+
+<!-- Postes -->
+<mat-card class="section-card">
+  <mat-card-title>Postes</mat-card-title>
+  <mat-card-content>
+    <table mat-table [dataSource]="postes" class="mat-elevation-z1" matSort>
+      <ng-container matColumnDef="codePoste">
+        <th mat-header-cell *matHeaderCellDef>Code Poste</th>
+        <td mat-cell *matCellDef="let poste">{{ poste.codePoste }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="grade">
+        <th mat-header-cell *matHeaderCellDef>Grade</th>
+        <td mat-cell *matCellDef="let poste">{{ poste.grade?.libelle }}</td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="['codePoste', 'grade']"></tr>
+      <tr mat-row *matRowDef="let row; columns: ['codePoste', 'grade']"></tr>
+    </table>
+  </mat-card-content>
+  <mat-card-actions align="end">
+    <button mat-raised-button color="accent" (click)="addPoste()">
+      Ajouter Poste
+    </button>
+  </mat-card-actions>
+</mat-card>
+
+<!-- Mouvements -->
+<mat-card class="section-card">
+  <mat-card-title>Mouvements</mat-card-title>
+  <mat-card-content>
+    <table mat-table [dataSource]="mouvements" class="mat-elevation-z1" matSort>
+      <ng-container matColumnDef="type">
+        <th mat-header-cell *matHeaderCellDef>Type</th>
+        <td mat-cell *matCellDef="let mouvement">{{ mouvement.type }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="description">
+        <th mat-header-cell *matHeaderCellDef>Description</th>
+        <td mat-cell *matCellDef="let mouvement">
+          {{ mouvement.description }}
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="['type', 'description']"></tr>
+      <tr mat-row *matRowDef="let row; columns: ['type', 'description']"></tr>
+    </table>
+  </mat-card-content>
+  <mat-card-actions align="end">
+    <button mat-raised-button color="accent" (click)="addMouvement()">
+      Ajouter Mouvement
+    </button>
+  </mat-card-actions>
+</mat-card>

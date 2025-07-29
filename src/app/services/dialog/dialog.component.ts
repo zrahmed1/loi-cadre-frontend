@@ -17,7 +17,6 @@ const userSchema = z.object({
   email: z.string().email('Email invalide'),
   password: z.string().min(6, 'Mot de passe trop court'),
   role: z.string().min(1, 'Rôle requis'),
-  etablissementId: z.number().min(1, 'Établissement requis'),
 });
 
 interface DialogData {
@@ -26,7 +25,6 @@ interface DialogData {
   email: string;
   password: string;
   role: string | null;
-  etablissementId: number | null;
 }
 
 @Component({
@@ -78,14 +76,7 @@ interface DialogData {
         <mat-error *ngIf="errors['role']">{{ errors['role'] }}</mat-error>
       </mat-form-field>
 
-      <mat-form-field appearance="outline">
-        <mat-label>Établissement</mat-label>
-        <mat-select [(ngModel)]="data.etablissementId">
-          <mat-option [value]="null">Sélectionner un établissement</mat-option>
-          <mat-option *ngFor="let etab of etablissements" [value]="etab.id">{{ etab.nom }}</mat-option>
-        </mat-select>
-        <mat-error *ngIf="errors['etablissementId']">{{ errors['etablissementId'] }}</mat-error>
-      </mat-form-field>
+      
     </mat-dialog-content>
 
     <mat-dialog-actions align="end">
@@ -127,7 +118,7 @@ export class DialogComponent {
         const field = err.path[0] as string;
         this.errors[field] = err.message;
       });
-      this.cdr.detectChanges(); // ✅ Force UI update
+      this.cdr.detectChanges(); 
       return false;
     }
     console.log(this.errors)

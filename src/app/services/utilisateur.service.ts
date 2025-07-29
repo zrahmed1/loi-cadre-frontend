@@ -1,15 +1,15 @@
-import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { environment } from '../../environments/environment';
-import { Utilisateur, Role } from '../models/utilisateur';
+import { Injectable } from "@angular/core";
+import { HttpClient, HttpParams } from "@angular/common/http";
+import { Observable } from "rxjs";
+import { environment } from "../../environments/environment";
+import { Utilisateur, Role } from "../models/utilisateur";
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: "root",
 })
 export class UtilisateurService {
   validateToken() {
-      return true; // Placeholder for actual token validation logic
+    return true; // Placeholder for actual token validation logic
   }
   private apiUrl = `${environment.apiUrl}/utilisateurs`;
 
@@ -24,16 +24,18 @@ export class UtilisateurService {
   }
 
   getByEtablissement(etablissementId: number): Observable<Utilisateur[]> {
-    return this.http.get<Utilisateur[]>(`${this.apiUrl}/etablissement/${etablissementId}`);
+    return this.http.get<Utilisateur[]>(
+      `${this.apiUrl}/etablissement/${etablissementId}`
+    );
   }
 
   getByRole(role: Role): Observable<Utilisateur[]> {
-    const params = new HttpParams().set('role', role);
+    const params = new HttpParams().set("role", role);
     return this.http.get<Utilisateur[]>(`${this.apiUrl}/role`, { params });
   }
 
   getByEmail(email: string): Observable<Utilisateur> {
-    const params = new HttpParams().set('email', email);
+    const params = new HttpParams().set("email", email);
     return this.http.get<Utilisateur>(`${this.apiUrl}/email`, { params });
   }
 
@@ -52,12 +54,16 @@ export class UtilisateurService {
     // Mock admin user for testing
     return {
       id: 1,
-      nom: 'Admin',
-      prenom: 'Test',
-      email: 'admin@example.com',
-      motDePasse: '',
+      nom: "Admin",
+      prenom: "Test",
+      email: "admin@example.com",
+      motDePasse: "",
       role: Role.ADMIN,
-      etablissement: { id: 1, nom: 'Etablissement A', departement: {id: 1, nom: 'res', responsableId:1} }
+      etablissement: {
+        id: 1,
+        nom: "Etablissement A",
+        departement: { id: 1, nom: "res", userID: 1 },
+      },
     };
   }
 }

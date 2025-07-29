@@ -1,23 +1,40 @@
 <div class="departement-list">
   <h1>Départements</h1>
-  <table>
-    <thead>
-      <tr>
-        <th>Nom</th>
-        <th>Responsable</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let dep of departements">
-        <td>{{ dep.nom }}</td>
-        <td>{{ dep.responsableId ? 'Utilisateur ' + dep.responsableId : 'Aucun' }}</td>
-        <td>
-          <button (click)="openDepartementModal(dep)">Modifier</button>
-          <button (click)="dep.id && delete(dep.id)">Supprimer</button>
-        </td>
-      </tr>
-    </tbody>
+  <div class="actions">
+    <button mat-raised-button color="primary" (click)="openDepartementModal()">
+      Nouveau Département Modal
+    </button>
+  </div>
+  <table mat-table [dataSource]="dataSource" class="mat-elevation-z2">
+    <ng-container matColumnDef="nom">
+      <th mat-header-cell *matHeaderCellDef>Nom</th>
+      <td mat-cell *matCellDef="let dep">{{ dep.nom }}</td>
+    </ng-container>
+    <ng-container matColumnDef="responsable">
+      <th mat-header-cell *matHeaderCellDef>Responsable</th>
+      <td mat-cell *matCellDef="let dep">
+        {{ dep.responsable?.nom }} {{ dep.responsable?.prenom }}
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="actions">
+      <th mat-header-cell *matHeaderCellDef>Actions</th>
+      <td mat-cell *matCellDef="let dep">
+        <button mat-button color="primary" (click)="openDepartementModal(dep)">
+          Modifier
+        </button>
+        <button mat-button color="warn" (click)="dep.id && delete(dep.id)">
+          Supprimer
+        </button>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
   </table>
-  <button (click)="openDepartementModal()">Nouveau Département Modal</button>
+
+  <mat-paginator
+    [pageSizeOptions]="[5, 10, 20]"
+    showFirstLastButtons
+  ></mat-paginator>
 </div>

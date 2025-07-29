@@ -1,31 +1,75 @@
-<div class="etablissement-list">
+<div class="etablissement-list" style="max-width: 1000px; margin: auto">
   <h1>Établissements</h1>
-  <form [formGroup]="filterForm" class="filters">
-    <select formControlName="selectedDepartement">
-      <option [value]="null">Tous les départements</option>
-      <option *ngFor="let dep of departements" [value]="dep.id">{{ dep.nom }}</option>
-    </select>
-  </form>
-  <table>
-    <thead>
-      <tr>
-        <th>Nom</th>
-        <th>Département</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let etab of etablissements">
-        <td>{{ etab.nom }}</td>
-        <td>{{ etab.departement?.nom || 'Aucun' }}</td>
-        <td>
-          <button [routerLink]="['/etablissement', etab.id]">Détails</button>
-          <button [routerLink]="['/etablissement/edit', etab.id]">Modifier</button>
-          <button *ngIf="etab.id !==undefined" (click)="delete(etab.id)">Supprimer</button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
-  <button (click)="openCreateEtablissementModal()">Nouvel Établissement 2</button>
 
+  <div class="buttonWrapper">
+    <button (click)="openCreateEtablissementModal()">
+      Nouvel Établissement
+    </button>
+  </div>
+
+  <form [formGroup]="filterForm" class="filters">
+    <mat-form-field appearance="outline" style="width: 300px">
+      <mat-label>Département</mat-label>
+      <mat-select formControlName="selectedDepartement">
+        <mat-option [value]="null">Tous les départements</mat-option>
+        <mat-option *ngFor="let dep of departements" [value]="dep.id">{{
+          dep.nom
+        }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </form>
+
+  <table
+    mat-table
+    [dataSource]="dataSource"
+    class="mat-elevation-z2 full-width-table"
+  >
+    <ng-container matColumnDef="nom">
+      <th mat-header-cell *matHeaderCellDef>Nom</th>
+      <td mat-cell *matCellDef="let etab">{{ etab.nom }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="departement">
+      <th mat-header-cell *matHeaderCellDef>Département</th>
+      <td mat-cell *matCellDef="let etab">
+        {{ etab.departement?.nom || "Aucun" }}
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="actions">
+      <th mat-header-cell *matHeaderCellDef>Actions</th>
+      <td mat-cell *matCellDef="let etab">
+        <button
+          mat-button
+          color="primary"
+          [routerLink]="['/etablissement', etab.id]"
+        >
+          Détails
+        </button>
+        <button
+          mat-button
+          color="accent"
+          [routerLink]="['/etablissement/edit', etab.id]"
+        >
+          Modifier
+        </button>
+        <button
+          mat-button
+          color="warn"
+          *ngIf="etab.id !== undefined"
+          (click)="delete(etab.id)"
+        >
+          Supprimer
+        </button>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+  </table>
+
+  <mat-paginator
+    [pageSizeOptions]="[5, 10, 20]"
+    showFirstLastButtons
+  ></mat-paginator>
 </div>

@@ -1,38 +1,126 @@
-<div class="loi-cadre-list">
-  <h1>Lois Cadres</h1>
-  <form [formGroup]="filterForm" class="filters">
-    <select formControlName="selectedAnnee">
-      <option [value]="null">Toutes les années</option>
-      <option *ngFor="let year of [2022, 2023, 2024, 2025, 2026]" [value]="year">{{ year }}</option>
-    </select>
-    <select formControlName="selectedStatut">
-      <option [value]="null">Tous les statuts</option>
-      <option *ngFor="let statut of statuts" [value]="statut">{{ statut }}</option>
-    </select>
-  </form>
-  <table>
-    <thead>
-      <tr>
-        <th>Année</th>
-        <th>Version</th>
-        <th>Statut</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let loi of lois">
-        <td>{{ loi.annee }}</td>
-        <td>{{ loi.version }}</td>
-        <td>{{ loi.statut }}</td>
-        <td>
-          <button [routerLink]="['/loi-cadre', loi.id]">Détails</button>
-          <button [routerLink]="['/loi-cadre/edit', loi.id]">Modifier</button>
-          <button *ngIf="loi.id !== undefined" (click)="changeStatut(loi.id, StatutLoiCadre.ENVOYEE_DB)">Envoyer DB</button>
-          <button *ngIf="loi.id !== undefined" (click)="valider(loi.id)">Valider</button>
-          <button *ngIf="loi.id !== undefined" (click)="delete(loi.id)">Supprimer</button>
+<mat-card class="loi-cadre-list">
+  <mat-card-title>Lois Cadres</mat-card-title>
+  <mat-card-content>
+    <form [formGroup]="filterForm" class="filters">
+      <div class="form-grid">
+        <mat-form-field appearance="outline">
+          <mat-label>Année</mat-label>
+          <mat-select formControlName="selectedAnnee">
+            <mat-option [value]="null">Toutes les années</mat-option>
+            <mat-option
+              *ngFor="let year of [2022, 2023, 2024, 2025, 2026]"
+              [value]="year"
+            >
+              {{ year }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Statut</mat-label>
+          <mat-select formControlName="selectedStatut">
+            <mat-option [value]="null">Tous les statuts</mat-option>
+            <mat-option *ngFor="let statut of statuts" [value]="statut">
+              {{ statut }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+    </form>
+
+    <table
+      mat-table
+      [dataSource]="lois"
+      class="mat-elevation-z1 full-width-table"
+    >
+      <!-- Année -->
+      <ng-container matColumnDef="annee">
+        <th mat-header-cell *matHeaderCellDef>Année</th>
+        <td mat-cell *matCellDef="let loi">{{ loi.annee }}</td>
+      </ng-container>
+
+      <!-- Version -->
+      <ng-container matColumnDef="version">
+        <th mat-header-cell *matHeaderCellDef>Version</th>
+        <td mat-cell *matCellDef="let loi">{{ loi.version }}</td>
+      </ng-container>
+
+      <!-- Statut -->
+      <ng-container matColumnDef="statut">
+        <th mat-header-cell *matHeaderCellDef>Statut</th>
+        <td mat-cell *matCellDef="let loi">{{ loi.statut }}</td>
+      </ng-container>
+
+      <!-- Actions -->
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef>Actions</th>
+        <td mat-cell *matCellDef="let loi">
+          <div class="actions">
+            <button
+              mat-icon-button
+              [routerLink]="['/loi-cadre', loi.id]"
+              matTooltip="Détails"
+            >
+              <mat-icon>visibility</mat-icon>
+            </button>
+            <button
+              mat-icon-button
+              color="primary"
+              [routerLink]="['/loi-cadre/edit', loi.id]"
+              matTooltip="Modifier"
+            >
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button
+              mat-icon-button
+              color="accent"
+              *ngIf="loi.id"
+              (click)="changeStatut(loi.id, StatutLoiCadre.ENVOYEE_DB)"
+              matTooltip="Envoyer DB"
+            >
+              <mat-icon>send</mat-icon>
+            </button>
+            <button
+              mat-icon-button
+              color="primary"
+              *ngIf="loi.id"
+              (click)="valider(loi.id)"
+              matTooltip="Valider"
+            >
+              <mat-icon>check_circle</mat-icon>
+            </button>
+            <button
+              mat-icon-button
+              color="warn"
+              *ngIf="loi.id"
+              (click)="delete(loi.id)"
+              matTooltip="Supprimer"
+            >
+              <mat-icon>delete</mat-icon>
+            </button>
+          </div>
         </td>
-      </tr>
-    </tbody>
-  </table>
-  <button [routerLink]="['/loi-cadre/create']">Nouvelle Loi Cadre</button>
-</div>
+      </ng-container>
+
+      <tr
+        mat-header-row
+        *matHeaderRowDef="['annee', 'version', 'statut', 'actions']"
+      ></tr>
+      <tr
+        mat-row
+        *matRowDef="let row; columns: ['annee', 'version', 'statut', 'actions']"
+      ></tr>
+    </table>
+  </mat-card-content>
+
+  <mat-card-actions align="end">
+    <button
+      mat-raised-button
+      color="primary"
+      [routerLink]="['/loi-cadre/create']"
+    >
+      <mat-icon>add</mat-icon>
+      Nouvelle Loi Cadre
+    </button>
+  </mat-card-actions>
+</mat-card>

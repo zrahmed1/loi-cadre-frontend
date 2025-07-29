@@ -15,6 +15,7 @@ import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatButtonModule } from "@angular/material/button";
 
 import { ViewChild } from "@angular/core";
+import { MatChipsModule } from "@angular/material/chips";
 
 @Component({
   selector: "app-etablissement-list",
@@ -24,6 +25,7 @@ import { ViewChild } from "@angular/core";
     RouterModule,
     ReactiveFormsModule,
     MatPaginatorModule,
+    MatChipsModule,
     MatTableModule,
     MatFormFieldModule,
     MatSelectModule,
@@ -88,16 +90,15 @@ export class EtablissementListComponent implements OnInit {
       this.dataSource.paginator = this.paginator;
     });
   }
-
-  openCreateEtablissementModal(): void {
+  openCreateEtablissementModal(etablissement?: Etablissement): void {
     const dialogRef = this.dialog.open(EtablissementCreateModalComponent, {
       width: "600px",
-      data: {}, // si besoin de passer des données
+      data: etablissement || {}, // Passer les données si édition
     });
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result === "refresh") {
-        this.loadEtablissements(); // recharge la liste après ajout
+        this.loadEtablissements(); // Recharge les données après modif/création
       }
     });
   }

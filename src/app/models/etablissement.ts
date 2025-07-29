@@ -1,9 +1,11 @@
-import { Departement } from './departement';
+import { Departement } from "./departement";
 
 export interface Etablissement {
   id?: number;
   nom: string;
-  departementId?: number;
-  departement?: Departement;
+  departementsID?: number;
+  departements?: Departement[];
+  utilisateur: {
+    id: number;
+  };
 }
-

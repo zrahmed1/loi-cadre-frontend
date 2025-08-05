@@ -62,7 +62,8 @@ export class UtilisateurService {
       etablissement: {
         id: 1,
         nom: "Etablissement A",
-        departement: { id: 1, nom: "res", userID: 1 },
+        departements: [{ id: 1, nom: "res", userID: 1 }],
+        utilisateur: { id: 1 },
       },
     };
   }

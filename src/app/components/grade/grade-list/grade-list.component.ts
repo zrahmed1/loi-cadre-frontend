@@ -1,15 +1,15 @@
-import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
-import { Grade } from '../../../models/grade';
-import { GradeService } from '../../../services/grade.service';
+import { Component, OnInit } from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { RouterModule } from "@angular/router";
+import { Grade } from "../../../models/grade";
+import { GradeService } from "../../../services/grade.service";
 
 @Component({
-  selector: 'app-grade-list',
+  selector: "app-grade-list",
   standalone: true,
   imports: [CommonModule, RouterModule],
-  templateUrl: './grade-list.component.html',
-  styleUrls: ['./grade-list.component.scss']
+  templateUrl: "./grade-list.component.html",
+  styleUrls: ["./grade-list.component.scss"],
 })
 export class GradeListComponent implements OnInit {
   grades: Grade[] = [];
@@ -17,7 +17,7 @@ export class GradeListComponent implements OnInit {
   constructor(private gradeService: GradeService) {}
 
   ngOnInit() {
-    this.gradeService.getAll().subscribe(grades => this.grades = grades);
+    this.gradeService.getAll().subscribe((grades) => (this.grades = grades));
   }
 
   delete(id: number) {

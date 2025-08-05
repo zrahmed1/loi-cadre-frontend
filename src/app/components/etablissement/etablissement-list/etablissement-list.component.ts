@@ -84,7 +84,7 @@ export class EtablissementListComponent implements OnInit {
     const { selectedDepartement } = this.filterForm.value;
     this.etablissementService.getAll().subscribe((etabs) => {
       const filtered = selectedDepartement
-        ? etabs.filter((e) => e.departementId === selectedDepartement)
+        ? etabs.filter((e) => e.departementsID === selectedDepartement)
         : etabs;
       this.dataSource = new MatTableDataSource<Etablissement>(filtered);
       this.dataSource.paginator = this.paginator;

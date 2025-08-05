@@ -1,6 +1,6 @@
 <div class="etablissement-detail" *ngIf="etablissement">
   <h1>{{ etablissement.nom }}</h1>
-  <p>Département: {{ etablissement.departement?.nom || 'Aucun' }}</p>
+  <p>Département: {{ etablissement.departementsID || "Aucun" }}</p>
   <h2>Postes Budgétaires</h2>
   <table>
     <thead>

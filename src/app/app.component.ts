@@ -30,6 +30,11 @@ export class AppComponent implements OnInit {
       roles: [Role.ADMIN, Role.RS, Role.RESPONSABLE_RH],
     },
     {
+      path: "/postes",
+      label: "Postes",
+      roles: [Role.ADMIN, Role.RS, Role.RESPONSABLE_RH, Role.CONSULTATION],
+    },
+    {
       path: "/lois-cadres",
       label: "Lois Cadres",
       roles: [Role.ADMIN, Role.RS, Role.RESPONSABLE_RH, Role.CONSULTATION],

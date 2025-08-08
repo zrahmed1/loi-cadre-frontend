@@ -1,20 +1,24 @@
-import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { environment } from '../../environments/environment';
-import { LoiCadre } from '../models/loi-cadre';
-import {Mouvement} from '../models/mouvement';
-import {PosteBudgetaire} from '../models/poste-budgetaire';
-import { StatutLoiCadre } from '../models/loi-cadre';
-import { HttpParams } from '@angular/common/http';
+import { Injectable } from "@angular/core";
+import { HttpClient } from "@angular/common/http";
+import { Observable } from "rxjs";
+import { environment } from "../../environments/environment";
+import { LoiCadre } from "../models/loi-cadre";
+import { Mouvement } from "../models/mouvement";
+import { PosteBudgetaire } from "../models/poste-budgetaire";
+import { StatutLoiCadre } from "../models/loi-cadre";
+import { HttpParams } from "@angular/common/http";
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: "root",
 })
 export class LoiCadreService {
   private apiUrl = `${environment.apiUrl}/lois-cadres`;
 
   constructor(private http: HttpClient) {}
+
+  createLoiCadre(data: any): Observable<any> {
+    return this.http.post(`${this.apiUrl}`, data);
+  }
 
   getAll(): Observable<LoiCadre[]> {
     return this.http.get<LoiCadre[]>(this.apiUrl);
@@ -41,12 +45,19 @@ export class LoiCadreService {
   }
 
   changerStatut(id: number, statut: StatutLoiCadre): Observable<LoiCadre> {
-    const params = new HttpParams().set('statut', statut);
-    return this.http.put<LoiCadre>(`${this.apiUrl}/${id}/statut`, {}, { params });
+    const params = new HttpParams().set("statut", statut);
+    return this.http.put<LoiCadre>(
+      `${this.apiUrl}/${id}/statut`,
+      {},
+      { params }
+    );
   }
 
   addMouvement(id: number, mouvement: Mouvement): Observable<LoiCadre> {
-    return this.http.post<LoiCadre>(`${this.apiUrl}/${id}/mouvements`, mouvement);
+    return this.http.post<LoiCadre>(
+      `${this.apiUrl}/${id}/mouvements`,
+      mouvement
+    );
   }
 
   addPoste(id: number, poste: PosteBudgetaire): Observable<LoiCadre> {

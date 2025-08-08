@@ -35,8 +35,8 @@ import { MatTooltipModule } from "@angular/material/tooltip";
 export class LoiCadreListComponent implements OnInit {
   lois: LoiCadre[] = [];
   filterForm: FormGroup;
-  statuts = Object.values(StatutLoiCadre);
-  StatutLoiCadre: any;
+  statuts = Object.values(StatutLoiCadre); // ['BROUILLON', 'ENVOYEE_DB', 'VALIDEE', ...]
+  StatutLoiCadre = StatutLoiCadre; // Référence pour le template
 
   constructor(
     private loiCadreService: LoiCadreService,
@@ -55,26 +55,34 @@ export class LoiCadreListComponent implements OnInit {
 
   loadLois() {
     const { selectedAnnee, selectedStatut } = this.filterForm.value;
+
     this.loiCadreService.getAll().subscribe((lois) => {
-      this.lois = lois.filter(
-        (l) =>
-          (!selectedAnnee || l.annee === selectedAnnee) &&
-          (!selectedStatut || l.statut === selectedStatut)
-      );
+      this.lois = lois.filter((l) => {
+        const matchAnnee =
+          !selectedAnnee || Number(l.annee) === Number(selectedAnnee);
+        const matchStatut =
+          !selectedStatut ||
+          l.statut.toUpperCase() === String(selectedStatut).toUpperCase();
+        return matchAnnee && matchStatut;
+      });
     });
   }
 
   changeStatut(id: number, statut: StatutLoiCadre) {
-    this.loiCadreService
-      .changerStatut(id, statut)
-      .subscribe(() => this.loadLois());
+    this.loiCadreService.changerStatut(id, statut).subscribe(() => {
+      this.loadLois();
+    });
   }
 
   valider(id: number) {
-    this.loiCadreService.valider(id).subscribe(() => this.loadLois());
+    this.loiCadreService.valider(id).subscribe(() => {
+      this.loadLois();
+    });
   }
 
   delete(id: number) {
-    this.loiCadreService.delete(id).subscribe(() => this.loadLois());
+    this.loiCadreService.delete(id).subscribe(() => {
+      this.loadLois();
+    });
   }
 }

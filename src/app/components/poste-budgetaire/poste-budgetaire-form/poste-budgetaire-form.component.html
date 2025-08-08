@@ -1,42 +1,70 @@
 <form [formGroup]="posteForm" (ngSubmit)="save()" class="poste-budgetaire-form">
-  <div>
-    <label>Code Poste</label>
-    <input formControlName="codePoste" required>
-  </div>
-  <div>
-    <label>Grade</label>
-    <select formControlName="gradeId">
-      <option [value]="null">Aucun</option>
-      <option *ngFor="let grade of grades" [value]="grade.id">{{ grade.libelle }}</option>
-    </select>
-  </div>
-  <div>
-    <label>État</label>
-    <select formControlName="etat" required>
-      <option *ngFor="let etat of etats" [value]="etat">{{ etat }}</option>
-    </select>
-  </div>
-  <div>
-    <label>Effectif Initial</label>
-    <input formControlName="effectifInitial" type="number" required>
-  </div>
-  <div>
-    <label>Effectif Final</label>
-    <input formControlName="effectifFinal" type="number" required>
-  </div>
-  <div>
-    <label>Établissement</label>
-    <select formControlName="etablissementId">
-      <option [value]="null">Aucun</option>
-      <option *ngFor="let etab of etablissements" [value]="etab.id">{{ etab.nom }}</option>
-    </select>
-  </div>
-  <div>
-    <label>Loi Cadre</label>
-    <select formControlName="loiCadreId">
-      <option [value]="null">Aucune</option>
-      <option *ngFor="let loi of lois" [value]="loi.id">{{ loi.annee }} - {{ loi.version }}</option>
-    </select>
-  </div>
-  <button type="submit" [disabled]="posteForm.invalid">Enregistrer</button>
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>Code Poste</mat-label>
+    <input matInput formControlName="codePoste" required />
+    <mat-error *ngIf="posteForm.get('codePoste')?.hasError('required')">
+      Code poste requis
+    </mat-error>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>Grade</mat-label>
+    <mat-select formControlName="gradeId">
+      <mat-option [value]="null">Aucun</mat-option>
+      <mat-option *ngFor="let grade of grades" [value]="grade.id">
+        {{ grade.libelle }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>État</mat-label>
+    <mat-select formControlName="etat" required>
+      <mat-option *ngFor="let etat of etats" [value]="etat">{{
+        etat
+      }}</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>Effectif Initial</mat-label>
+    <input matInput type="number" formControlName="effectifInitial" required />
+    <mat-error *ngIf="posteForm.get('effectifInitial')?.hasError('required')">
+      Valeur requise
+    </mat-error>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>Effectif Final</mat-label>
+    <input matInput type="number" formControlName="effectifFinal" required />
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>Établissement</mat-label>
+    <mat-select formControlName="etablissementId">
+      <mat-option [value]="null">Aucun</mat-option>
+      <mat-option *ngFor="let etab of etablissements" [value]="etab.id">
+        {{ etab.nom }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>Loi Cadre</mat-label>
+    <mat-select formControlName="loiCadreId">
+      <mat-option [value]="null">Aucune</mat-option>
+      <mat-option *ngFor="let loi of lois" [value]="loi.id">
+        {{ loi.annee }} - {{ loi.version }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <button
+    mat-raised-button
+    color="primary"
+    type="submit"
+    [disabled]="posteForm.invalid"
+  >
+    Enregistrer
+  </button>
 </form>

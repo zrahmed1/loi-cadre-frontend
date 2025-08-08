@@ -22,6 +22,7 @@ import { SignatureListComponent } from "./components/signature/signature-list/si
 import { UtilisateurFormComponent } from "./components/utilisateur/utilisateur-form/utilisateur-form.component";
 import { UtilisateurListComponent } from "./components/utilisateur/utilisateur-list/utilisateur-list.component";
 import { AuthGuard } from "./auth.guard";
+import { PosteBudgetaireListComponent } from "./components/poste-budgetaire/poste-budgetaire-list/poste-budgetaire-list.component";
 export const routes: Routes = [
   { path: "", redirectTo: "dashboard", pathMatch: "full" },
   {
@@ -64,6 +65,12 @@ export const routes: Routes = [
   {
     path: "departements",
     component: DepartementListComponent,
+    canActivate: [AuthGuard],
+    data: { roles: ["ADMIN", "RS", "RESPONSABLE_RH"] },
+  },
+  {
+    path: "postes",
+    component: PosteBudgetaireListComponent,
     canActivate: [AuthGuard],
     data: { roles: ["ADMIN", "RS", "RESPONSABLE_RH"] },
   },

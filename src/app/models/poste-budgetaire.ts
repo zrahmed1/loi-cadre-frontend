@@ -1,10 +1,10 @@
-import { LoiCadre } from './loi-cadre';
-import { Grade } from './grade';
-import { Etablissement } from './etablissement';
+import { LoiCadre } from "./loi-cadre";
+import { Grade } from "./grade";
+import { Etablissement } from "./etablissement";
 
 export enum EtatPoste {
-  VACANT = 'VACANT',
-  OCCUPE = 'OCCUPE'
+  VACANT = "VACANT",
+  OCCUPE = "OCCUPE",
 }
 
 export interface PosteBudgetaire {

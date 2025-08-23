@@ -1,44 +1,52 @@
-<div class="app-container">
-  <aside class="sidebar" [class.closed]="!sidebarOpen">
-    <div class="sidebar-header">
-      <h2>Menu</h2>
-      <button class="toggle-btn" (click)="toggleSidebar()">
-        <span *ngIf="sidebarOpen">✕</span>
-        <span *ngIf="!sidebarOpen">☰</span>
+<mat-sidenav-container
+  class="sidenav-container"
+  role="region"
+  aria-label="Main Application"
+>
+  <mat-sidenav
+    #sidenav
+    mode="side"
+    opened="false"
+    class="sidenav"
+    aria-label="Navigation Menu"
+  >
+    <mat-nav-list>
+      <a
+        mat-list-item
+        *ngFor="let link of navLinks"
+        [routerLink]="link.path"
+        routerLinkActive="active"
+        [attr.aria-label]="link.label"
+      >
+        {{ link.label }}
+      </a>
+    </mat-nav-list>
+  </mat-sidenav>
+  <mat-sidenav-content>
+    <mat-toolbar color="primary">
+      <button
+        mat-icon-button
+        (click)="sidenav.toggle()"
+        aria-label="Toggle navigation menu"
+      >
+        <mat-icon>menu</mat-icon>
       </button>
-    </div>
-    <nav>
-      <ul>
-        <li *ngFor="let link of navLinks" [class.hidden]="!hasAccess(link.roles || [])">
-          <a [routerLink]="link.path" routerLinkActive="active">{{ link.label }}</a>
-        </li>
-      </ul>
-    </nav>
-  </aside>
-  
-  <!-- Overlay for mobile -->
-  <div class="sidebar-overlay" 
-       [class.active]="sidebarOpen" 
-       (click)="toggleSidebar()"></div>
-  
-  <div class="main-content" [class.sidebar-closed]="!sidebarOpen">
-    <header class="top-bar">
-      <!-- Mobile menu button -->
-      <button class="mobile-menu-btn" (click)="toggleSidebar()" *ngIf="!sidebarOpen">
-        ☰
-      </button>
-      <div class="user-info">
-        <span>{{ utilisateur?.nom }} {{ utilisateur?.prenom }} ({{ utilisateur?.role }})</span>
-      </div>
-      <div class="notifications">
-        <span>{{ notifications.length }} Notifications</span>
-        <ul>
-          <li *ngFor="let notif of notifications">{{ notif.message }}</li>
-        </ul>
-      </div>
-    </header>
+      <span>Loi Cadre EPA</span>
+      <span class="spacer"></span>
+      <ng-container *ngIf="isAuthenticated(); else notAuthenticated">
+        <span *ngIf="currentUser$ | async as user"
+          >{{ user.nom }} {{ user.prenom }}</span
+        >
+        <button mat-button (click)="logout()" aria-label="Logout">
+          Logout
+        </button>
+      </ng-container>
+      <ng-template #notAuthenticated>
+        <button mat-button routerLink="/login" aria-label="Login">Login</button>
+      </ng-template>
+    </mat-toolbar>
     <main>
       <router-outlet></router-outlet>
     </main>
-  </div>
-</div>
+  </mat-sidenav-content>
+</mat-sidenav-container>

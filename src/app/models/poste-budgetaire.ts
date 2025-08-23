@@ -10,6 +10,7 @@ export enum EtatPoste {
 export interface PosteBudgetaire {
   id?: number;
   codePoste: string;
+  description?: string;
   loiCadreId?: number;
   loiCadre?: LoiCadre;
   gradeId?: number;

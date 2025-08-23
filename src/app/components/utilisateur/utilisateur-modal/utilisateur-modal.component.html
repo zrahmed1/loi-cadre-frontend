@@ -1,0 +1,21 @@
+<h2 mat-dialog-title>
+  {{ data.utilisateur ? "Edit Utilisateur" : "Create Utilisateur" }}
+</h2>
+<mat-dialog-content>
+  <app-utilisateur-form
+    [utilisateur]="data.utilisateur"
+    #utilisateurForm
+  ></app-utilisateur-form>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button mat-button (click)="onCancel()" aria-label="Cancel">Cancel</button>
+  <button
+    mat-raised-button
+    color="primary"
+    [disabled]="!utilisateurForm.utilisateurForm.valid"
+    (click)="onSubmit(utilisateurForm.formValue)"
+    aria-label="Save utilisateur"
+  >
+    Save
+  </button>
+</mat-dialog-actions>

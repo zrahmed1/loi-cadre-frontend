@@ -1,99 +1,198 @@
 import { Component, OnInit } from "@angular/core";
-import { CommonModule } from "@angular/common";
-import { RouterModule } from "@angular/router";
-import { ReactiveFormsModule, FormBuilder, FormGroup } from "@angular/forms";
-import { Departement } from "../../models/departement";
-import { Etablissement } from "../../models/etablissement";
-import { LoiCadre } from "../../models/loi-cadre";
-import { Mouvement } from "../../models/mouvement";
-import { Utilisateur } from "../../models/utilisateur";
-import { DepartementService } from "../../services/departement.service";
-import { EtablissementService } from "../../services/etablissement.service";
-import { LoiCadreService } from "../../services/loi-cadre.service";
+import { PosteBudgetaireService } from "../../services/poste-budgetaire.service";
 import { MouvementService } from "../../services/mouvement.service";
+import { LoiCadreService } from "../../services/loi-cadre.service";
 import { UtilisateurService } from "../../services/utilisateur.service";
+import { EffectifSummary } from "../../models/effectif-summary";
+import { StatutMouvement } from "../../models/mouvement";
+import { StatutLoiCadre } from "../../models/loi-cadre";
+import { MatCardModule } from "@angular/material/card";
+import { MatProgressBarModule } from "@angular/material/progress-bar";
+import { MatButtonModule } from "@angular/material/button";
+import { MatTableModule } from "@angular/material/table";
+import { MatSnackBar, MatSnackBarModule } from "@angular/material/snack-bar";
+import { CommonModule } from "@angular/common";
+import { catchError, throwError } from "rxjs";
+import { Router } from "@angular/router";
+import { MatSpinner } from "@angular/material/progress-spinner";
+
 @Component({
   selector: "app-dashboard",
   standalone: true,
-  imports: [CommonModule, RouterModule, ReactiveFormsModule],
+  imports: [
+    CommonModule,
+    MatCardModule,
+    MatProgressBarModule,
+    MatButtonModule,
+    MatTableModule,
+    MatSnackBarModule,
+    MatSpinner,
+  ],
   templateUrl: "./dashboard.component.html",
   styleUrls: ["./dashboard.component.scss"],
 })
 export class DashboardComponent implements OnInit {
-  getEtablissementNomByMouvement(_t97: Mouvement) {
-    return (
-      this.etablissements.find(
-        (e) => e.id === _t97.posteConcerne?.etablissement?.id
-      )?.nom || "N/A"
-    );
-  }
-  filterForm: FormGroup;
-  utilisateur: Utilisateur | null = null;
-  loisCadres: LoiCadre[] = [];
-  mouvements: Mouvement[] = [];
-  notifications: { id: number; message: string }[] = [];
-  departements: Departement[] = [];
-  etablissements: Etablissement[] = [];
-  stats = { utilisateurs: 0, etablissements: 0, loisCadres: 0, mouvements: 0 };
+  effectifSummaries: EffectifSummary[] = [];
+  pendingMouvementsCount: number = 0;
+  loiCadresInitialeCount: number = 0;
+  loiCadresEnvoeeDbCount: number = 0;
+  loiCadresDefinitiveCount: number = 0;
+  totalUtilisateurs: number = 0;
+  isLoading: boolean = true;
+  effectifChart: any;
 
   constructor(
-    private utilisateurService: UtilisateurService,
-    private loiCadreService: LoiCadreService,
+    private posteBudgetaireService: PosteBudgetaireService,
     private mouvementService: MouvementService,
-    private departementService: DepartementService,
-    private etablissementService: EtablissementService,
-    private fb: FormBuilder
-  ) {
-    this.filterForm = this.fb.group({
-      departementId: [null],
-      etablissementId: [null],
-      annee: [new Date().getFullYear()],
+    private loiCadreService: LoiCadreService,
+    private utilisateurService: UtilisateurService,
+    private snackBar: MatSnackBar,
+    private router: Router
+  ) {}
+
+  ngOnInit(): void {
+    this.loadEffectifSummaries();
+    this.loadPendingMouvements();
+    this.loadLoiCadresCounts();
+    this.loadTotalUtilisateurs();
+  }
+
+  loadEffectifSummaries(): void {
+    this.posteBudgetaireService
+      .getEffectifSummary()
+      .pipe(
+        catchError((err) => {
+          this.snackBar.open(
+            "Error loading effectif summaries: " + err.message,
+            "Close",
+            { duration: 3000 }
+          );
+          return throwError(() => err);
+        })
+      )
+      .subscribe({
+        next: (summaries) => {
+          this.effectifSummaries = summaries;
+          this.updateEffectifChart();
+        },
+      });
+  }
+
+  loadPendingMouvements(): void {
+    this.mouvementService
+      .getByStatus(StatutMouvement.EN_ATTENTE)
+      .pipe(
+        catchError((err) => {
+          this.snackBar.open(
+            "Error loading pending mouvements: " + err.message,
+            "Close",
+            { duration: 3000 }
+          );
+          return throwError(() => err);
+        })
+      )
+      .subscribe({
+        next: (mouvements) => {
+          this.pendingMouvementsCount = mouvements.length;
+        },
+      });
+  }
+
+  loadLoiCadresCounts(): void {
+    this.loiCadreService
+      .getByStatut(StatutLoiCadre.INITIALE)
+      .pipe(
+        catchError((err) => {
+          this.snackBar.open(
+            "Error loading loi cadres: " + err.message,
+            "Close",
+            { duration: 3000 }
+          );
+          return throwError(() => err);
+        })
+      )
+      .subscribe({
+        next: (lois) => {
+          this.loiCadresInitialeCount = lois.length;
+        },
+      });
+    this.loiCadreService.getByStatut(StatutLoiCadre.ENVOYEE_DB).subscribe({
+      next: (lois) => {
+        this.loiCadresEnvoeeDbCount = lois.length;
+      },
+    });
+    this.loiCadreService.getByStatut(StatutLoiCadre.DEFINITIVE).subscribe({
+      next: (lois) => {
+        this.loiCadresDefinitiveCount = lois.length;
+        this.isLoading = false;
+      },
     });
   }
 
-  ngOnInit() {
-    this.utilisateur = this.utilisateurService.getCurrentUser();
-    this.departementService
-      .getAll()
-      .subscribe((depts) => (this.departements = depts));
-    this.etablissementService
-      .getAll()
-      .subscribe((etabs) => (this.etablissements = etabs));
-    this.loiCadreService.getAll().subscribe((lois) => {
-      this.loisCadres = lois;
-      this.stats.loisCadres = lois.length;
-    });
-    this.mouvementService.getAll().subscribe((mouvs) => {
-      this.mouvements = mouvs;
-      this.stats.mouvements = mouvs.length;
-    });
+  loadTotalUtilisateurs(): void {
     this.utilisateurService
       .getAll()
-      .subscribe((users) => (this.stats.utilisateurs = users.length));
-    this.etablissementService
-      .getAll()
-      .subscribe((etabs) => (this.stats.etablissements = etabs.length));
-    // Fetch notifications from backend or keep mock
-    this.notifications = [
-      { id: 1, message: "Nouvelle Loi Cadre en attente" },
-      { id: 2, message: "Mouvement soumis pour validation" },
-    ];
-    this.filterForm.valueChanges.subscribe(() => this.loadFilteredData());
+      .pipe(
+        catchError((err) => {
+          this.snackBar.open(
+            "Error loading utilisateurs: " + err.message,
+            "Close",
+            { duration: 3000 }
+          );
+          return throwError(() => err);
+        })
+      )
+      .subscribe({
+        next: (utilisateurs) => {
+          this.totalUtilisateurs = utilisateurs.length;
+        },
+      });
   }
 
-  loadFilteredData() {
-    const { departementId, etablissementId, annee } = this.filterForm.value;
-    this.loiCadreService.getAll().subscribe((lois) => {
-      this.loisCadres = lois.filter((l) => l.annee === annee);
-    });
-    this.mouvementService.getAll().subscribe((mouvs) => {
-      this.mouvements = mouvs.filter(
-        (m) =>
-          (!etablissementId ||
-            m.posteConcerne?.etablissement?.id === etablissementId) &&
-          (!departementId ||
-            m.posteConcerne?.etablissement?.departementsID === departementId)
-      );
-    });
+  updateEffectifChart(): void {
+    this.effectifChart = {
+      type: "bar",
+      data: {
+        labels: this.effectifSummaries.map(
+          (summary) => `Etablissement ${summary.etablissementId}`
+        ),
+        datasets: [
+          {
+            label: "Total Initial",
+            data: this.effectifSummaries.map((summary) => summary.totalInitial),
+            backgroundColor: "#42A5F5",
+            borderColor: "#1E88E5",
+            borderWidth: 1,
+          },
+          {
+            label: "Total Final",
+            data: this.effectifSummaries.map((summary) => summary.totalFinal),
+            backgroundColor: "#66BB6A",
+            borderColor: "#388E3C",
+            borderWidth: 1,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        scales: {
+          y: {
+            beginAtZero: true,
+            title: { display: true, text: "Effectif Count" },
+          },
+          x: {
+            title: { display: true, text: "Etablissement" },
+          },
+        },
+        plugins: {
+          legend: { position: "top" },
+          title: { display: true, text: "Effectif Summary by Etablissement" },
+        },
+      },
+    };
+  }
+
+  navigateTo(path: string): void {
+    this.router.navigate([`/${path}`]);
   }
 }

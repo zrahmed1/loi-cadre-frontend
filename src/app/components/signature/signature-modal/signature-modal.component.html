@@ -1,0 +1,34 @@
+<h2 mat-dialog-title>
+  {{
+    data.mode === "create"
+      ? "Create Signature"
+      : data.mode === "validate"
+      ? "Validate Signature"
+      : "Reject Signature"
+  }}
+</h2>
+<mat-dialog-content>
+  <app-signature-form
+    [signature]="data.signature"
+    [mode]="data.mode"
+    #signatureForm
+  ></app-signature-form>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button mat-button (click)="onCancel()" aria-label="Cancel">Cancel</button>
+  <button
+    mat-raised-button
+    color="primary"
+    [disabled]="!signatureForm.signatureForm.valid"
+    (click)="onSubmit(signatureForm.formValue)"
+    aria-label="Save signature"
+  >
+    {{
+      data.mode === "create"
+        ? "Create"
+        : data.mode === "validate"
+        ? "Validate"
+        : "Reject"
+    }}
+  </button>
+</mat-dialog-actions>

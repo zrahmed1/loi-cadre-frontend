@@ -1,37 +1,9 @@
-:host {
-	display: block;
+mat-dialog-content {
+  padding: 20px;
 }
 
-.mat-mdc-dialog-content {
-	padding: 20px;
-	max-height: 80vh;
-}
-
-h2 {
-	margin: 0 0 20px;
-	color: #1976d2;
-	font-size: 24px;
-}
-
-.form-row {
-	margin-bottom: 16px;
-}
-
-.full-width {
-	width: 100%;
-}
-
-.mat-mdc-dialog-actions {
-	padding: 16px 0 0;
-	margin-bottom: 0;
-	gap: 8px;
-}
-
-textarea {
-	min-height: 100px;
-}
-
-// Make form fields take full width
-mat-form-field {
-	width: 100%;
+mat-dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
 }

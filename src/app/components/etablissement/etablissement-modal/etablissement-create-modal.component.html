@@ -1,58 +1,21 @@
 <h2 mat-dialog-title>
-  {{
-    isEditMode ? "Modifier l'Établissement" : "Créer un nouvel Établissement"
-  }}
+  {{ data.etablissement ? "Edit Etablissement" : "Create Etablissement" }}
 </h2>
-
-<form [formGroup]="etablissementForm" (ngSubmit)="onSubmit()">
-  <mat-dialog-content [formGroup]="etablissementForm">
-    <mat-form-field appearance="outline">
-      <mat-label>Nom de l’établissement</mat-label>
-      <input matInput formControlName="nom" />
-      <mat-error *ngIf="etablissementForm.get('nom')?.hasError('required')">
-        Le nom est requis.
-      </mat-error>
-    </mat-form-field>
-
-    <mat-form-field appearance="outline">
-      <mat-label>Responsable</mat-label>
-      <mat-select formControlName="userID">
-        <mat-option value="" disabled
-          >-- Sélectionner un responsable --</mat-option
-        >
-        <mat-option *ngFor="let user of utilisateurs" [value]="user.id">
-          {{ user.nom }}
-        </mat-option>
-      </mat-select>
-      <mat-error *ngIf="etablissementForm.get('userID')?.hasError('required')">
-        Le responsable est requis.
-      </mat-error>
-    </mat-form-field>
-
-    <mat-form-field appearance="outline">
-      <mat-label>Départements</mat-label>
-      <mat-select formControlName="departementsID" multiple>
-        <mat-option *ngFor="let dep of departements" [value]="dep.id">
-          {{ dep.nom }}
-        </mat-option>
-      </mat-select>
-      <mat-error
-        *ngIf="etablissementForm.get('departementsID')?.hasError('required')"
-      >
-        Au moins un département est requis.
-      </mat-error>
-    </mat-form-field>
-  </mat-dialog-content>
-
-  <mat-dialog-actions align="end">
-    <button mat-button color="warn" (click)="onCancel()">Annuler</button>
-    <button
-      mat-button
-      color="primary"
-      type="submit"
-      [disabled]="etablissementForm.invalid"
-    >
-      {{ isEditMode ? "Modifier" : "Créer" }}
-    </button>
-  </mat-dialog-actions>
-</form>
+<mat-dialog-content>
+  <app-etablissement-form
+    [etablissement]="data.etablissement"
+    #etablissementForm
+  ></app-etablissement-form>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button mat-button (click)="onCancel()" aria-label="Cancel">Cancel</button>
+  <button
+    mat-raised-button
+    color="primary"
+    [disabled]="!etablissementForm.etablissementForm.valid"
+    (click)="onSubmit(etablissementForm.formValue)"
+    aria-label="Save etablissement"
+  >
+    Save
+  </button>
+</mat-dialog-actions>

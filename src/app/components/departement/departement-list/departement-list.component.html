@@ -1,40 +1,86 @@
-<div class="departement-list">
-  <h1>Départements</h1>
-  <div class="actions">
-    <button mat-raised-button color="primary" (click)="openDepartementModal()">
-      Nouveau Département
+<div
+  class="departement-list-container"
+  role="region"
+  aria-label="Departement Management"
+>
+  <h2>Departement Management</h2>
+  <div class="search-container">
+    <mat-form-field appearance="fill">
+      <mat-label>Search by Etablissement Code</mat-label>
+      <input
+        matInput
+        [(ngModel)]="searchEtablissementCode"
+        (ngModelChange)="searchByEtablissementCode()"
+        aria-label="Search departements by etablissement code"
+      />
+      <button
+        mat-icon-button
+        matSuffix
+        (click)="resetSearch()"
+        aria-label="Reset search"
+      >
+        <mat-icon>clear</mat-icon>
+      </button>
+    </mat-form-field>
+    <button
+      mat-raised-button
+      color="primary"
+      (click)="openCreateModal()"
+      aria-label="Add new departement"
+    >
+      Add Departement
     </button>
   </div>
-  <table mat-table [dataSource]="dataSource" class="mat-elevation-z2">
+  <mat-spinner
+    *ngIf="isLoading"
+    aria-label="Loading departements"
+  ></mat-spinner>
+  <table
+    mat-table
+    [dataSource]="departements"
+    class="mat-elevation-z8"
+    aria-describedby="Departement List Table"
+    *ngIf="!isLoading"
+  >
+    <ng-container matColumnDef="code">
+      <th mat-header-cell *matHeaderCellDef>Code</th>
+      <td mat-cell *matCellDef="let departement">{{ departement.code }}</td>
+    </ng-container>
     <ng-container matColumnDef="nom">
       <th mat-header-cell *matHeaderCellDef>Nom</th>
-      <td mat-cell *matCellDef="let dep">{{ dep.nom }}</td>
+      <td mat-cell *matCellDef="let departement">{{ departement.nom }}</td>
     </ng-container>
-    <ng-container matColumnDef="responsable">
-      <th mat-header-cell *matHeaderCellDef>Responsable</th>
-      <td mat-cell *matCellDef="let dep">
-        {{ dep.responsable?.nom }} {{ dep.responsable?.prenom }}
+    <ng-container matColumnDef="etablissement">
+      <th mat-header-cell *matHeaderCellDef>Etablissement</th>
+      <td mat-cell *matCellDef="let departement">
+        {{ getEtablissementName(departement) }}
       </td>
     </ng-container>
-
     <ng-container matColumnDef="actions">
       <th mat-header-cell *matHeaderCellDef>Actions</th>
-      <td mat-cell *matCellDef="let dep">
-        <button mat-button color="primary" (click)="openDepartementModal(dep)">
-          Modifier
+      <td mat-cell *matCellDef="let departement">
+        <button
+          mat-icon-button
+          color="primary"
+          (click)="openEditModal(departement)"
+          aria-label="Edit departement"
+        >
+          <mat-icon>edit</mat-icon>
         </button>
-        <button mat-button color="warn" (click)="dep.id && delete(dep.id)">
-          Supprimer
+        <button
+          mat-icon-button
+          color="warn"
+          (click)="deleteDepartement(departement.id!)"
+          aria-label="Delete departement"
+        >
+          <mat-icon>delete</mat-icon>
         </button>
       </td>
     </ng-container>
-
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
     <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+    <tr class="mat-row" *matNoDataRow>
+      <td class="mat-cell" colspan="4">No departements found</td>
+    </tr>
   </table>
-
-  <mat-paginator
-    [pageSizeOptions]="[5, 10, 20]"
-    showFirstLastButtons
-  ></mat-paginator>
 </div>

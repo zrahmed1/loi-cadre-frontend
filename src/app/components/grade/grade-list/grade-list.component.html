@@ -1,23 +1,77 @@
-<div class="grade-list">
-  <h1>Grades</h1>
-  <table>
-    <thead>
-      <tr>
-        <th>Code</th>
-        <th>Libellé</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let grade of grades">
-        <td>{{ grade.code }}</td>
-        <td>{{ grade.libelle }}</td>
-        <td>
-          <button [routerLink]="['/admin/grade/edit', grade.id]">Modifier</button>
-          <button *ngIf="grade.id !== undefined" (click)="delete(grade.id)">Supprimer</button>
-        </td>
-      </tr>
-    </tbody>
+<div class="grade-list-container" role="region" aria-label="Grade Management">
+  <h2>Grade Management</h2>
+  <div class="search-container">
+    <mat-form-field appearance="fill">
+      <mat-label>Search by Code</mat-label>
+      <input
+        matInput
+        [(ngModel)]="searchCode"
+        (ngModelChange)="searchByCode()"
+        aria-label="Search grades by code"
+      />
+      <button
+        mat-icon-button
+        matSuffix
+        (click)="resetSearch()"
+        aria-label="Reset search"
+      >
+        <mat-icon>clear</mat-icon>
+      </button>
+    </mat-form-field>
+    <button
+      mat-raised-button
+      color="primary"
+      (click)="openCreateModal()"
+      aria-label="Add new grade"
+    >
+      Add Grade
+    </button>
+  </div>
+  <mat-spinner *ngIf="isLoading" aria-label="Loading grades"></mat-spinner>
+  <table
+    mat-table
+    [dataSource]="grades"
+    class="mat-elevation-z8"
+    aria-describedby="Grade List Table"
+    *ngIf="!isLoading"
+  >
+    <ng-container matColumnDef="code">
+      <th mat-header-cell *matHeaderCellDef>Code</th>
+      <td mat-cell *matCellDef="let grade">{{ grade.code }}</td>
+    </ng-container>
+    <ng-container matColumnDef="libelle">
+      <th mat-header-cell *matHeaderCellDef>Libelle</th>
+      <td mat-cell *matCellDef="let grade">{{ grade.libelle }}</td>
+    </ng-container>
+    <ng-container matColumnDef="description">
+      <th mat-header-cell *matHeaderCellDef>Description</th>
+      <td mat-cell *matCellDef="let grade">{{ grade.description || "-" }}</td>
+    </ng-container>
+    <ng-container matColumnDef="actions">
+      <th mat-header-cell *matHeaderCellDef>Actions</th>
+      <td mat-cell *matCellDef="let grade">
+        <button
+          mat-icon-button
+          color="primary"
+          (click)="openEditModal(grade)"
+          aria-label="Edit grade"
+        >
+          <mat-icon>edit</mat-icon>
+        </button>
+        <button
+          mat-icon-button
+          color="warn"
+          (click)="deleteGrade(grade.id!)"
+          aria-label="Delete grade"
+        >
+          <mat-icon>delete</mat-icon>
+        </button>
+      </td>
+    </ng-container>
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+    <tr class="mat-row" *matNoDataRow>
+      <td class="mat-cell" colspan="4">No grades found</td>
+    </tr>
   </table>
-  <button [routerLink]="['/admin/grade/create']">Nouveau Grade</button>
 </div>

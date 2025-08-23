@@ -1,93 +1,69 @@
-import { CommonModule } from '@angular/common';
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject } from "@angular/core";
 import {
-	FormBuilder,
-	FormGroup,
-	ReactiveFormsModule,
-	Validators,
-} from '@angular/forms';
-import { MatButtonModule } from '@angular/material/button';
-import { MatNativeDateModule } from '@angular/material/core';
-import { MatDatepickerModule } from '@angular/material/datepicker';
-import {
-	MAT_DIALOG_DATA,
-	MatDialogModule,
-	MatDialogRef,
-} from '@angular/material/dialog';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIconModule } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
-
-import { LoiCadre } from '../../../models/loi-cadre';
-import { Mouvement, TypeMouvement } from '../../../models/mouvement';
-import { PosteBudgetaire } from '../../../models/poste-budgetaire';
-import { LoiCadreService } from '../../../services/loi-cadre.service';
-import { PosteBudgetaireService } from '../../../services/poste-budgetaire.service';
+  MatDialogRef,
+  MAT_DIALOG_DATA,
+  MatDialogModule,
+} from "@angular/material/dialog";
+import { MatSnackBar, MatSnackBarModule } from "@angular/material/snack-bar";
+import { MatButtonModule } from "@angular/material/button";
+import { catchError, throwError } from "rxjs";
+import { CommonModule } from "@angular/common";
+import { MouvementFormComponent } from "../mouvement-form/mouvement-form.component";
+import { Mouvement } from "../../../models/mouvement";
+import { MouvementService } from "../../../services/mouvement.service";
 
 @Component({
-	selector: 'app-mouvement-modal',
-	standalone: true,
-	imports: [
-		CommonModule,
-		ReactiveFormsModule,
-		MatDialogModule,
-		MatButtonModule,
-		MatFormFieldModule,
-		MatInputModule,
-		MatSelectModule,
-		MatDatepickerModule,
-		MatNativeDateModule,
-		MatIconModule,
-	],
-	templateUrl: './mouvement-modal.component.html',
-	styleUrls: ['./mouvement-modal.component.scss'],
+  selector: "app-mouvement-modal",
+  standalone: true,
+  imports: [
+    CommonModule,
+    MatDialogModule,
+    MatButtonModule,
+    MatSnackBarModule,
+    MouvementFormComponent,
+  ],
+  templateUrl: "./mouvement-modal.component.html",
+  styleUrls: ["./mouvement-modal.component.scss"],
 })
-export class MouvementModalComponent implements OnInit {
-	mouvementForm: FormGroup;
-	postes: PosteBudgetaire[] = [];
-	lois: LoiCadre[] = [];
-	types = Object.values(TypeMouvement);
+export class MouvementModalComponent {
+  constructor(
+    public dialogRef: MatDialogRef<MouvementModalComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: { mouvement: Mouvement | null },
+    private mouvementService: MouvementService,
+    private snackBar: MatSnackBar
+  ) {}
 
-	constructor(
-		private fb: FormBuilder,
-		private dialogRef: MatDialogRef<MouvementModalComponent>,
-		private posteBudgetaireService: PosteBudgetaireService,
-		private loiCadreService: LoiCadreService,
-		@Inject(MAT_DIALOG_DATA)
-		public data: { mouvement?: Mouvement; loiCadreId?: number }
-	) {
-		this.mouvementForm = this.fb.group({
-			type: [TypeMouvement.CREATION, Validators.required],
-			posteConcerneId: [null],
-			dateEffet: ['', Validators.required],
-			description: ['', Validators.required],
-			loiCadreId: [data?.loiCadreId || null],
-		});
+  onSubmit(formValue: Mouvement): void {
+    const operation = this.data.mouvement
+      ? this.mouvementService.update(this.data.mouvement.id!, formValue)
+      : this.mouvementService.create(formValue.loiCadreId!, formValue);
 
-		if (data?.mouvement) {
-			this.mouvementForm.patchValue(data.mouvement);
-		}
-	}
+    operation
+      .pipe(
+        catchError((err) => {
+          const message =
+            err.status === 400
+              ? "Error: Invalid mouvement data. Check required fields or loi cadre status."
+              : `Error saving mouvement: ${err.message}`;
+          this.snackBar.open(message, "Close", { duration: 5000 });
+          return throwError(() => err);
+        })
+      )
+      .subscribe({
+        next: () => {
+          this.snackBar.open(
+            this.data.mouvement
+              ? "Mouvement updated successfully"
+              : "Mouvement created successfully",
+            "Close",
+            { duration: 2000 }
+          );
+          this.dialogRef.close(true);
+        },
+      });
+  }
 
-	ngOnInit() {
-		this.loadData();
-	}
-
-	private loadData() {
-		this.posteBudgetaireService
-			.getAll()
-			.subscribe((postes) => (this.postes = postes));
-		this.loiCadreService.getAll().subscribe((lois) => (this.lois = lois));
-	}
-
-	onSubmit() {
-		if (this.mouvementForm.valid) {
-			this.dialogRef.close(this.mouvementForm.value);
-		}
-	}
-
-	onCancel() {
-		this.dialogRef.close();
-	}
+  onCancel(): void {
+    this.dialogRef.close();
+  }
 }

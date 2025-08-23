@@ -2,7 +2,7 @@
   max-width: 1200px;
   margin: 0 auto;
   padding: 2rem;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 
   h1 {
     font-size: 1.8rem;
@@ -153,4 +153,31 @@
       white-space: nowrap;
     }
   }
+}
+.dashboard-container {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.metric-card {
+  padding: 16px;
+}
+
+mat-card-title {
+  margin-bottom: 16px;
+}
+
+mat-progress-bar {
+  margin-top: 8px;
+}
+
+table {
+  width: 100%;
 }

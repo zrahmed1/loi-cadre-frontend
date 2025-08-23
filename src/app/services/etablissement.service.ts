@@ -1,11 +1,11 @@
-import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { environment } from '../../environments/environment';
-import { Etablissement } from '../models/etablissement';
+import { Injectable } from "@angular/core";
+import { HttpClient } from "@angular/common/http";
+import { Observable } from "rxjs";
+import { environment } from "../../environments/environment";
+import { Etablissement } from "../models/etablissement";
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: "root",
 })
 export class EtablissementService {
   private apiUrl = `${environment.apiUrl}/etablissements`;
@@ -18,6 +18,16 @@ export class EtablissementService {
 
   getById(id: number): Observable<Etablissement> {
     return this.http.get<Etablissement>(`${this.apiUrl}/${id}`);
+  }
+
+  getByCode(code: string): Observable<Etablissement> {
+    return this.http.get<Etablissement>(`${this.apiUrl}/code/${code}`);
+  }
+
+  getByResponsable(responsableId: number): Observable<Etablissement[]> {
+    return this.http.get<Etablissement[]>(
+      `${this.apiUrl}/responsable/${responsableId}`
+    );
   }
 
   create(etablissement: Etablissement): Observable<Etablissement> {

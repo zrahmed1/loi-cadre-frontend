@@ -1,53 +1,86 @@
-import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { RouterModule, ActivatedRoute, Router } from '@angular/router';
-import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Departement } from '../../../models/departement';
-import { Utilisateur } from '../../../models/utilisateur';
-import { DepartementService } from '../../../services/departement.service';
-import { UtilisateurService } from '../../../services/utilisateur.service';
+import { Component, Input, OnInit } from "@angular/core";
+import {
+  FormBuilder,
+  FormGroup,
+  Validators,
+  ReactiveFormsModule,
+} from "@angular/forms";
+
+import { MatFormFieldModule } from "@angular/material/form-field";
+import { MatInputModule } from "@angular/material/input";
+import { MatSelectModule } from "@angular/material/select";
+import { CommonModule } from "@angular/common";
+import { Observable } from "rxjs";
+import { Departement } from "../../../models/departement";
+import { Etablissement } from "../../../models/etablissement";
+import { Utilisateur } from "../../../models/utilisateur";
+import { EtablissementService } from "../../../services/etablissement.service";
+import { UtilisateurService } from "../../../services/utilisateur.service";
 
 @Component({
-  selector: 'app-departement-form',
+  selector: "app-departement-form",
   standalone: true,
-  imports: [CommonModule, RouterModule, ReactiveFormsModule],
-  templateUrl: './departement-form.component.html',
-  styleUrls: ['./departement-form.component.scss']
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
+  ],
+  templateUrl: "./departement-form.component.html",
+  styleUrls: ["./departement-form.component.scss"],
 })
 export class DepartementFormComponent implements OnInit {
+  @Input() departement: Departement | null = null;
   departementForm: FormGroup;
-  utilisateurs: Utilisateur[] = [];
-  id: number | null = null;
+  etablissements$: Observable<Etablissement[]>;
+  utilisateurs$: Observable<Utilisateur[]>;
 
   constructor(
-    private departementService: DepartementService,
-    private utilisateurService: UtilisateurService,
-    private route: ActivatedRoute,
-    private router: Router,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private etablissementService: EtablissementService,
+    private utilisateurService: UtilisateurService
   ) {
     this.departementForm = this.fb.group({
-      nom: ['', Validators.required],
-      responsableId: [null]
+      code: [
+        "",
+        [
+          Validators.required,
+          Validators.pattern(/^[A-Z0-9]{10}$/),
+          Validators.maxLength(10),
+        ],
+      ],
+      nom: ["", [Validators.required, Validators.maxLength(100)]],
+      etablissementId: ["", Validators.required],
+      responsable: [null],
     });
+    this.etablissements$ = this.etablissementService.getAll();
+    this.utilisateurs$ = this.utilisateurService.getAll();
   }
 
-  ngOnInit() {
-    this.id = this.route.snapshot.params['id'];
-    if (this.id) {
-      this.departementService.getById(this.id).subscribe(dep => this.departementForm.patchValue(dep));
+  ngOnInit(): void {
+    if (this.departement) {
+      this.departementForm.patchValue({
+        code: this.departement.code,
+        nom: this.departement.nom,
+        etablissementId: this.departement.etablissementId,
+        responsable: this.departement.responsable
+          ? this.departement.responsable.id
+          : null,
+      });
     }
-    this.utilisateurService.getAll().subscribe(users => this.utilisateurs = users);
   }
 
-  save() {
-    if (this.departementForm.valid) {
-      const departement = this.departementForm.value as Departement;
-      if (this.id) {
-        this.departementService.update(this.id, departement).subscribe(() => this.router.navigate(['/departements']));
-      } else {
-        this.departementService.create(departement).subscribe(() => this.router.navigate(['/departements']));
-      }
-    }
+  get formValue(): Departement {
+    const value = this.departementForm.value as Omit<
+      Departement,
+      "responsable"
+    > & { responsable: number | null };
+    return {
+      ...value,
+      responsable: value.responsable
+        ? { id: Number(value.responsable) }
+        : undefined,
+    };
   }
 }

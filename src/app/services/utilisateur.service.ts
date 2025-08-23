@@ -8,9 +8,6 @@ import { Utilisateur, Role } from "../models/utilisateur";
   providedIn: "root",
 })
 export class UtilisateurService {
-  validateToken() {
-    return true; // Placeholder for actual token validation logic
-  }
   private apiUrl = `${environment.apiUrl}/utilisateurs`;
 
   constructor(private http: HttpClient) {}
@@ -26,6 +23,12 @@ export class UtilisateurService {
   getByEtablissement(etablissementId: number): Observable<Utilisateur[]> {
     return this.http.get<Utilisateur[]>(
       `${this.apiUrl}/etablissement/${etablissementId}`
+    );
+  }
+
+  getByDepartement(departementId: number): Observable<Utilisateur[]> {
+    return this.http.get<Utilisateur[]>(
+      `${this.apiUrl}/departement/${departementId}`
     );
   }
 
@@ -50,21 +53,12 @@ export class UtilisateurService {
   delete(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
-  getCurrentUser(): Utilisateur {
-    // Mock admin user for testing
-    return {
-      id: 1,
-      nom: "Admin",
-      prenom: "Test",
-      email: "admin@example.com",
-      motDePasse: "",
-      role: Role.ADMIN,
-      etablissement: {
-        id: 1,
-        nom: "Etablissement A",
-        departements: [{ id: 1, nom: "res", userID: 1 }],
-        utilisateur: { id: 1 },
-      },
-    };
+
+  updateLastLogin(id: number): Observable<void> {
+    return this.http.post<void>(`${this.apiUrl}/${id}/login`, {});
+  }
+
+  getAllRoles(): Observable<Role[]> {
+    return this.http.get<Role[]>(`${this.apiUrl}/roles`);
   }
 }

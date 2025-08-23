@@ -1,66 +1,138 @@
-<div class="utilisateur-list">
-  <h1>Utilisateurs</h1>
-  <div class="buttonWrapper">
-    <button (click)="openDialog()">Nouveau Utilisateur</button>
-  </div>
-
-  <form [formGroup]="filterForm" class="filters">
-    <select formControlName="selectedRole">
-      <option [ngValue]="null" disabled selected hidden>
-        Filtrer par rôle
-      </option>
-      <option [ngValue]="null">Tous les rôles</option>
-      <option *ngFor="let role of roles" [ngValue]="role">{{ role }}</option>
-    </select>
-  </form>
-  <div class="tableWrapper">
-    <table>
-      <thead>
-        <tr>
-          <th>Nom</th>
-          <th>Prénom</th>
-          <th>Email</th>
-          <th>Rôle</th>
-
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let user of utilisateurs">
-          <td data-label="Nom">{{ user.nom }}</td>
-          <td data-label="Prénom">{{ user.prenom }}</td>
-          <td data-label="Email">{{ user.email }}</td>
-          <td data-label="Rôle">{{ user.role }}</td>
-          <td data-label="Actions">
-            <button [routerLink]="['/utilisateur/edit', user.id]">
-              Modifier
-            </button>
-            <button *ngIf="user.id !== undefined" (click)="delete(user.id)">
-              Supprimer
-            </button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-    <div class="pagination">
-      <button (click)="previousPage()" [disabled]="currentPage === 1">
-        Précédent
-      </button>
-
-      <ng-container
-        *ngFor="let page of [].constructor(totalPages); let i = index"
+<div
+  class="utilisateur-list-container"
+  role="region"
+  aria-label="Utilisateur Management"
+>
+  <h2>Utilisateur Management</h2>
+  <div class="search-container">
+    <mat-form-field appearance="fill">
+      <mat-label>Search by Role</mat-label>
+      <mat-select
+        [(ngModel)]="searchRole"
+        (ngModelChange)="filterByRole()"
+        aria-label="Search utilisateurs by role"
       >
-        <button
-          [class.active]="currentPage === i + 1"
-          (click)="goToPage(i + 1)"
+        <mat-option [value]="''">-- All --</mat-option>
+        <mat-option *ngFor="let role of roles" [value]="role">{{
+          role
+        }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field appearance="fill">
+      <mat-label>Search by Etablissement</mat-label>
+      <mat-select
+        [(ngModel)]="searchEtablissementId"
+        (ngModelChange)="filterByEtablissement()"
+        aria-label="Search utilisateurs by etablissement"
+      >
+        <mat-option [value]="''">-- All --</mat-option>
+        <mat-option
+          *ngFor="let etablissement of etablissements"
+          [value]="etablissement.id"
+          >{{ etablissement.nom }} ({{ etablissement.code }})</mat-option
         >
-          {{ i + 1 }}
-        </button>
-      </ng-container>
-
-      <button (click)="nextPage()" [disabled]="currentPage === totalPages">
-        Suivant
-      </button>
-    </div>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field appearance="fill">
+      <mat-label>Search by Departement</mat-label>
+      <mat-select
+        [(ngModel)]="searchDepartementId"
+        (ngModelChange)="filterByDepartement()"
+        aria-label="Search utilisateurs by departement"
+      >
+        <mat-option [value]="''">-- All --</mat-option>
+        <mat-option
+          *ngFor="let departement of departements"
+          [value]="departement.id"
+          >{{ departement.nom }} ({{ departement.code }})</mat-option
+        >
+      </mat-select>
+    </mat-form-field>
+    <button
+      mat-raised-button
+      color="primary"
+      (click)="openCreateModal()"
+      aria-label="Add new utilisateur"
+    >
+      Add Utilisateur
+    </button>
   </div>
+  <mat-spinner
+    *ngIf="isLoading"
+    aria-label="Loading utilisateurs"
+  ></mat-spinner>
+  <table
+    mat-table
+    [dataSource]="utilisateurs"
+    class="mat-elevation-z8"
+    aria-describedby="Utilisateur List Table"
+    *ngIf="!isLoading"
+  >
+    <ng-container matColumnDef="nom">
+      <th mat-header-cell *matHeaderCellDef>Nom</th>
+      <td mat-cell *matCellDef="let utilisateur">{{ utilisateur.nom }}</td>
+    </ng-container>
+    <ng-container matColumnDef="prenom">
+      <th mat-header-cell *matHeaderCellDef>Prenom</th>
+      <td mat-cell *matCellDef="let utilisateur">{{ utilisateur.prenom }}</td>
+    </ng-container>
+    <ng-container matColumnDef="email">
+      <th mat-header-cell *matHeaderCellDef>Email</th>
+      <td mat-cell *matCellDef="let utilisateur">{{ utilisateur.email }}</td>
+    </ng-container>
+    <ng-container matColumnDef="role">
+      <th mat-header-cell *matHeaderCellDef>Role</th>
+      <td mat-cell *matCellDef="let utilisateur">{{ utilisateur.role }}</td>
+    </ng-container>
+    <ng-container matColumnDef="active">
+      <th mat-header-cell *matHeaderCellDef>Active</th>
+      <td mat-cell *matCellDef="let utilisateur">
+        {{ utilisateur.active ? "Yes" : "No" }}
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="etablissement">
+      <th mat-header-cell *matHeaderCellDef>Etablissement</th>
+      <td mat-cell *matCellDef="let utilisateur">
+        {{ getEtablissementName(utilisateur.etablissement) }}
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="departement">
+      <th mat-header-cell *matHeaderCellDef>Departement</th>
+      <td mat-cell *matCellDef="let utilisateur">
+        {{ getDepartementName(utilisateur.departement) }}
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="lastLogin">
+      <th mat-header-cell *matHeaderCellDef>Last Login</th>
+      <td mat-cell *matCellDef="let utilisateur">
+        {{ utilisateur.lastLogin | date }}
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="actions">
+      <th mat-header-cell *matHeaderCellDef>Actions</th>
+      <td mat-cell *matCellDef="let utilisateur">
+        <button
+          mat-icon-button
+          color="primary"
+          (click)="openEditModal(utilisateur)"
+          aria-label="Edit utilisateur"
+        >
+          <mat-icon>edit</mat-icon>
+        </button>
+        <button
+          mat-icon-button
+          color="warn"
+          (click)="deleteUtilisateur(utilisateur.id!)"
+          aria-label="Delete utilisateur"
+        >
+          <mat-icon>delete</mat-icon>
+        </button>
+      </td>
+    </ng-container>
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+    <tr class="mat-row" *matNoDataRow>
+      <td class="mat-cell" colspan="9">No utilisateurs found</td>
+    </tr>
+  </table>
 </div>

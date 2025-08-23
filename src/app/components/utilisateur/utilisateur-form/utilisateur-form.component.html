@@ -1,20 +1,80 @@
-<form [formGroup]="utilisateurForm" (ngSubmit)="save()" class="utilisateur-form">
-  <div>
-    <label>Nom</label>
-    <input formControlName="nom" required>
-  </div>
-  <div>
-    <label>Prénom</label>
-    <input formControlName="prenom" required>
-  </div>
-  <div>
-    <label>Email</label>
-    <input formControlName="email" type="email" required>
-  </div>
-  <div *ngIf="!id">
-    <label>Mot de passe</label>
-    <input formControlName="motDePasse" type="password" required>
-  </div>
- 
-  <button type="submit" [disabled]="utilisateurForm.invalid">Enregistrer</button>
+<form [formGroup]="utilisateurForm" role="form" aria-label="Utilisateur Form">
+  <mat-form-field appearance="fill">
+    <mat-label>Nom</mat-label>
+    <input matInput formControlName="nom" aria-label="Nom" />
+    <mat-error *ngIf="utilisateurForm.get('nom')?.hasError('required')"
+      >Nom is required</mat-error
+    >
+  </mat-form-field>
+  <mat-form-field appearance="fill">
+    <mat-label>Prenom</mat-label>
+    <input matInput formControlName="prenom" aria-label="Prenom" />
+    <mat-error *ngIf="utilisateurForm.get('prenom')?.hasError('required')"
+      >Prenom is required</mat-error
+    >
+  </mat-form-field>
+  <mat-form-field appearance="fill">
+    <mat-label>Email</mat-label>
+    <input matInput formControlName="email" type="email" aria-label="Email" />
+    <mat-error *ngIf="utilisateurForm.get('email')?.hasError('required')"
+      >Email is required</mat-error
+    >
+    <mat-error *ngIf="utilisateurForm.get('email')?.hasError('email')"
+      >Invalid email format</mat-error
+    >
+  </mat-form-field>
+  <mat-form-field appearance="fill">
+    <mat-label>Mot de Passe</mat-label>
+    <input
+      matInput
+      formControlName="motDePasse"
+      type="password"
+      aria-label="Password"
+    />
+    <mat-error *ngIf="utilisateurForm.get('motDePasse')?.hasError('required')"
+      >Password is required</mat-error
+    >
+    <mat-error *ngIf="utilisateurForm.get('motDePasse')?.hasError('minlength')"
+      >Password must be at least 6 characters</mat-error
+    >
+  </mat-form-field>
+  <mat-form-field appearance="fill">
+    <mat-label>Role</mat-label>
+    <mat-select formControlName="role" aria-label="Select role">
+      <mat-option *ngFor="let role of roles" [value]="role">{{
+        role
+      }}</mat-option>
+    </mat-select>
+    <mat-error *ngIf="utilisateurForm.get('role')?.hasError('required')"
+      >Role is required</mat-error
+    >
+  </mat-form-field>
+  <mat-checkbox formControlName="active" aria-label="Active status"
+    >Active</mat-checkbox
+  >
+  <mat-form-field appearance="fill">
+    <mat-label>Etablissement</mat-label>
+    <mat-select
+      formControlName="etablissementId"
+      aria-label="Select etablissement"
+    >
+      <mat-option [value]="null">-- None --</mat-option>
+      <mat-option
+        *ngFor="let etablissement of etablissements$ | async"
+        [value]="etablissement.id"
+        >{{ etablissement.nom }} ({{ etablissement.code }})</mat-option
+      >
+    </mat-select>
+  </mat-form-field>
+  <mat-form-field appearance="fill">
+    <mat-label>Departement</mat-label>
+    <mat-select formControlName="departementId" aria-label="Select departement">
+      <mat-option [value]="null">-- None --</mat-option>
+      <mat-option
+        *ngFor="let departement of departements$ | async"
+        [value]="departement.id"
+        >{{ departement.nom }} ({{ departement.code }})</mat-option
+      >
+    </mat-select>
+  </mat-form-field>
 </form>

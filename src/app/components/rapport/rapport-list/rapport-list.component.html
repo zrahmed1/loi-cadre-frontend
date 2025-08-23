@@ -1,0 +1,70 @@
+<div
+  class="rapport-list-container"
+  role="region"
+  aria-label="Rapport Management"
+>
+  <h2>Rapport Management</h2>
+  <mat-spinner *ngIf="isLoading" aria-label="Loading loi cadres"></mat-spinner>
+  <table
+    mat-table
+    [dataSource]="loisCadres"
+    class="mat-elevation-z8"
+    aria-describedby="Loi Cadre List for Reporting"
+    *ngIf="!isLoading"
+  >
+    <ng-container matColumnDef="annee">
+      <th mat-header-cell *matHeaderCellDef>Annee</th>
+      <td mat-cell *matCellDef="let loiCadre">{{ loiCadre.annee }}</td>
+    </ng-container>
+    <ng-container matColumnDef="version">
+      <th mat-header-cell *matHeaderCellDef>Version</th>
+      <td mat-cell *matCellDef="let loiCadre">{{ loiCadre.version }}</td>
+    </ng-container>
+    <ng-container matColumnDef="statut">
+      <th mat-header-cell *matHeaderCellDef>Statut</th>
+      <td mat-cell *matCellDef="let loiCadre">{{ loiCadre.statut }}</td>
+    </ng-container>
+    <ng-container matColumnDef="dateCreation">
+      <th mat-header-cell *matHeaderCellDef>Date Creation</th>
+      <td mat-cell *matCellDef="let loiCadre">
+        {{ loiCadre.dateCreation | date }}
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="dateModification">
+      <th mat-header-cell *matHeaderCellDef>Date Modification</th>
+      <td mat-cell *matCellDef="let loiCadre">
+        {{ loiCadre.dateModification | date }}
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="postes">
+      <th mat-header-cell *matHeaderCellDef>Postes</th>
+      <td mat-cell *matCellDef="let loiCadre">
+        {{ getPostesCount(loiCadre) }}
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="mouvements">
+      <th mat-header-cell *matHeaderCellDef>Mouvements</th>
+      <td mat-cell *matCellDef="let loiCadre">
+        {{ getMouvementsCount(loiCadre) }}
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="actions">
+      <th mat-header-cell *matHeaderCellDef>Actions</th>
+      <td mat-cell *matCellDef="let loiCadre">
+        <button
+          mat-icon-button
+          color="primary"
+          (click)="exportRapport(loiCadre.id!)"
+          aria-label="Export rapport for loi cadre"
+        >
+          <mat-icon>download</mat-icon>
+        </button>
+      </td>
+    </ng-container>
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+    <tr class="mat-row" *matNoDataRow>
+      <td class="mat-cell" colspan="8">No loi cadres found for reporting</td>
+    </tr>
+  </table>
+</div>

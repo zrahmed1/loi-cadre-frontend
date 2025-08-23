@@ -1,0 +1,16 @@
+<h2 mat-dialog-title>{{ data.grade ? "Edit Grade" : "Create Grade" }}</h2>
+<mat-dialog-content>
+  <app-grade-form [grade]="data.grade" #gradeForm></app-grade-form>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button mat-button (click)="onCancel()" aria-label="Cancel">Cancel</button>
+  <button
+    mat-raised-button
+    color="primary"
+    [disabled]="!gradeForm.gradeForm.valid"
+    (click)="onSubmit(gradeForm.formValue)"
+    aria-label="Save grade"
+  >
+    Save
+  </button>
+</mat-dialog-actions>

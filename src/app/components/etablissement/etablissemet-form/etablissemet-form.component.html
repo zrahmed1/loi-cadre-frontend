@@ -1,0 +1,48 @@
+<form
+  [formGroup]="etablissementForm"
+  role="form"
+  aria-label="Etablissement Form"
+>
+  <mat-form-field appearance="fill">
+    <mat-label>Code (10 characters)</mat-label>
+    <input
+      matInput
+      formControlName="code"
+      placeholder="e.g., EECCRRGGDD"
+      aria-label="Etablissement code"
+    />
+    <mat-error *ngIf="etablissementForm.get('code')?.hasError('required')"
+      >Code is required</mat-error
+    >
+    <mat-error
+      *ngIf="
+        etablissementForm.get('code')?.hasError('pattern') ||
+        etablissementForm.get('code')?.hasError('maxlength')
+      "
+    >
+      Code must be exactly 10 alphanumeric characters (e.g., EECCRRGGDD)
+    </mat-error>
+  </mat-form-field>
+  <mat-form-field appearance="fill">
+    <mat-label>Nom</mat-label>
+    <input matInput formControlName="nom" aria-label="Etablissement nom" />
+    <mat-error *ngIf="etablissementForm.get('nom')?.hasError('required')"
+      >Nom is required</mat-error
+    >
+    <mat-error *ngIf="etablissementForm.get('nom')?.hasError('maxlength')"
+      >Nom cannot exceed 100 characters</mat-error
+    >
+  </mat-form-field>
+  <mat-form-field appearance="fill">
+    <mat-label>Responsable</mat-label>
+    <mat-select formControlName="responsable" aria-label="Select responsable">
+      <mat-option [value]="null">-- None --</mat-option>
+      <mat-option
+        *ngFor="let utilisateur of utilisateurs$ | async"
+        [value]="utilisateur.id"
+      >
+        {{ utilisateur.nom }} {{ utilisateur.prenom || "" }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+</form>

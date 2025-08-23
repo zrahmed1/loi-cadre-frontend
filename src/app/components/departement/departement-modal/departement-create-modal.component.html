@@ -1,43 +1,21 @@
 <h2 mat-dialog-title>
-  {{ isEditMode ? "Modifier le Département" : "Créer un nouveau Département" }}
+  {{ data.departement ? "Edit Departement" : "Create Departement" }}
 </h2>
-<form [formGroup]="departementForm" (ngSubmit)="onSubmit()">
-  <mat-dialog-content [formGroup]="departementForm">
-    <mat-form-field appearance="outline">
-      <mat-label>Nom du Département</mat-label>
-      <input matInput formControlName="nom" />
-      <mat-error *ngIf="departementForm.get('nom')?.hasError('required')">
-        Le nom est requis.
-      </mat-error>
-    </mat-form-field>
-
-    <mat-form-field appearance="outline">
-      <mat-label>Responsable</mat-label>
-      <mat-select formControlName="userID">
-        <mat-option value="" disabled
-          >-- Sélectionner un utilisateur --</mat-option
-        >
-        <mat-option *ngFor="let user of utilisateurs" [value]="user.id">
-          {{ user.nom }}
-        </mat-option>
-      </mat-select>
-      <mat-error *ngIf="departementForm.get('userID')?.hasError('required')">
-        Le responsable est requis.
-      </mat-error>
-    </mat-form-field>
-  </mat-dialog-content>
-
-  <mat-dialog-actions align="end">
-    <button mat-button type="button" color="warn" (click)="onCancel()">
-      Annuler
-    </button>
-    <button
-      mat-button
-      color="primary"
-      type="submit"
-      [disabled]="departementForm.invalid"
-    >
-      {{ isEditMode ? "Modifier" : "Créer" }}
-    </button>
-  </mat-dialog-actions>
-</form>
+<mat-dialog-content>
+  <app-departement-form
+    [departement]="data.departement"
+    #departementForm
+  ></app-departement-form>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button mat-button (click)="onCancel()" aria-label="Cancel">Cancel</button>
+  <button
+    mat-raised-button
+    color="primary"
+    [disabled]="!departementForm.departementForm.valid"
+    (click)="onSubmit(departementForm.formValue)"
+    aria-label="Save departement"
+  >
+    Save
+  </button>
+</mat-dialog-actions>

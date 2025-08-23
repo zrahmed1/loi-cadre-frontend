@@ -1,62 +1,82 @@
-import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { RouterModule, ActivatedRoute, Router } from '@angular/router';
-import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Etablissement } from '../../../models/etablissement';
-import { Role, Utilisateur } from '../../../models/utilisateur';
-import { EtablissementService } from '../../../services/etablissement.service';
-import { UtilisateurService } from '../../../services/utilisateur.service';
+import { Component, Input, OnInit } from "@angular/core";
+import {
+  FormBuilder,
+  FormGroup,
+  Validators,
+  ReactiveFormsModule,
+} from "@angular/forms";
+import { MatFormFieldModule } from "@angular/material/form-field";
+import { MatInputModule } from "@angular/material/input";
+import { MatSelectModule } from "@angular/material/select";
+import { MatCheckboxModule } from "@angular/material/checkbox";
+import { CommonModule } from "@angular/common";
+import { Observable } from "rxjs";
+import { Departement } from "../../../models/departement";
+import { Etablissement } from "../../../models/etablissement";
+import { Utilisateur, Role } from "../../../models/utilisateur";
+import { DepartementService } from "../../../services/departement.service";
+import { EtablissementService } from "../../../services/etablissement.service";
+import { UtilisateurService } from "../../../services/utilisateur.service";
 
 @Component({
-  selector: 'app-utilisateur-form',
+  selector: "app-utilisateur-form",
   standalone: true,
-  imports: [CommonModule, RouterModule, ReactiveFormsModule],
-  templateUrl: './utilisateur-form.component.html',
-  styleUrls: ['./utilisateur-form.component.scss']
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
+    MatCheckboxModule,
+  ],
+  templateUrl: "./utilisateur-form.component.html",
+  styleUrls: ["./utilisateur-form.component.scss"],
 })
 export class UtilisateurFormComponent implements OnInit {
+  @Input() utilisateur: Utilisateur | null = null;
   utilisateurForm: FormGroup;
-  etablissements: Etablissement[] = [];
-  roles = Object.values(Role);
-  id: number | null = null;
+  roles: Role[] = Object.values(Role);
+  etablissements$: Observable<Etablissement[]>;
+  departements$: Observable<Departement[]>;
 
   constructor(
+    private fb: FormBuilder,
     private utilisateurService: UtilisateurService,
-    private etablissementService: EtablissementService,
-    private route: ActivatedRoute,
-    private router: Router,
-    private fb: FormBuilder
+    private departementService: DepartementService,
+    private etablissementService: EtablissementService
   ) {
     this.utilisateurForm = this.fb.group({
-      nom: ['', Validators.required],
-      prenom: ['', Validators.required],
-      email: ['', [Validators.required, Validators.email]],
-      motDePasse: [''],
-      role: [Role.CONSULTATION, Validators.required],
-      etablissementId: [null]
+      nom: ["", Validators.required],
+      prenom: ["", Validators.required],
+      email: ["", [Validators.required, Validators.email]],
+      motDePasse: [
+        "",
+        this.utilisateur ? [] : [Validators.required, Validators.minLength(6)],
+      ],
+      role: ["", Validators.required],
+      active: [true],
+      etablissementId: [null],
+      departementId: [null],
     });
+    this.etablissements$ = this.etablissementService.getAll();
+    this.departements$ = this.departementService.getAll();
   }
 
-  ngOnInit() {
-    this.id = this.route.snapshot.params['id'];
-    if (this.id) {
-      this.utilisateurService.getById(this.id).subscribe(user => this.utilisateurForm.patchValue(user));
-      this.utilisateurForm.get('motDePasse')?.clearValidators();
-    } else {
-      this.utilisateurForm.get('motDePasse')?.setValidators(Validators.required);
+  ngOnInit(): void {
+    if (this.utilisateur) {
+      this.utilisateurForm.patchValue({
+        nom: this.utilisateur.nom,
+        prenom: this.utilisateur.prenom,
+        email: this.utilisateur.email,
+        role: this.utilisateur.role,
+        active: this.utilisateur.active,
+        etablissementId: this.utilisateur.etablissementId,
+        departementId: this.utilisateur.departementId,
+      });
     }
-    this.utilisateurForm.get('motDePasse')?.updateValueAndValidity();
-    this.etablissementService.getAll().subscribe(etabs => this.etablissements = etabs);
   }
 
-  save() {
-    if (this.utilisateurForm.valid) {
-      const utilisateur = this.utilisateurForm.value as Utilisateur;
-      if (this.id) {
-        this.utilisateurService.update(this.id, utilisateur).subscribe(() => this.router.navigate(['/utilisateurs']));
-      } else {
-        this.utilisateurService.create(utilisateur).subscribe(() => this.router.navigate(['/utilisateurs']));
-      }
-    }
+  get formValue(): Utilisateur {
+    return this.utilisateurForm.value as Utilisateur;
   }
 }

@@ -1,83 +1,67 @@
 import { Component, OnInit } from "@angular/core";
+import { Router, RouterModule } from "@angular/router";
+import { AuthService } from "./services/auth.service";
+import { MatToolbarModule } from "@angular/material/toolbar";
+import { MatButtonModule } from "@angular/material/button";
+import { MatSidenavModule } from "@angular/material/sidenav";
+import { MatIconModule } from "@angular/material/icon";
+import { MatListModule } from "@angular/material/list";
 import { CommonModule } from "@angular/common";
-import { RouterModule } from "@angular/router";
-import { UtilisateurService } from "./services/utilisateur.service";
-import { Utilisateur, Role } from "./models/utilisateur";
+import { Observable } from "rxjs";
+import { Utilisateur } from "./models/utilisateur";
+import { MatSnackBar, MatSnackBarModule } from "@angular/material/snack-bar";
 
 @Component({
   selector: "app-root",
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [
+    CommonModule,
+    RouterModule,
+    MatToolbarModule,
+    MatButtonModule,
+    MatSidenavModule,
+    MatIconModule,
+    MatListModule,
+    MatSnackBarModule,
+  ],
   templateUrl: "./app.component.html",
   styleUrls: ["./app.component.scss"],
 })
 export class AppComponent implements OnInit {
-  utilisateur: Utilisateur | null = null;
-  sidebarOpen = true; // Add this property
-
-  notifications: { id: number; message: string }[] = [];
+  currentUser$: Observable<Utilisateur | null>;
   navLinks = [
     { path: "/dashboard", label: "Dashboard" },
-    { path: "/utilisateurs", label: "Utilisateurs", roles: [Role.ADMIN] },
-    {
-      path: "/departements",
-      label: "Départements",
-      roles: [Role.ADMIN, Role.RS, Role.RESPONSABLE_RH],
-    },
-    {
-      path: "/etablissements",
-      label: "Établissements",
-      roles: [Role.ADMIN, Role.RS, Role.RESPONSABLE_RH],
-    },
-    {
-      path: "/postes",
-      label: "Postes",
-      roles: [Role.ADMIN, Role.RS, Role.RESPONSABLE_RH, Role.CONSULTATION],
-    },
-    {
-      path: "/lois-cadres",
-      label: "Lois Cadres",
-      roles: [Role.ADMIN, Role.RS, Role.RESPONSABLE_RH, Role.CONSULTATION],
-    },
-    {
-      path: "/mouvements",
-      label: "Mouvements",
-      roles: [
-        Role.ADMIN,
-        Role.RS,
-        Role.RESPONSABLE_RH,
-        Role.CADRE_RH,
-        Role.CONSULTATION,
-      ],
-    },
-    {
-      path: "/signatures",
-      label: "Signatures",
-      roles: [Role.ADMIN, Role.RS, Role.RESPONSABLE_RH],
-    },
-    {
-      path: "/rapports",
-      label: "Rapports",
-      roles: [Role.ADMIN, Role.RS, Role.RESPONSABLE_RH, Role.CONSULTATION],
-    },
-    { path: "/admin", label: "Administration", roles: [Role.ADMIN] },
+    { path: "/grades", label: "Grades" },
+    { path: "/etablissements", label: "Etablissements" },
+    { path: "/departements", label: "Departements" },
+    { path: "/lois-cadres", label: "Lois Cadres" },
+    { path: "/mouvements", label: "Mouvements" },
+    { path: "/postes-budgetaires", label: "Postes Budgetaires" },
+    { path: "/signatures", label: "Signatures" },
+    { path: "/utilisateurs", label: "Utilisateurs" },
+    { path: "/rapports", label: "Rapports" },
   ];
 
-  constructor(private utilisateurService: UtilisateurService) {}
-
-  ngOnInit() {
-    this.utilisateur = this.utilisateurService.getCurrentUser();
-    // Fetch notifications from backend or use mock for testing
-    this.notifications = [
-      { id: 1, message: "Nouvelle Loi Cadre en attente" },
-      { id: 2, message: "Mouvement soumis pour validation" },
-    ];
+  constructor(
+    private authService: AuthService,
+    private router: Router,
+    private snackBar: MatSnackBar
+  ) {
+    this.currentUser$ = this.authService.currentUser$;
   }
 
-  hasAccess(roles: Role[]): boolean {
-    return this.utilisateur ? roles.includes(this.utilisateur.role) : false;
+  ngOnInit(): void {
+    // Check authentication state on init
+    this.authService.isAuthenticated();
   }
-  toggleSidebar() {
-    this.sidebarOpen = !this.sidebarOpen;
+
+  isAuthenticated(): boolean {
+    return this.authService.isAuthenticated();
+  }
+
+  logout(): void {
+    this.authService.logout();
+    this.snackBar.open("Logged out successfully", "Close", { duration: 2000 });
+    this.router.navigate(["/login"]);
   }
 }

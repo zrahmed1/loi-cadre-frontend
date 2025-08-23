@@ -2,7 +2,7 @@ import { Injectable } from "@angular/core";
 import { HttpClient, HttpParams } from "@angular/common/http";
 import { Observable } from "rxjs";
 import { environment } from "../../environments/environment";
-import { Mouvement, TypeMouvement } from "../models/mouvement";
+import { Mouvement, StatutMouvement, TypeMouvement } from "../models/mouvement";
 
 @Injectable({
   providedIn: "root",
@@ -24,13 +24,14 @@ export class MouvementService {
     return this.http.get<Mouvement[]>(`${this.apiUrl}/loi/${loiCadreId}`);
   }
 
-  getByPoste(posteId: number): Observable<Mouvement[]> {
-    return this.http.get<Mouvement[]>(`${this.apiUrl}/poste/${posteId}`);
-  }
-
   getByType(type: TypeMouvement): Observable<Mouvement[]> {
     const params = new HttpParams().set("type", type);
     return this.http.get<Mouvement[]>(`${this.apiUrl}/type`, { params });
+  }
+
+  getByStatus(status: StatutMouvement): Observable<Mouvement[]> {
+    const params = new HttpParams().set("status", status);
+    return this.http.get<Mouvement[]>(`${this.apiUrl}/status`, { params });
   }
 
   create(loiCadreId: number, mouvement: Mouvement): Observable<Mouvement> {

@@ -1,88 +1,147 @@
-<div class="signature-list">
-	<h1>Signatures</h1>
-
-	<form [formGroup]="filterForm" class="filters">
-		<mat-form-field appearance="outline">
-			<mat-label>Loi Cadre</mat-label>
-			<mat-select formControlName="selectedLoiCadre">
-				<mat-option [value]="null">Toutes les lois</mat-option>
-				<mat-option *ngFor="let loi of lois" [value]="loi.id">
-					{{ loi.annee }} - {{ loi.version }}
-				</mat-option>
-			</mat-select>
-		</mat-form-field>
-	</form>
-
-	<div class="actions">
-		<button
-			mat-raised-button
-			color="primary"
-			[routerLink]="['/signature/create']">
-			<mat-icon>add</mat-icon>
-			Nouvelle Signature
-		</button>
-	</div>
-
-	<table mat-table [dataSource]="dataSource" class="mat-elevation-z2">
-		<ng-container matColumnDef="loiCadre">
-			<th mat-header-cell *matHeaderCellDef>Loi Cadre</th>
-			<td mat-cell *matCellDef="let sig">
-				{{ getLoiCadreInfo(sig.loiCadreId) }}
-			</td>
-		</ng-container>
-
-		<ng-container matColumnDef="signataire">
-			<th mat-header-cell *matHeaderCellDef>Signataire</th>
-			<td mat-cell *matCellDef="let sig">{{ sig.signataire?.nom || 'N/A' }}</td>
-		</ng-container>
-
-		<ng-container matColumnDef="status">
-			<th mat-header-cell *matHeaderCellDef>Statut</th>
-			<td mat-cell *matCellDef="let sig">
-				<mat-chip-set>
-					<mat-chip
-						[color]="sig.status === 'EN_ATTENTE' ? 'warn' : 'primary'"
-						highlighted>
-						{{ sig.status }}
-					</mat-chip>
-				</mat-chip-set>
-			</td>
-		</ng-container>
-
-		<ng-container matColumnDef="dateSignature">
-			<th mat-header-cell *matHeaderCellDef>Date</th>
-			<td mat-cell *matCellDef="let sig">{{ sig.dateSignature | date }}</td>
-		</ng-container>
-
-		<ng-container matColumnDef="actions">
-			<th mat-header-cell *matHeaderCellDef>Actions</th>
-			<td mat-cell *matCellDef="let sig">
-				<button
-					mat-icon-button
-					color="primary"
-					*ngIf="sig.status === 'EN_ATTENTE' && sig.id !== undefined"
-					(click)="validate(sig.id)"
-					matTooltip="Signer">
-					<mat-icon>done</mat-icon>
-				</button>
-				<button
-					mat-icon-button
-					color="warn"
-					*ngIf="sig.id !== undefined"
-					(click)="delete(sig.id)"
-					matTooltip="Supprimer">
-					<mat-icon>delete</mat-icon>
-				</button>
-			</td>
-		</ng-container>
-
-		<tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-		<tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
-	</table>
-
-	<mat-paginator
-		[pageSize]="10"
-		[pageSizeOptions]="[5, 10, 25, 100]"
-		showFirstLastButtons>
-	</mat-paginator>
+<div
+  class="signature-list-container"
+  role="region"
+  aria-label="Signature Management"
+>
+  <h2>Signature Management</h2>
+  <div class="search-container">
+    <mat-form-field appearance="fill">
+      <mat-label>Search by Loi Cadre</mat-label>
+      <mat-select
+        [(ngModel)]="searchLoiCadreId"
+        (ngModelChange)="searchByLoiCadre()"
+        aria-label="Search signatures by loi cadre"
+      >
+        <mat-option [value]="''">-- All --</mat-option>
+        <mat-option *ngFor="let loiCadre of loisCadres" [value]="loiCadre.id"
+          >{{ loiCadre.annee }} (v{{ loiCadre.version }})</mat-option
+        >
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field appearance="fill">
+      <mat-label>Search by Mouvement</mat-label>
+      <mat-select
+        [(ngModel)]="searchMouvementId"
+        (ngModelChange)="searchByMouvement()"
+        aria-label="Search signatures by mouvement"
+      >
+        <mat-option [value]="''">-- All --</mat-option>
+        <mat-option *ngFor="let mouvement of mouvements" [value]="mouvement.id"
+          >{{ mouvement.type }} ({{ mouvement.description || "-" }})</mat-option
+        >
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field appearance="fill">
+      <mat-label>Search by Signataire</mat-label>
+      <mat-select
+        [(ngModel)]="searchSignataireId"
+        (ngModelChange)="searchBySignataire()"
+        aria-label="Search signatures by signataire"
+      >
+        <mat-option [value]="''">-- All --</mat-option>
+        <mat-option
+          *ngFor="let utilisateur of utilisateurs"
+          [value]="utilisateur.id"
+          >{{ utilisateur.nom }} {{ utilisateur.prenom || "" }}</mat-option
+        >
+      </mat-select>
+    </mat-form-field>
+    <button
+      mat-raised-button
+      color="primary"
+      (click)="openCreateModal()"
+      aria-label="Add new signature"
+    >
+      Add Signature
+    </button>
+  </div>
+  <mat-spinner *ngIf="isLoading" aria-label="Loading signatures"></mat-spinner>
+  <table
+    mat-table
+    [dataSource]="signatures"
+    class="mat-elevation-z8"
+    aria-describedby="Signature List Table"
+    *ngIf="!isLoading"
+  >
+    <ng-container matColumnDef="status">
+      <th mat-header-cell *matHeaderCellDef>Status</th>
+      <td mat-cell *matCellDef="let signature">{{ signature.status }}</td>
+    </ng-container>
+    <ng-container matColumnDef="loiCadre">
+      <th mat-header-cell *matHeaderCellDef>Loi Cadre</th>
+      <td mat-cell *matCellDef="let signature">
+        {{ getLoiCadreName(signature.loiCadre) }}
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="mouvement">
+      <th mat-header-cell *matHeaderCellDef>Mouvement</th>
+      <td mat-cell *matCellDef="let signature">
+        {{ getMouvementName(signature.mouvement) }}
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="signataire">
+      <th mat-header-cell *matHeaderCellDef>Signataire</th>
+      <td mat-cell *matCellDef="let signature">
+        {{ getSignataireName(signature.signataire) }}
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="dateSignature">
+      <th mat-header-cell *matHeaderCellDef>Date Signature</th>
+      <td mat-cell *matCellDef="let signature">
+        {{ signature.dateSignature | date }}
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="ordre">
+      <th mat-header-cell *matHeaderCellDef>Ordre</th>
+      <td mat-cell *matCellDef="let signature">{{ signature.ordre }}</td>
+    </ng-container>
+    <ng-container matColumnDef="circuitId">
+      <th mat-header-cell *matHeaderCellDef>Circuit ID</th>
+      <td mat-cell *matCellDef="let signature">
+        {{ signature.circuitId || "-" }}
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="motifRejet">
+      <th mat-header-cell *matHeaderCellDef>Motif Rejet</th>
+      <td mat-cell *matCellDef="let signature">
+        {{ signature.motifRejet || "-" }}
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="actions">
+      <th mat-header-cell *matHeaderCellDef>Actions</th>
+      <td mat-cell *matCellDef="let signature">
+        <button
+          mat-icon-button
+          color="primary"
+          (click)="openValidateModal(signature)"
+          aria-label="Validate signature"
+          [disabled]="signature.status !== 'EN_ATTENTE'"
+        >
+          <mat-icon>check</mat-icon>
+        </button>
+        <button
+          mat-icon-button
+          color="warn"
+          (click)="openRejectModal(signature)"
+          aria-label="Reject signature"
+          [disabled]="signature.status !== 'EN_ATTENTE'"
+        >
+          <mat-icon>close</mat-icon>
+        </button>
+        <button
+          mat-icon-button
+          color="warn"
+          (click)="deleteSignature(signature.id!)"
+          aria-label="Delete signature"
+        >
+          <mat-icon>delete</mat-icon>
+        </button>
+      </td>
+    </ng-container>
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+    <tr class="mat-row" *matNoDataRow>
+      <td class="mat-cell" colspan="9">No signatures found</td>
+    </tr>
+  </table>
 </div>

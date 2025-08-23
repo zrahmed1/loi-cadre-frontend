@@ -1,89 +1,21 @@
-<div mat-dialog-content>
-	<h2 mat-dialog-title>
-		{{ data?.mouvement ? 'Modifier' : 'Nouveau' }} Mouvement
-	</h2>
-
-	<form [formGroup]="mouvementForm" (ngSubmit)="onSubmit()">
-		<div class="form-row">
-			<mat-form-field appearance="outline" class="full-width">
-				<mat-label>Type</mat-label>
-				<mat-select formControlName="type" required>
-					<mat-option *ngFor="let type of types" [value]="type">
-						{{ type }}
-					</mat-option>
-				</mat-select>
-				<mat-error *ngIf="mouvementForm.get('type')?.errors?.['required']">
-					Le type est requis
-				</mat-error>
-			</mat-form-field>
-		</div>
-
-		<div class="form-row">
-			<mat-form-field appearance="outline" class="full-width">
-				<mat-label>Poste</mat-label>
-				<mat-select formControlName="posteConcerneId">
-					<mat-option [value]="null">Aucun</mat-option>
-					<mat-option *ngFor="let poste of postes" [value]="poste.id">
-						{{ poste.codePoste }}
-					</mat-option>
-				</mat-select>
-			</mat-form-field>
-		</div>
-
-		<div class="form-row">
-			<mat-form-field appearance="outline" class="full-width">
-				<mat-label>Date d'effet</mat-label>
-				<input
-					matInput
-					[matDatepicker]="picker"
-					formControlName="dateEffet"
-					required />
-				<mat-datepicker-toggle
-					matIconSuffix
-					[for]="picker"></mat-datepicker-toggle>
-				<mat-datepicker #picker></mat-datepicker>
-				<mat-error *ngIf="mouvementForm.get('dateEffet')?.errors?.['required']">
-					La date d'effet est requise
-				</mat-error>
-			</mat-form-field>
-		</div>
-
-		<div class="form-row">
-			<mat-form-field appearance="outline" class="full-width">
-				<mat-label>Description</mat-label>
-				<textarea
-					matInput
-					formControlName="description"
-					required
-					rows="3"></textarea>
-				<mat-error
-					*ngIf="mouvementForm.get('description')?.errors?.['required']">
-					La description est requise
-				</mat-error>
-			</mat-form-field>
-		</div>
-
-		<div class="form-row">
-			<mat-form-field appearance="outline" class="full-width">
-				<mat-label>Loi Cadre</mat-label>
-				<mat-select formControlName="loiCadreId">
-					<mat-option [value]="null">Aucune</mat-option>
-					<mat-option *ngFor="let loi of lois" [value]="loi.id">
-						{{ loi.annee }} - {{ loi.version }}
-					</mat-option>
-				</mat-select>
-			</mat-form-field>
-		</div>
-
-		<div mat-dialog-actions align="end">
-			<button mat-button type="button" (click)="onCancel()">Annuler</button>
-			<button
-				mat-raised-button
-				color="primary"
-				type="submit"
-				[disabled]="mouvementForm.invalid">
-				{{ data?.mouvement ? 'Modifier' : 'Créer' }}
-			</button>
-		</div>
-	</form>
-</div>
+<h2 mat-dialog-title>
+  {{ data.mouvement ? "Edit Mouvement" : "Create Mouvement" }}
+</h2>
+<mat-dialog-content>
+  <app-mouvement-form
+    [mouvement]="data.mouvement"
+    #mouvementForm
+  ></app-mouvement-form>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button mat-button (click)="onCancel()" aria-label="Cancel">Cancel</button>
+  <button
+    mat-raised-button
+    color="primary"
+    [disabled]="!mouvementForm.mouvementForm.valid"
+    (click)="onSubmit(mouvementForm.formValue)"
+    aria-label="Save mouvement"
+  >
+    Save
+  </button>
+</mat-dialog-actions>

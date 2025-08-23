@@ -1,77 +1,100 @@
-import { Component, OnInit } from "@angular/core";
-import { CommonModule } from "@angular/common";
-import { RouterModule, ActivatedRoute, Router } from "@angular/router";
+import { Component, Input, OnInit } from "@angular/core";
 import {
-  ReactiveFormsModule,
   FormBuilder,
   FormGroup,
   Validators,
+  ReactiveFormsModule,
 } from "@angular/forms";
+import { MatFormFieldModule } from "@angular/material/form-field";
+import { MatInputModule } from "@angular/material/input";
+import { MatSelectModule } from "@angular/material/select";
+import { MatDatepickerModule } from "@angular/material/datepicker";
+import { MatNativeDateModule } from "@angular/material/core";
+import { CommonModule } from "@angular/common";
+import { Observable } from "rxjs";
+import { switchMap, startWith } from "rxjs/operators";
 import { LoiCadre } from "../../../models/loi-cadre";
-import { TypeMouvement, Mouvement } from "../../../models/mouvement";
+import {
+  Mouvement,
+  TypeMouvement,
+  StatutMouvement,
+} from "../../../models/mouvement";
 import { PosteBudgetaire } from "../../../models/poste-budgetaire";
+import { Utilisateur } from "../../../models/utilisateur";
 import { LoiCadreService } from "../../../services/loi-cadre.service";
-import { MouvementService } from "../../../services/mouvement.service";
 import { PosteBudgetaireService } from "../../../services/poste-budgetaire.service";
+import { UtilisateurService } from "../../../services/utilisateur.service";
 
 @Component({
   selector: "app-mouvement-form",
   standalone: true,
-  imports: [CommonModule, RouterModule, ReactiveFormsModule],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+  ],
   templateUrl: "./mouvement-form.component.html",
   styleUrls: ["./mouvement-form.component.scss"],
 })
 export class MouvementFormComponent implements OnInit {
+  @Input() mouvement: Mouvement | null = null;
   mouvementForm: FormGroup;
-  postes: PosteBudgetaire[] = [];
-  lois: LoiCadre[] = [];
-  types = Object.values(TypeMouvement);
-  id: number | null = null;
+  typeMouvementValues: TypeMouvement[] = Object.values(TypeMouvement);
+  statutMouvementValues: StatutMouvement[] = Object.values(StatutMouvement);
+  loisCadres$: Observable<LoiCadre[]>;
+  postes$: Observable<PosteBudgetaire[]>;
+  utilisateurs$: Observable<Utilisateur[]>;
 
   constructor(
-    private mouvementService: MouvementService,
-    private posteBudgetaireService: PosteBudgetaireService,
+    private fb: FormBuilder,
     private loiCadreService: LoiCadreService,
-    private route: ActivatedRoute,
-    private router: Router,
-    private fb: FormBuilder
+    private posteBudgetaireService: PosteBudgetaireService,
+    private utilisateurService: UtilisateurService
   ) {
     this.mouvementForm = this.fb.group({
-      type: [TypeMouvement.CREATION, Validators.required],
-      posteConcerneId: [null],
+      type: ["", Validators.required],
+      description: [""],
       dateEffet: ["", Validators.required],
-      description: ["", Validators.required],
-      loiCadreId: [null],
+      posteOrigineId: [null],
+      posteDestinationId: [null],
+      effectif: ["", [Validators.required, Validators.min(1)]],
+      status: ["", Validators.required],
+      loiCadreId: ["", Validators.required],
+      creeParId: ["", Validators.required],
     });
+    this.loisCadres$ = this.loiCadreService.getAll();
+    this.postes$ = this.mouvementForm.get("loiCadreId")!.valueChanges.pipe(
+      startWith(null),
+      switchMap((loiCadreId) =>
+        loiCadreId
+          ? this.posteBudgetaireService.getByLoiCadre(loiCadreId)
+          : this.posteBudgetaireService.getAll()
+      )
+    );
+    this.utilisateurs$ = this.utilisateurService.getAll();
   }
 
-  ngOnInit() {
-    this.id = this.route.snapshot.params["id"];
-    if (this.id) {
-      this.mouvementService
-        .getById(this.id)
-        .subscribe((mouv) => this.mouvementForm.patchValue(mouv));
+  ngOnInit(): void {
+    if (this.mouvement) {
+      this.mouvementForm.patchValue({
+        type: this.mouvement.type,
+        description: this.mouvement.description,
+        dateEffet: this.mouvement.dateEffet,
+        posteOrigineId: this.mouvement.posteOrigineId,
+        posteDestinationId: this.mouvement.posteDestinationId,
+        effectif: this.mouvement.effectif,
+        status: this.mouvement.status,
+        loiCadreId: this.mouvement.loiCadreId,
+        creeParId: this.mouvement.creeParId,
+      });
     }
-    this.posteBudgetaireService
-      .getAll()
-      .subscribe((postes) => (this.postes = postes));
-    this.loiCadreService.getAll().subscribe((lois) => (this.lois = lois));
-    const loiCadreId = this.route.snapshot.queryParams["loiCadreId"];
-    if (loiCadreId) this.mouvementForm.patchValue({ loiCadreId: +loiCadreId });
   }
 
-  save() {
-    if (this.mouvementForm.valid) {
-      const mouvement = this.mouvementForm.value as Mouvement;
-      if (this.id) {
-        this.mouvementService
-          .update(this.id, mouvement)
-          .subscribe(() => this.router.navigate(["/mouvements"]));
-      } else {
-        this.mouvementService
-          .create(mouvement.loiCadreId!, mouvement)
-          .subscribe(() => this.router.navigate(["/mouvements"]));
-      }
-    }
+  get formValue(): Mouvement {
+    return this.mouvementForm.value as Mouvement;
   }
 }

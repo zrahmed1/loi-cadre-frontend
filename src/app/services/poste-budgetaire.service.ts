@@ -1,11 +1,12 @@
-import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { environment } from '../../environments/environment';
-import { PosteBudgetaire, EtatPoste } from '../models/poste-budgetaire';
+import { Injectable } from "@angular/core";
+import { HttpClient, HttpParams } from "@angular/common/http";
+import { Observable } from "rxjs";
+import { environment } from "../../environments/environment";
+import { PosteBudgetaire, EtatPoste } from "../models/poste-budgetaire";
+import { EffectifSummary } from "../models/effectif-summary";
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: "root",
 })
 export class PosteBudgetaireService {
   private apiUrl = `${environment.apiUrl}/postes`;
@@ -21,16 +22,32 @@ export class PosteBudgetaireService {
   }
 
   getByEtablissement(etablissementId: number): Observable<PosteBudgetaire[]> {
-    return this.http.get<PosteBudgetaire[]>(`${this.apiUrl}/etablissement/${etablissementId}`);
+    return this.http.get<PosteBudgetaire[]>(
+      `${this.apiUrl}/etablissement/${etablissementId}`
+    );
+  }
+
+  getByGrade(gradeId: number): Observable<PosteBudgetaire[]> {
+    return this.http.get<PosteBudgetaire[]>(`${this.apiUrl}/grade/${gradeId}`);
+  }
+
+  getByLoiCadre(loiCadreId: number): Observable<PosteBudgetaire[]> {
+    return this.http.get<PosteBudgetaire[]>(
+      `${this.apiUrl}/loi-cadre/${loiCadreId}`
+    );
   }
 
   getByEtat(etat: EtatPoste): Observable<PosteBudgetaire[]> {
-    const params = new HttpParams().set('etat', etat);
+    const params = new HttpParams().set("etat", etat);
     return this.http.get<PosteBudgetaire[]>(`${this.apiUrl}/etat`, { params });
   }
 
   getDisponibles(): Observable<PosteBudgetaire[]> {
     return this.http.get<PosteBudgetaire[]>(`${this.apiUrl}/disponibles`);
+  }
+
+  getEffectifSummary(): Observable<EffectifSummary[]> {
+    return this.http.get<EffectifSummary[]>(`${this.apiUrl}/effectif-summary`);
   }
 
   create(poste: PosteBudgetaire): Observable<PosteBudgetaire> {

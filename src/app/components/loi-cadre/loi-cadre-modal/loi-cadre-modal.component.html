@@ -1,0 +1,21 @@
+<h2 mat-dialog-title>
+  {{ data.loiCadre ? "Edit Loi Cadre" : "Create Loi Cadre" }}
+</h2>
+<mat-dialog-content>
+  <app-loi-cadre-form
+    [loiCadre]="data.loiCadre"
+    #loiCadreForm
+  ></app-loi-cadre-form>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button mat-button (click)="onCancel()" aria-label="Cancel">Cancel</button>
+  <button
+    mat-raised-button
+    color="primary"
+    [disabled]="!loiCadreForm.loiCadreForm.valid"
+    (click)="onSubmit(loiCadreForm.formValue)"
+    aria-label="Save loi cadre"
+  >
+    Save
+  </button>
+</mat-dialog-actions>

@@ -1,12 +1,11 @@
 import { Injectable } from "@angular/core";
-import { HttpClient } from "@angular/common/http";
+import { HttpClient, HttpParams } from "@angular/common/http";
 import { Observable } from "rxjs";
 import { environment } from "../../environments/environment";
 import { LoiCadre } from "../models/loi-cadre";
 import { Mouvement } from "../models/mouvement";
 import { PosteBudgetaire } from "../models/poste-budgetaire";
 import { StatutLoiCadre } from "../models/loi-cadre";
-import { HttpParams } from "@angular/common/http";
 
 @Injectable({
   providedIn: "root",
@@ -16,16 +15,21 @@ export class LoiCadreService {
 
   constructor(private http: HttpClient) {}
 
-  createLoiCadre(data: any): Observable<any> {
-    return this.http.post(`${this.apiUrl}`, data);
-  }
-
   getAll(): Observable<LoiCadre[]> {
     return this.http.get<LoiCadre[]>(this.apiUrl);
   }
 
   getById(id: number): Observable<LoiCadre> {
     return this.http.get<LoiCadre>(`${this.apiUrl}/${id}`);
+  }
+
+  getByAnnee(annee: number): Observable<LoiCadre[]> {
+    return this.http.get<LoiCadre[]>(`${this.apiUrl}/annee/${annee}`);
+  }
+
+  getByStatut(statut: StatutLoiCadre): Observable<LoiCadre[]> {
+    const params = new HttpParams().set("statut", statut);
+    return this.http.get<LoiCadre[]>(`${this.apiUrl}/statut`, { params });
   }
 
   create(loi: LoiCadre): Observable<LoiCadre> {
@@ -62,5 +66,12 @@ export class LoiCadreService {
 
   addPoste(id: number, poste: PosteBudgetaire): Observable<LoiCadre> {
     return this.http.post<LoiCadre>(`${this.apiUrl}/${id}/postes`, poste);
+  }
+
+  exportExcel(loiCadreId: number): Observable<Blob> {
+    return this.http.get<Blob>(
+      `${environment.apiUrl}/loi-cadre/export/excel/${loiCadreId}`,
+      { responseType: "blob" as "json" }
+    );
   }
 }

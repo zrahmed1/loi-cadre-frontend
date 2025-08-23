@@ -1,31 +1,113 @@
-<form [formGroup]="mouvementForm" (ngSubmit)="save()" class="mouvement-form">
-  <div>
-    <label>Type</label>
-    <select formControlName="type" required>
-      <option *ngFor="let type of types" [value]="type">{{ type }}</option>
-    </select>
-  </div>
-  <div>
-    <label>Poste</label>
-    <select formControlName="posteConcerneId">
-      <option [value]="null">Aucun</option>
-      <option *ngFor="let poste of postes" [value]="poste.id">{{ poste.codePoste }}</option>
-    </select>
-  </div>
-  <div>
-    <label>Date d'effet</label>
-    <input formControlName="dateEffet" type="date" required>
-  </div>
-  <div>
-    <label>Description</label>
-    <input formControlName="description" required>
-  </div>
-  <div>
-    <label>Loi Cadre</label>
-    <select formControlName="loiCadreId">
-      <option [value]="null">Aucune</option>
-      <option *ngFor="let loi of lois" [value]="loi.id">{{ loi.annee }} - {{ loi.version }}</option>
-    </select>
-  </div>
-  <button type="submit" [disabled]="mouvementForm.invalid">Enregistrer</button>
+<form [formGroup]="mouvementForm" role="form" aria-label="Mouvement Form">
+  <mat-form-field appearance="fill">
+    <mat-label>Type</mat-label>
+    <mat-select formControlName="type" aria-label="Select mouvement type">
+      <mat-option *ngFor="let type of typeMouvementValues" [value]="type">{{
+        type
+      }}</mat-option>
+    </mat-select>
+    <mat-error *ngIf="mouvementForm.get('type')?.hasError('required')"
+      >Type is required</mat-error
+    >
+  </mat-form-field>
+  <mat-form-field appearance="fill">
+    <mat-label>Description</mat-label>
+    <input
+      matInput
+      formControlName="description"
+      aria-label="Mouvement description"
+    />
+  </mat-form-field>
+  <mat-form-field appearance="fill">
+    <mat-label>Date Effet</mat-label>
+    <input
+      matInput
+      [matDatepicker]="picker"
+      formControlName="dateEffet"
+      aria-label="Mouvement date effet"
+    />
+    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+    <mat-datepicker #picker></mat-datepicker>
+    <mat-error *ngIf="mouvementForm.get('dateEffet')?.hasError('required')"
+      >Date Effet is required</mat-error
+    >
+  </mat-form-field>
+  <mat-form-field appearance="fill">
+    <mat-label>Loi Cadre</mat-label>
+    <mat-select formControlName="loiCadreId" aria-label="Select loi cadre">
+      <mat-option
+        *ngFor="let loiCadre of loisCadres$ | async"
+        [value]="loiCadre.id"
+        >{{ loiCadre.annee }} (v{{ loiCadre.version }})</mat-option
+      >
+    </mat-select>
+    <mat-error *ngIf="mouvementForm.get('loiCadreId')?.hasError('required')"
+      >Loi Cadre is required</mat-error
+    >
+  </mat-form-field>
+  <mat-form-field appearance="fill">
+    <mat-label>Poste Origine</mat-label>
+    <mat-select
+      formControlName="posteOrigineId"
+      aria-label="Select poste origine"
+    >
+      <mat-option [value]="null">-- None --</mat-option>
+      <mat-option *ngFor="let poste of postes$ | async" [value]="poste.id"
+        >{{ poste.description || "Poste" }} ({{ poste.codePoste }})</mat-option
+      >
+    </mat-select>
+  </mat-form-field>
+  <mat-form-field appearance="fill">
+    <mat-label>Poste Destination</mat-label>
+    <mat-select
+      formControlName="posteDestinationId"
+      aria-label="Select poste destination"
+    >
+      <mat-option [value]="null">-- None --</mat-option>
+      <mat-option *ngFor="let poste of postes$ | async" [value]="poste.id"
+        >{{ poste.description || "Poste" }} ({{ poste.codePoste }})</mat-option
+      >
+    </mat-select>
+  </mat-form-field>
+  <mat-form-field appearance="fill">
+    <mat-label>Effectif</mat-label>
+    <input
+      matInput
+      type="number"
+      formControlName="effectif"
+      aria-label="Mouvement effectif"
+    />
+    <mat-error *ngIf="mouvementForm.get('effectif')?.hasError('required')"
+      >Effectif is required</mat-error
+    >
+    <mat-error *ngIf="mouvementForm.get('effectif')?.hasError('min')"
+      >Effectif must be at least 1</mat-error
+    >
+  </mat-form-field>
+  <mat-form-field appearance="fill">
+    <mat-label>Status</mat-label>
+    <mat-select formControlName="status" aria-label="Select mouvement status">
+      <mat-option
+        *ngFor="let status of statutMouvementValues"
+        [value]="status"
+        >{{ status }}</mat-option
+      >
+    </mat-select>
+    <mat-error *ngIf="mouvementForm.get('status')?.hasError('required')"
+      >Status is required</mat-error
+    >
+  </mat-form-field>
+  <mat-form-field appearance="fill">
+    <mat-label>Created By</mat-label>
+    <mat-select formControlName="creeParId" aria-label="Select creator">
+      <mat-option
+        *ngFor="let utilisateur of utilisateurs$ | async"
+        [value]="utilisateur.id"
+        >{{ utilisateur.nom }} {{ utilisateur.prenom || "" }}</mat-option
+      >
+    </mat-select>
+    <mat-error *ngIf="mouvementForm.get('creeParId')?.hasError('required')"
+      >Creator is required</mat-error
+    >
+  </mat-form-field>
 </form>

@@ -1,0 +1,21 @@
+<h2 mat-dialog-title>
+  {{ data.poste ? "Edit Poste Budgetaire" : "Create Poste Budgetaire" }}
+</h2>
+<mat-dialog-content>
+  <app-poste-budgetaire-form
+    [poste]="data.poste"
+    #posteForm
+  ></app-poste-budgetaire-form>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button mat-button (click)="onCancel()" aria-label="Cancel">Cancel</button>
+  <button
+    mat-raised-button
+    color="primary"
+    [disabled]="!posteForm.posteForm.valid"
+    (click)="onSubmit(posteForm.formValue)"
+    aria-label="Save poste budgetaire"
+  >
+    Save
+  </button>
+</mat-dialog-actions>

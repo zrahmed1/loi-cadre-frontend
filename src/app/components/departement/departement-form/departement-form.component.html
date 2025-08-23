@@ -1,14 +1,62 @@
-<form [formGroup]="departementForm" (ngSubmit)="save()" class="departement-form">
-  <div>
-    <label>Nom</label>
-    <input formControlName="nom" required>
-  </div>
-  <div>
-    <label>Responsable</label>
-    <select formControlName="responsableId">
-      <option [value]="null">Aucun</option>
-      <option *ngFor="let user of utilisateurs" [value]="user.id">{{ user.nom }} {{ user.prenom }}</option>
-    </select>
-  </div>
-  <button type="submit" [disabled]="departementForm.invalid">Enregistrer</button>
+<form [formGroup]="departementForm" role="form" aria-label="Departement Form">
+  <mat-form-field appearance="fill">
+    <mat-label>Code (10 characters)</mat-label>
+    <input
+      matInput
+      formControlName="code"
+      placeholder="e.g., DDCCRRGGEE"
+      aria-label="Departement code"
+    />
+    <mat-error *ngIf="departementForm.get('code')?.hasError('required')"
+      >Code is required</mat-error
+    >
+    <mat-error
+      *ngIf="
+        departementForm.get('code')?.hasError('pattern') ||
+        departementForm.get('code')?.hasError('maxlength')
+      "
+    >
+      Code must be exactly 10 alphanumeric characters (e.g., DDCCRRGGEE)
+    </mat-error>
+  </mat-form-field>
+  <mat-form-field appearance="fill">
+    <mat-label>Nom</mat-label>
+    <input matInput formControlName="nom" aria-label="Departement nom" />
+    <mat-error *ngIf="departementForm.get('nom')?.hasError('required')"
+      >Nom is required</mat-error
+    >
+    <mat-error *ngIf="departementForm.get('nom')?.hasError('maxlength')"
+      >Nom cannot exceed 100 characters</mat-error
+    >
+  </mat-form-field>
+  <mat-form-field appearance="fill">
+    <mat-label>Etablissement</mat-label>
+    <mat-select
+      formControlName="etablissementId"
+      aria-label="Select etablissement"
+    >
+      <mat-option
+        *ngFor="let etablissement of etablissements$ | async"
+        [value]="etablissement.id"
+      >
+        {{ etablissement.nom }} ({{ etablissement.code }})
+      </mat-option>
+    </mat-select>
+    <mat-error
+      *ngIf="departementForm.get('etablissementId')?.hasError('required')"
+      >Etablissement is required</mat-error
+    >
+  </mat-form-field>
+  <mat-form-field appearance="fill">
+    <mat-label>Responsable</mat-label>
+    <mat-select formControlName="responsable" aria-label="Select responsable">
+      <mat-option [value]="null">-- None --</mat-option>
+      <mat-option
+        *ngFor="let utilisateur of utilisateurs$ | async"
+        [value]="utilisateur.id"
+      >
+        {{ utilisateur.nom }} {{ utilisateur.prenom || "" }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
 </form>

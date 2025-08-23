@@ -1,96 +1,110 @@
-<div class="etablissement-list">
-  <h1>Établissements</h1>
-
-  <div class="buttonWrapper">
+<div
+  class="etablissement-list-container"
+  role="region"
+  aria-label="Etablissement Management"
+>
+  <h2>Etablissement Management</h2>
+  <div class="search-container">
+    <mat-form-field appearance="fill">
+      <mat-label>Search by Code</mat-label>
+      <input
+        matInput
+        [(ngModel)]="searchCode"
+        (ngModelChange)="searchByCode()"
+        aria-label="Search etablissements by code"
+      />
+      <button
+        mat-icon-button
+        matSuffix
+        (click)="resetSearch()"
+        aria-label="Reset search"
+      >
+        <mat-icon>clear</mat-icon>
+      </button>
+    </mat-form-field>
+    <mat-form-field appearance="fill">
+      <mat-label>Search by Responsable ID</mat-label>
+      <input
+        matInput
+        type="number"
+        [(ngModel)]="searchResponsableId"
+        (ngModelChange)="searchByResponsable()"
+        aria-label="Search etablissements by responsable ID"
+      />
+      <button
+        mat-icon-button
+        matSuffix
+        (click)="resetSearch()"
+        aria-label="Reset search"
+      >
+        <mat-icon>clear</mat-icon>
+      </button>
+    </mat-form-field>
     <button
       mat-raised-button
       color="primary"
-      (click)="openCreateEtablissementModal()"
+      (click)="openCreateModal()"
+      aria-label="Add new etablissement"
     >
-      Nouvel Établissement
+      Add Etablissement
     </button>
   </div>
-
-  <form [formGroup]="filterForm" class="filters">
-    <mat-form-field appearance="outline" style="width: 300px">
-      <mat-label>Département</mat-label>
-      <mat-select formControlName="selectedDepartement">
-        <mat-option [value]="null">Tous les départements</mat-option>
-        <mat-option *ngFor="let dep of departements" [value]="dep.id">
-          {{ dep.nom }}
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
-  </form>
-
+  <mat-spinner
+    *ngIf="isLoading"
+    aria-label="Loading etablissements"
+  ></mat-spinner>
   <table
     mat-table
-    [dataSource]="dataSource"
-    class="mat-elevation-z2 full-width-table"
+    [dataSource]="etablissements"
+    class="mat-elevation-z8"
+    aria-describedby="Etablissement List Table"
+    *ngIf="!isLoading"
   >
-    <!-- Nom -->
+    <ng-container matColumnDef="code">
+      <th mat-header-cell *matHeaderCellDef>Code</th>
+      <td mat-cell *matCellDef="let etablissement">{{ etablissement.code }}</td>
+    </ng-container>
     <ng-container matColumnDef="nom">
       <th mat-header-cell *matHeaderCellDef>Nom</th>
-      <td mat-cell *matCellDef="let etab">{{ etab.nom }}</td>
+      <td mat-cell *matCellDef="let etablissement">{{ etablissement.nom }}</td>
     </ng-container>
-
-    <!-- Départements -->
-    <ng-container matColumnDef="departement">
-      <th mat-header-cell *matHeaderCellDef>Départements</th>
-      <td mat-cell *matCellDef="let etab">
-        <ng-container *ngIf="etab.departements?.length > 0; else aucun">
-          <div>
-            <mat-chip
-              *ngFor="let dep of etab.departements"
-              color="primary"
-              selected
-            >
-              {{ dep.nom }}
-            </mat-chip>
-          </div>
-        </ng-container>
-        <ng-template #aucun><span>Aucun</span></ng-template>
+    <ng-container matColumnDef="responsableId">
+      <th mat-header-cell *matHeaderCellDef>Responsable ID</th>
+      <td mat-cell *matCellDef="let etablissement">
+        {{ etablissement.responsableId || "-" }}
       </td>
     </ng-container>
-
-    <!-- Actions -->
+    <ng-container matColumnDef="departements">
+      <th mat-header-cell *matHeaderCellDef>Departements</th>
+      <td mat-cell *matCellDef="let etablissement">
+        {{ getDepartementNames(etablissement) }}
+      </td>
+    </ng-container>
     <ng-container matColumnDef="actions">
       <th mat-header-cell *matHeaderCellDef>Actions</th>
-      <td mat-cell *matCellDef="let etab">
+      <td mat-cell *matCellDef="let etablissement">
         <button
-          mat-button
+          mat-icon-button
           color="primary"
-          [routerLink]="['/etablissement', etab.id]"
+          (click)="openEditModal(etablissement)"
+          aria-label="Edit etablissement"
         >
-          Détails
+          <mat-icon>edit</mat-icon>
         </button>
         <button
-          mat-button
-          color="accent"
-          (click)="openCreateEtablissementModal(etab)"
-        >
-          Modifier
-        </button>
-
-        <button
-          mat-button
+          mat-icon-button
           color="warn"
-          *ngIf="etab.id !== undefined"
-          (click)="delete(etab.id)"
+          (click)="deleteEtablissement(etablissement.id!)"
+          aria-label="Delete etablissement"
         >
-          Supprimer
+          <mat-icon>delete</mat-icon>
         </button>
       </td>
     </ng-container>
-
-    <!-- Header & Row declarations -->
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
     <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+    <tr class="mat-row" *matNoDataRow>
+      <td class="mat-cell" colspan="5">No etablissements found</td>
+    </tr>
   </table>
-
-  <!-- Pagination -->
-  <mat-paginator
-    [pageSizeOptions]="[5, 10, 20]"
-    showFirstLastButtons
-  ></mat-paginator>
 </div>

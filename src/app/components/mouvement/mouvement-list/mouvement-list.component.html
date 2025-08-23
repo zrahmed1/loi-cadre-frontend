@@ -1,119 +1,147 @@
-<div class="mouvement-list">
-	<h1>Mouvements</h1>
-
-	<form [formGroup]="filterForm" class="filters">
-		<mat-form-field appearance="outline">
-			<mat-label>Loi Cadre</mat-label>
-			<mat-select formControlName="selectedLoiCadre">
-				<mat-option [value]="null">Toutes les lois</mat-option>
-				<mat-option *ngFor="let loi of lois" [value]="loi.id">
-					{{ loi.annee }} - {{ loi.version }}
-				</mat-option>
-			</mat-select>
-		</mat-form-field>
-
-		<mat-form-field appearance="outline">
-			<mat-label>Poste</mat-label>
-			<mat-select formControlName="selectedPoste">
-				<mat-option [value]="null">Tous les postes</mat-option>
-				<mat-option *ngFor="let poste of postes" [value]="poste.id">
-					{{ poste.codePoste }}
-				</mat-option>
-			</mat-select>
-		</mat-form-field>
-
-		<mat-form-field appearance="outline">
-			<mat-label>Type</mat-label>
-			<mat-select formControlName="selectedType">
-				<mat-option [value]="null">Tous les types</mat-option>
-				<mat-option *ngFor="let type of types" [value]="type">
-					{{ type }}
-				</mat-option>
-			</mat-select>
-		</mat-form-field>
-	</form>
-
-	<div class="actions">
-		<button mat-raised-button color="primary" (click)="openMouvementModal()">
-			Nouveau Mouvement
-		</button>
-	</div>
-
-	<table mat-table [dataSource]="mouvements" class="mat-elevation-z2">
-		<ng-container matColumnDef="type">
-			<th mat-header-cell *matHeaderCellDef>Type</th>
-			<td mat-cell *matCellDef="let mouvement">{{ mouvement.type }}</td>
-		</ng-container>
-
-		<ng-container matColumnDef="poste">
-			<th mat-header-cell *matHeaderCellDef>Poste</th>
-			<td mat-cell *matCellDef="let mouvement">
-				{{ mouvement.posteConcerne?.codePoste }}
-			</td>
-		</ng-container>
-
-		<ng-container matColumnDef="description">
-			<th mat-header-cell *matHeaderCellDef>Description</th>
-			<td mat-cell *matCellDef="let mouvement">{{ mouvement.description }}</td>
-		</ng-container>
-
-		<ng-container matColumnDef="dateEffet">
-			<th mat-header-cell *matHeaderCellDef>Date d'effet</th>
-			<td mat-cell *matCellDef="let mouvement">{{ mouvement.dateEffet }}</td>
-		</ng-container>
-
-		<ng-container matColumnDef="loiCadre">
-			<th mat-header-cell *matHeaderCellDef>Loi Cadre</th>
-			<td mat-cell *matCellDef="let mouvement">
-				{{ mouvement.loiCadre?.annee }} - {{ mouvement.loiCadre?.version }}
-			</td>
-		</ng-container>
-
-		<ng-container matColumnDef="actions">
-			<th mat-header-cell *matHeaderCellDef>Actions</th>
-			<td mat-cell *matCellDef="let mouvement">
-				<button
-					mat-button
-					color="primary"
-					(click)="openMouvementModal(mouvement)">
-					Modifier
-				</button>
-				<button
-					mat-button
-					color="warn"
-					*ngIf="mouvement.id !== undefined"
-					(click)="delete(mouvement.id)">
-					Supprimer
-				</button>
-			</td>
-		</ng-container>
-
-		<tr
-			mat-header-row
-			*matHeaderRowDef="[
-				'type',
-				'poste',
-				'description',
-				'dateEffet',
-				'loiCadre',
-				'actions'
-			]"></tr>
-		<tr
-			mat-row
-			*matRowDef="
-				let row;
-				columns: [
-					'type',
-					'poste',
-					'description',
-					'dateEffet',
-					'loiCadre',
-					'actions'
-				]
-			"></tr>
-	</table>
-
-	<mat-paginator
-		[pageSize]="10"
-		[pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>
+<div
+  class="mouvement-list-container"
+  role="region"
+  aria-label="Mouvement Management"
+>
+  <h2>Mouvement Management</h2>
+  <div class="search-container">
+    <mat-form-field appearance="fill">
+      <mat-label>Search by Type</mat-label>
+      <mat-select
+        [(ngModel)]="searchType"
+        (ngModelChange)="searchByType()"
+        aria-label="Search mouvements by type"
+      >
+        <mat-option [value]="''">-- All --</mat-option>
+        <mat-option *ngFor="let type of typeMouvementValues" [value]="type">{{
+          type
+        }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field appearance="fill">
+      <mat-label>Search by Status</mat-label>
+      <mat-select
+        [(ngModel)]="searchStatus"
+        (ngModelChange)="searchByStatus()"
+        aria-label="Search mouvements by status"
+      >
+        <mat-option [value]="''">-- All --</mat-option>
+        <mat-option
+          *ngFor="let status of statutMouvementValues"
+          [value]="status"
+          >{{ status }}</mat-option
+        >
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field appearance="fill">
+      <mat-label>Search by Loi Cadre</mat-label>
+      <mat-select
+        [(ngModel)]="searchLoiCadreId"
+        (ngModelChange)="searchByLoiCadre()"
+        aria-label="Search mouvements by loi cadre"
+      >
+        <mat-option [value]="''">-- All --</mat-option>
+        <mat-option *ngFor="let loiCadre of loisCadres" [value]="loiCadre.id"
+          >{{ loiCadre.annee }} (v{{ loiCadre.version }})</mat-option
+        >
+      </mat-select>
+    </mat-form-field>
+    <button
+      mat-raised-button
+      color="primary"
+      (click)="openCreateModal()"
+      aria-label="Add new mouvement"
+    >
+      Add Mouvement
+    </button>
+  </div>
+  <mat-spinner *ngIf="isLoading" aria-label="Loading mouvements"></mat-spinner>
+  <table
+    mat-table
+    [dataSource]="mouvements"
+    class="mat-elevation-z8"
+    aria-describedby="Mouvement List Table"
+    *ngIf="!isLoading"
+  >
+    <ng-container matColumnDef="type">
+      <th mat-header-cell *matHeaderCellDef>Type</th>
+      <td mat-cell *matCellDef="let mouvement">{{ mouvement.type }}</td>
+    </ng-container>
+    <ng-container matColumnDef="description">
+      <th mat-header-cell *matHeaderCellDef>Description</th>
+      <td mat-cell *matCellDef="let mouvement">
+        {{ mouvement.description || "-" }}
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="dateEffet">
+      <th mat-header-cell *matHeaderCellDef>Date Effet</th>
+      <td mat-cell *matCellDef="let mouvement">
+        {{ mouvement.dateEffet | date }}
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="posteOrigine">
+      <th mat-header-cell *matHeaderCellDef>Poste Origine</th>
+      <td mat-cell *matCellDef="let mouvement">
+        {{ getPosteName(mouvement.posteOrigine) }}
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="posteDestination">
+      <th mat-header-cell *matHeaderCellDef>Poste Destination</th>
+      <td mat-cell *matCellDef="let mouvement">
+        {{ getPosteName(mouvement.posteDestination) }}
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="effectif">
+      <th mat-header-cell *matHeaderCellDef>Effectif</th>
+      <td mat-cell *matCellDef="let mouvement">{{ mouvement.effectif }}</td>
+    </ng-container>
+    <ng-container matColumnDef="status">
+      <th mat-header-cell *matHeaderCellDef>Status</th>
+      <td mat-cell *matCellDef="let mouvement">{{ mouvement.status }}</td>
+    </ng-container>
+    <ng-container matColumnDef="loiCadre">
+      <th mat-header-cell *matHeaderCellDef>Loi Cadre</th>
+      <td mat-cell *matCellDef="let mouvement">
+        {{ getLoiCadreName(mouvement.loiCadre) }}
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="creePar">
+      <th mat-header-cell *matHeaderCellDef>Created By</th>
+      <td mat-cell *matCellDef="let mouvement">
+        {{ getCreeParName(mouvement.creePar) }}
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="dateCreation">
+      <th mat-header-cell *matHeaderCellDef>Date Creation</th>
+      <td mat-cell *matCellDef="let mouvement">
+        {{ mouvement.dateCreation | date }}
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="actions">
+      <th mat-header-cell *matHeaderCellDef>Actions</th>
+      <td mat-cell *matCellDef="let mouvement">
+        <button
+          mat-icon-button
+          color="primary"
+          (click)="openEditModal(mouvement)"
+          aria-label="Edit mouvement"
+        >
+          <mat-icon>edit</mat-icon>
+        </button>
+        <button
+          mat-icon-button
+          color="warn"
+          (click)="deleteMouvement(mouvement.id!)"
+          aria-label="Delete mouvement"
+        >
+          <mat-icon>delete</mat-icon>
+        </button>
+      </td>
+    </ng-container>
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+    <tr class="mat-row" *matNoDataRow>
+      <td class="mat-cell" colspan="10">No mouvements found</td>
+    </tr>
+  </table>
 </div>

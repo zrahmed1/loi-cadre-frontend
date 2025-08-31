@@ -9,7 +9,7 @@ import { MatButtonModule } from "@angular/material/button";
 import { catchError, throwError } from "rxjs";
 import { CommonModule } from "@angular/common";
 import { MouvementFormComponent } from "../mouvement-form/mouvement-form.component";
-import { Mouvement } from "../../../models/mouvement";
+import { Mouvement, MouvementRequest } from "../../../models/mouvement";
 import { MouvementService } from "../../../services/mouvement.service";
 
 @Component({
@@ -34,9 +34,21 @@ export class MouvementModalComponent {
   ) {}
 
   onSubmit(formValue: Mouvement): void {
+    // Map form value to request interface
+    const request: MouvementRequest = {
+      type: formValue.type,
+      description: formValue.description,
+      dateEffet: formValue.dateEffet,
+      posteOrigineId: formValue.posteOrigineId,
+      posteDestinationId: formValue.posteDestinationId,
+      effectif: formValue.effectif,
+      // include creator id in request body as backend expects 'creeParId'
+      creeParId: formValue.creeParId || formValue.creePar?.id || 1,
+    };
+
     const operation = this.data.mouvement
-      ? this.mouvementService.update(this.data.mouvement.id!, formValue)
-      : this.mouvementService.create(formValue.loiCadreId!, formValue);
+      ? this.mouvementService.update(this.data.mouvement.id!, request)
+      : this.mouvementService.create(formValue.loiCadreId!, request);
 
     operation
       .pipe(

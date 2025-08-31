@@ -10,7 +10,7 @@ import { MatInputModule } from "@angular/material/input";
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { FormsModule } from "@angular/forms";
 import { CommonModule } from "@angular/common";
-import { Departement } from "../../../models/departement";
+import { Departement, DepartementDto } from "../../../models/departement";
 import { DepartementService } from "../../../services/departement.service";
 import { EtablissementService } from "../../../services/etablissement.service";
 import { DepartementModalComponent } from "../departement-modal/departement-create-modal.component";
@@ -33,8 +33,8 @@ import { DepartementModalComponent } from "../departement-modal/departement-crea
   styleUrls: ["./departement-list.component.scss"],
 })
 export class DepartementListComponent implements OnInit {
-  departements: Departement[] = [];
-  displayedColumns: string[] = ["code", "nom", "etablissement", "actions"];
+  departements: DepartementDto[] = [];
+  displayedColumns: string[] = ["code", "nom", "etablissementNom", "responsableNom", "actions"];
   searchEtablissementCode: string = "";
   isLoading: boolean = false;
 
@@ -67,29 +67,9 @@ export class DepartementListComponent implements OnInit {
       .subscribe({
         next: (departements) => {
           this.departements = departements;
-          this.loadEtablissements();
           this.isLoading = false;
         },
       });
-  }
-
-  loadEtablissements(): void {
-    this.departements.forEach((departement) => {
-      if (departement.etablissementId) {
-        this.etablissementService
-          .getById(departement.etablissementId)
-          .subscribe({
-            next: (etablissement) => {
-              departement.etablissement = etablissement;
-            },
-            error: (err) =>
-              console.error(
-                `Error loading etablissement ${departement.etablissementId}:`,
-                err
-              ),
-          });
-      }
-    });
   }
 
   searchByEtablissementCode(): void {
@@ -116,7 +96,6 @@ export class DepartementListComponent implements OnInit {
               .subscribe({
                 next: (departements) => {
                   this.departements = departements;
-                  this.loadEtablissements();
                   this.isLoading = false;
                 },
                 error: (err) => {
@@ -154,10 +133,19 @@ export class DepartementListComponent implements OnInit {
     });
   }
 
-  openEditModal(departement: Departement): void {
+  openEditModal(departement: DepartementDto): void {
+    // Convert DTO back to the form model for editing
+    const formDepartement: Departement = {
+      id: departement.id,
+      code: departement.code,
+      nom: departement.nom,
+      etablissementId: departement.etablissementId,
+      responsable: departement.responsableId ? { id: departement.responsableId } : undefined
+    };
+    
     const dialogRef = this.dialog.open(DepartementModalComponent, {
       width: "400px",
-      data: { departement },
+      data: { departement: formDepartement },
       ariaLabel: "Edit Departement Dialog",
     });
 
@@ -193,9 +181,5 @@ export class DepartementListComponent implements OnInit {
           },
         });
     }
-  }
-
-  getEtablissementName(departement: Departement): string {
-    return departement.etablissement?.nom || "-";
   }
 }

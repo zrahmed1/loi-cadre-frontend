@@ -11,15 +11,17 @@
     aria-label="Navigation Menu"
   >
     <mat-nav-list>
-      <a
-        mat-list-item
-        *ngFor="let link of navLinks"
-        [routerLink]="link.path"
-        routerLinkActive="active"
-        [attr.aria-label]="link.label"
-      >
-        {{ link.label }}
-      </a>
+      <ng-container *ngFor="let link of navLinks">
+        <a
+          mat-list-item
+          *ngIf="canShowLink(link)"
+          [routerLink]="link.path"
+          routerLinkActive="active"
+          [attr.aria-label]="link.label"
+        >
+          {{ link.label }}
+        </a>
+      </ng-container>
     </mat-nav-list>
   </mat-sidenav>
   <mat-sidenav-content>

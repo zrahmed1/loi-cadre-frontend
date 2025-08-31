@@ -14,7 +14,7 @@ import { CommonModule } from "@angular/common";
 import { Etablissement } from "../../../models/etablissement";
 import { Grade } from "../../../models/grade";
 import { LoiCadre } from "../../../models/loi-cadre";
-import { PosteBudgetaire, EtatPoste } from "../../../models/poste-budgetaire";
+import { PosteBudgetaire, PosteBudgetaireDto, EtatPoste } from "../../../models/poste-budgetaire";
 import { EtablissementService } from "../../../services/etablissement.service";
 import { GradeService } from "../../../services/grade.service";
 import { LoiCadreService } from "../../../services/loi-cadre.service";
@@ -40,16 +40,16 @@ import { PosteBudgetaireModalComponent } from "../poste-budgetaire-modal/poste-b
   styleUrls: ["./poste-budgetaire-list.component.scss"],
 })
 export class PosteBudgetaireListComponent implements OnInit {
-  postes: PosteBudgetaire[] = [];
+  postes: PosteBudgetaireDto[] = [];
   displayedColumns: string[] = [
     "codePoste",
     "description",
     "effectifInitial",
     "effectifFinal",
     "etat",
-    "loiCadre",
-    "grade",
-    "etablissement",
+    "loiCadreAnnee",
+    "gradeLibelle",
+    "etablissementNom",
     "actions",
   ];
   searchLoiCadreId: string = "";
@@ -273,10 +273,23 @@ export class PosteBudgetaireListComponent implements OnInit {
     });
   }
 
-  openEditModal(poste: PosteBudgetaire): void {
+  openEditModal(poste: PosteBudgetaireDto): void {
+    // Convert DTO back to the form model for editing
+    const formPoste: PosteBudgetaire = {
+      id: poste.id,
+      codePoste: poste.codePoste,
+      description: poste.description,
+      effectifInitial: poste.effectifInitial,
+      effectifFinal: poste.effectifFinal,
+      etat: poste.etat,
+      loiCadreId: poste.loiCadreId,
+      gradeId: poste.grade.id,
+      etablissementId: poste.etablissementId
+    };
+    
     const dialogRef = this.dialog.open(PosteBudgetaireModalComponent, {
       width: "600px",
-      data: { poste },
+      data: { poste: formPoste },
       ariaLabel: "Edit Poste Budgetaire Dialog",
     });
 
@@ -312,17 +325,5 @@ export class PosteBudgetaireListComponent implements OnInit {
           },
         });
     }
-  }
-
-  getLoiCadreName(loiCadre?: LoiCadre): string {
-    return loiCadre ? `${loiCadre.annee} (v${loiCadre.version})` : "-";
-  }
-
-  getGradeName(grade?: Grade): string {
-    return grade ? `${grade.libelle} (${grade.code})` : "-";
-  }
-
-  getEtablissementName(etablissement?: Etablissement): string {
-    return etablissement ? `${etablissement.nom} (${etablissement.code})` : "-";
   }
 }

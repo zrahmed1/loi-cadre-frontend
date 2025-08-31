@@ -2,7 +2,7 @@ import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { Observable } from "rxjs";
 import { environment } from "../../environments/environment";
-import { Etablissement } from "../models/etablissement";
+import { Etablissement, EtablissementDto, SaveEtablissementRequest, EtablissementRequest } from "../models/etablissement";
 
 @Injectable({
   providedIn: "root",
@@ -12,30 +12,30 @@ export class EtablissementService {
 
   constructor(private http: HttpClient) {}
 
-  getAll(): Observable<Etablissement[]> {
-    return this.http.get<Etablissement[]>(this.apiUrl);
+  getAll(): Observable<EtablissementDto[]> {
+    return this.http.get<EtablissementDto[]>(this.apiUrl);
   }
 
-  getById(id: number): Observable<Etablissement> {
-    return this.http.get<Etablissement>(`${this.apiUrl}/${id}`);
+  getById(id: number): Observable<EtablissementDto> {
+    return this.http.get<EtablissementDto>(`${this.apiUrl}/${id}`);
   }
 
-  getByCode(code: string): Observable<Etablissement> {
-    return this.http.get<Etablissement>(`${this.apiUrl}/code/${code}`);
+  getByCode(code: string): Observable<EtablissementDto> {
+    return this.http.get<EtablissementDto>(`${this.apiUrl}/code/${code}`);
   }
 
-  getByResponsable(responsableId: number): Observable<Etablissement[]> {
-    return this.http.get<Etablissement[]>(
+  getByResponsable(responsableId: number): Observable<EtablissementDto[]> {
+    return this.http.get<EtablissementDto[]>(
       `${this.apiUrl}/responsable/${responsableId}`
     );
   }
 
-  create(etablissement: Etablissement): Observable<Etablissement> {
-    return this.http.post<Etablissement>(this.apiUrl, etablissement);
+  create(request: SaveEtablissementRequest): Observable<EtablissementDto> {
+    return this.http.post<EtablissementDto>(this.apiUrl, request);
   }
 
-  update(id: number, etablissement: Etablissement): Observable<Etablissement> {
-    return this.http.put<Etablissement>(`${this.apiUrl}/${id}`, etablissement);
+  update(id: number, request: EtablissementRequest): Observable<EtablissementDto> {
+    return this.http.put<EtablissementDto>(`${this.apiUrl}/${id}`, request);
   }
 
   delete(id: number): Observable<void> {

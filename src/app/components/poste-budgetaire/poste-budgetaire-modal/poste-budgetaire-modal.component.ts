@@ -9,7 +9,7 @@ import { MatButtonModule } from "@angular/material/button";
 import { catchError, throwError } from "rxjs";
 import { CommonModule } from "@angular/common";
 import { PosteBudgetaireFormComponent } from "../poste-budgetaire-form/poste-budgetaire-form.component";
-import { PosteBudgetaire } from "../../../models/poste-budgetaire";
+import { PosteBudgetaire, PosteRequest } from "../../../models/poste-budgetaire";
 import { PosteBudgetaireService } from "../../../services/poste-budgetaire.service";
 
 @Component({
@@ -34,9 +34,21 @@ export class PosteBudgetaireModalComponent {
   ) {}
 
   onSubmit(formValue: PosteBudgetaire): void {
+    // Map form value to request interface
+    const request: PosteRequest = {
+      codePoste: formValue.codePoste,
+      description: formValue.description,
+      etat: formValue.etat!,
+      gradeId: formValue.gradeId!,
+      effectifInitial: formValue.effectifInitial!,
+      effectifFinal: formValue.effectifFinal || formValue.effectifInitial!,
+      etablissementId: formValue.etablissementId!,
+      loiCadreId: formValue.loiCadreId
+    };
+
     const operation = this.data.poste
-      ? this.posteBudgetaireService.update(this.data.poste.id!, formValue)
-      : this.posteBudgetaireService.create(formValue);
+      ? this.posteBudgetaireService.update(this.data.poste.id!, request)
+      : this.posteBudgetaireService.create(request);
 
     operation
       .pipe(

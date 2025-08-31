@@ -10,7 +10,7 @@ import { MatButtonModule } from "@angular/material/button";
 import { catchError, throwError } from "rxjs";
 import { CommonModule } from "@angular/common";
 import { EtablissementFormComponent } from "../etablissemet-form/etablissemet-form.component";
-import { Etablissement } from "../../../models/etablissement";
+import { Etablissement, EtablissementRequest, SaveEtablissementRequest } from "../../../models/etablissement";
 import { EtablissementService } from "../../../services/etablissement.service";
 
 @Component({
@@ -36,9 +36,24 @@ export class EtablissementModalComponent {
   ) {}
 
   onSubmit(formValue: Etablissement): void {
+    // Map form value to request interface
+    const updateRequest: EtablissementRequest = {
+      code: formValue.code,
+      nom: formValue.nom,
+      userId: formValue.userId || formValue.responsable?.id, // Use userId or responsable ID
+      departementsId: formValue.departements?.map(d => d.id).filter(id => id !== undefined) as number[]
+    };
+
+    const createRequest: SaveEtablissementRequest = {
+      code: formValue.code,
+      nom: formValue.nom,
+      userID: formValue.userId || formValue.responsable?.id, // Use correct property name
+      departementsID: formValue.departements?.map(d => d.id).filter(id => id !== undefined) as number[]
+    };
+
     const operation = this.data.etablissement
-      ? this.etablissementService.update(this.data.etablissement.id!, formValue)
-      : this.etablissementService.create(formValue);
+      ? this.etablissementService.update(this.data.etablissement.id!, updateRequest)
+      : this.etablissementService.create(createRequest);
 
     operation
       .pipe(

@@ -38,7 +38,7 @@ export class GradeFormComponent implements OnInit {
         ],
       ],
       libelle: ["", [Validators.required, Validators.maxLength(100)]],
-      description: ["", Validators.maxLength(500)],
+  // description removed: not present on backend
     });
   }
 

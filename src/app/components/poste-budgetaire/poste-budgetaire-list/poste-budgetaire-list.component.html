@@ -96,20 +96,20 @@
       <th mat-header-cell *matHeaderCellDef>Etat</th>
       <td mat-cell *matCellDef="let poste">{{ poste.etat }}</td>
     </ng-container>
-    <ng-container matColumnDef="loiCadre">
+    <ng-container matColumnDef="loiCadreAnnee">
       <th mat-header-cell *matHeaderCellDef>Loi Cadre</th>
       <td mat-cell *matCellDef="let poste">
-        {{ getLoiCadreName(poste.loiCadre) }}
+        {{ poste.loiCadreAnnee }} (v{{ poste.loiCadreVersion }})
       </td>
     </ng-container>
-    <ng-container matColumnDef="grade">
+    <ng-container matColumnDef="gradeLibelle">
       <th mat-header-cell *matHeaderCellDef>Grade</th>
-      <td mat-cell *matCellDef="let poste">{{ getGradeName(poste.grade) }}</td>
+      <td mat-cell *matCellDef="let poste">{{ poste.grade.libelle }} ({{ poste.grade.code }})</td>
     </ng-container>
-    <ng-container matColumnDef="etablissement">
+    <ng-container matColumnDef="etablissementNom">
       <th mat-header-cell *matHeaderCellDef>Etablissement</th>
       <td mat-cell *matCellDef="let poste">
-        {{ getEtablissementName(poste.etablissement) }}
+        {{ poste.etablissementNom }} ({{ poste.etablissementCode }})
       </td>
     </ng-container>
     <ng-container matColumnDef="actions">

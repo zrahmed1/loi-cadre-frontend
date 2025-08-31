@@ -9,7 +9,7 @@ import { MatButtonModule } from "@angular/material/button";
 import { catchError, throwError } from "rxjs";
 import { CommonModule } from "@angular/common";
 import { DepartementFormComponent } from "../departement-form/departement-form.component";
-import { Departement } from "../../../models/departement";
+import { Departement, DepartementRequest, SaveDepartementRequest } from "../../../models/departement";
 import { DepartementService } from "../../../services/departement.service";
 
 @Component({
@@ -34,9 +34,23 @@ export class DepartementModalComponent {
   ) {}
 
   onSubmit(formValue: Departement): void {
+    // Map form value to request interface
+    const request = this.data.departement 
+      ? {
+          nom: formValue.nom,
+          code: formValue.code,
+          userId: formValue.userId || formValue.responsable?.id, // Use userId or responsable ID
+          etablissementId: formValue.etablissementId!
+        } as DepartementRequest
+      : {
+          nom: formValue.nom,
+          code: formValue.code,
+          EtablissementId: formValue.etablissementId!
+        } as SaveDepartementRequest;
+
     const operation = this.data.departement
-      ? this.departementService.update(this.data.departement.id!, formValue)
-      : this.departementService.create(formValue);
+      ? this.departementService.update(this.data.departement.id!, request as DepartementRequest)
+      : this.departementService.create(request as SaveDepartementRequest);
 
     operation
       .pipe(

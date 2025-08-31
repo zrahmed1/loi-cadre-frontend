@@ -44,14 +44,12 @@ export class SignatureModalComponent {
       if (formValue.loiCadreId) {
         operation = this.signatureService.createLoiSignature(
           formValue.loiCadreId!,
-          formValue.signataireId!,
-          formValue.circuitId!
+          formValue.signataireId!
         );
       } else if (formValue.mouvementId) {
         operation = this.signatureService.createMouvementSignature(
           formValue.mouvementId!,
-          formValue.signataireId!,
-          formValue.circuitId!
+          formValue.signataireId!
         );
       } else {
         this.snackBar.open(

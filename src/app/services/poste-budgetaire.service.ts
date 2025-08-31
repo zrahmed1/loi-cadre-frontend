@@ -2,7 +2,7 @@ import { Injectable } from "@angular/core";
 import { HttpClient, HttpParams } from "@angular/common/http";
 import { Observable } from "rxjs";
 import { environment } from "../../environments/environment";
-import { PosteBudgetaire, EtatPoste } from "../models/poste-budgetaire";
+import { PosteBudgetaire, PosteBudgetaireDto, EtatPoste, PosteRequest } from "../models/poste-budgetaire";
 import { EffectifSummary } from "../models/effectif-summary";
 
 @Injectable({
@@ -13,49 +13,49 @@ export class PosteBudgetaireService {
 
   constructor(private http: HttpClient) {}
 
-  getAll(): Observable<PosteBudgetaire[]> {
-    return this.http.get<PosteBudgetaire[]>(this.apiUrl);
+  getAll(): Observable<PosteBudgetaireDto[]> {
+    return this.http.get<PosteBudgetaireDto[]>(this.apiUrl);
   }
 
-  getById(id: number): Observable<PosteBudgetaire> {
-    return this.http.get<PosteBudgetaire>(`${this.apiUrl}/${id}`);
+  getById(id: number): Observable<PosteBudgetaireDto> {
+    return this.http.get<PosteBudgetaireDto>(`${this.apiUrl}/${id}`);
   }
 
-  getByEtablissement(etablissementId: number): Observable<PosteBudgetaire[]> {
-    return this.http.get<PosteBudgetaire[]>(
+  getByEtablissement(etablissementId: number): Observable<PosteBudgetaireDto[]> {
+    return this.http.get<PosteBudgetaireDto[]>(
       `${this.apiUrl}/etablissement/${etablissementId}`
     );
   }
 
-  getByGrade(gradeId: number): Observable<PosteBudgetaire[]> {
-    return this.http.get<PosteBudgetaire[]>(`${this.apiUrl}/grade/${gradeId}`);
+  getByGrade(gradeId: number): Observable<PosteBudgetaireDto[]> {
+    return this.http.get<PosteBudgetaireDto[]>(`${this.apiUrl}/grade/${gradeId}`);
   }
 
-  getByLoiCadre(loiCadreId: number): Observable<PosteBudgetaire[]> {
-    return this.http.get<PosteBudgetaire[]>(
+  getByLoiCadre(loiCadreId: number): Observable<PosteBudgetaireDto[]> {
+    return this.http.get<PosteBudgetaireDto[]>(
       `${this.apiUrl}/loi-cadre/${loiCadreId}`
     );
   }
 
-  getByEtat(etat: EtatPoste): Observable<PosteBudgetaire[]> {
+  getByEtat(etat: EtatPoste): Observable<PosteBudgetaireDto[]> {
     const params = new HttpParams().set("etat", etat);
-    return this.http.get<PosteBudgetaire[]>(`${this.apiUrl}/etat`, { params });
+    return this.http.get<PosteBudgetaireDto[]>(`${this.apiUrl}/etat`, { params });
   }
 
-  getDisponibles(): Observable<PosteBudgetaire[]> {
-    return this.http.get<PosteBudgetaire[]>(`${this.apiUrl}/disponibles`);
+  getDisponibles(): Observable<PosteBudgetaireDto[]> {
+    return this.http.get<PosteBudgetaireDto[]>(`${this.apiUrl}/disponibles`);
   }
 
   getEffectifSummary(): Observable<EffectifSummary[]> {
     return this.http.get<EffectifSummary[]>(`${this.apiUrl}/effectif-summary`);
   }
 
-  create(poste: PosteBudgetaire): Observable<PosteBudgetaire> {
-    return this.http.post<PosteBudgetaire>(this.apiUrl, poste);
+  create(request: PosteRequest): Observable<PosteBudgetaireDto> {
+    return this.http.post<PosteBudgetaireDto>(this.apiUrl, request);
   }
 
-  update(id: number, poste: PosteBudgetaire): Observable<PosteBudgetaire> {
-    return this.http.put<PosteBudgetaire>(`${this.apiUrl}/${id}`, poste);
+  update(id: number, request: PosteRequest): Observable<PosteBudgetaireDto> {
+    return this.http.put<PosteBudgetaireDto>(`${this.apiUrl}/${id}`, request);
   }
 
   delete(id: number): Observable<void> {

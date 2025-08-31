@@ -11,7 +11,7 @@ import { MatSelectModule } from "@angular/material/select";
 import { MatDatepickerModule } from "@angular/material/datepicker";
 import { MatNativeDateModule } from "@angular/material/core";
 import { CommonModule } from "@angular/common";
-import { Observable } from "rxjs";
+import { Observable, of } from "rxjs";
 import { switchMap, startWith } from "rxjs/operators";
 import { LoiCadre } from "../../../models/loi-cadre";
 import {
@@ -19,7 +19,7 @@ import {
   TypeMouvement,
   StatutMouvement,
 } from "../../../models/mouvement";
-import { PosteBudgetaire } from "../../../models/poste-budgetaire";
+import { PosteBudgetaire, PosteBudgetaireDto } from "../../../models/poste-budgetaire";
 import { Utilisateur } from "../../../models/utilisateur";
 import { LoiCadreService } from "../../../services/loi-cadre.service";
 import { PosteBudgetaireService } from "../../../services/poste-budgetaire.service";
@@ -47,6 +47,7 @@ export class MouvementFormComponent implements OnInit {
   statutMouvementValues: StatutMouvement[] = Object.values(StatutMouvement);
   loisCadres$: Observable<LoiCadre[]>;
   postes$: Observable<PosteBudgetaire[]>;
+  originPost?: PosteBudgetaireDto | null;
   utilisateurs$: Observable<Utilisateur[]>;
 
   constructor(
@@ -67,6 +68,7 @@ export class MouvementFormComponent implements OnInit {
       creeParId: ["", Validators.required],
     });
     this.loisCadres$ = this.loiCadreService.getAll();
+    // When loiCadre changes, load postes for that loi
     this.postes$ = this.mouvementForm.get("loiCadreId")!.valueChanges.pipe(
       startWith(null),
       switchMap((loiCadreId) =>
@@ -76,6 +78,30 @@ export class MouvementFormComponent implements OnInit {
       )
     );
     this.utilisateurs$ = this.utilisateurService.getAll();
+
+    // react to type changes to adjust visible fields and validators
+    this.mouvementForm.get("type")!.valueChanges.pipe(startWith(this.mouvementForm.get("type")!.value)).subscribe(() => {
+      this.applyTypeRules();
+    });
+
+    // when origin post changes, fetch its details to validate effectif limits
+    this.mouvementForm.get("posteOrigineId")!.valueChanges.subscribe((id) => {
+      if (id) {
+        this.posteBudgetaireService.getById(id).subscribe({
+          next: (p) => {
+            this.originPost = p;
+            this.checkEffectifLimit();
+          },
+          error: () => {
+            this.originPost = null;
+            this.checkEffectifLimit();
+          },
+        });
+      } else {
+        this.originPost = null;
+        this.checkEffectifLimit();
+      }
+    });
   }
 
   ngOnInit(): void {
@@ -92,6 +118,97 @@ export class MouvementFormComponent implements OnInit {
         creeParId: this.mouvement.creeParId,
       });
     }
+  }
+
+  // UI helpers
+  showOrigine(): boolean {
+    const t = this.mouvementForm.get("type")!.value as TypeMouvement;
+    return [
+      TypeMouvement.SUPPRESSION,
+      TypeMouvement.TRANSFERT,
+      TypeMouvement.TRANSFORMATION_DES_OCCUPES,
+      TypeMouvement.TRANSFORMATION_DES_VACANTS,
+    ].includes(t);
+  }
+
+  showDestination(): boolean {
+    const t = this.mouvementForm.get("type")!.value as TypeMouvement;
+    return [
+      TypeMouvement.CREATION,
+      TypeMouvement.TRANSFERT,
+      TypeMouvement.TRANSFORMATION_DES_OCCUPES,
+      TypeMouvement.TRANSFORMATION_DES_VACANTS,
+    ].includes(t);
+  }
+
+  // apply field-level validators depending on selected type
+  applyTypeRules(): void {
+    const type = this.mouvementForm.get("type")!.value as TypeMouvement;
+
+    // reset validators
+    this.mouvementForm.get("posteOrigineId")!.clearValidators();
+    this.mouvementForm.get("posteDestinationId")!.clearValidators();
+
+    if (type === TypeMouvement.CREATION) {
+      this.mouvementForm.get("posteDestinationId")!.setValidators([Validators.required]);
+      // origin should be empty for creation
+      this.mouvementForm.get("posteOrigineId")!.setValue(null, { emitEvent: false });
+    } else if (type === TypeMouvement.SUPPRESSION) {
+      this.mouvementForm.get("posteOrigineId")!.setValidators([Validators.required]);
+      this.mouvementForm.get("posteDestinationId")!.setValue(null, { emitEvent: false });
+    } else {
+      // for TRANSFERT and TRANSFORMATIONS both are required
+      this.mouvementForm.get("posteOrigineId")!.setValidators([Validators.required]);
+      this.mouvementForm.get("posteDestinationId")!.setValidators([Validators.required]);
+    }
+
+    this.mouvementForm.get("posteOrigineId")!.updateValueAndValidity({ onlySelf: true });
+    this.mouvementForm.get("posteDestinationId")!.updateValueAndValidity({ onlySelf: true });
+
+    // re-check effectif limit after changing rules
+    this.checkEffectifLimit();
+  }
+
+  // check effectif against origin post depending on mouvement type
+  checkEffectifLimit(): void {
+    const type = this.mouvementForm.get("type")!.value as TypeMouvement;
+    const effectifCtrl = this.mouvementForm.get("effectif");
+    const effectif = Number(effectifCtrl!.value) || 0;
+
+    // clear custom error
+    const currentErrors = effectifCtrl!.errors || {};
+    delete currentErrors['exceedsOrigin'];
+
+    if (!this.originPost) {
+      effectifCtrl!.setErrors(Object.keys(currentErrors).length ? currentErrors : null);
+      return;
+    }
+
+    const origin = this.originPost;
+    // assume origin.effectifFinal represents current occupied positions
+    const originCurrent = origin.effectifFinal;
+    // assume vacant = effectifInitial - effectifFinal (may be <=0)
+    const originVacant = Math.max(0, origin.effectifInitial - origin.effectifFinal);
+
+    let allowed = Infinity;
+    if (type === TypeMouvement.SUPPRESSION || type === TypeMouvement.TRANSFERT) {
+      allowed = originCurrent;
+    } else if (type === TypeMouvement.TRANSFORMATION_DES_OCCUPES) {
+      allowed = originCurrent;
+    } else if (type === TypeMouvement.TRANSFORMATION_DES_VACANTS) {
+      allowed = originVacant;
+    }
+
+    if ((type === TypeMouvement.SUPPRESSION || type === TypeMouvement.TRANSFERT || type === TypeMouvement.TRANSFORMATION_DES_OCCUPES || type === TypeMouvement.TRANSFORMATION_DES_VACANTS) && effectif > allowed) {
+      effectifCtrl!.setErrors({ ...currentErrors, exceedsOrigin: { allowed, actual: effectif } });
+    } else {
+      effectifCtrl!.setErrors(Object.keys(currentErrors).length ? currentErrors : null);
+    }
+  }
+
+  get effectifAllowed(): number | null {
+    const errors = this.mouvementForm.get('effectif')?.errors as any;
+    return errors && errors.exceedsOrigin ? errors.exceedsOrigin.allowed : null;
   }
 
   get formValue(): Mouvement {

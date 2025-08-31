@@ -47,8 +47,6 @@ export class SignatureListComponent implements OnInit {
     "mouvement",
     "signataire",
     "dateSignature",
-    "ordre",
-    "circuitId",
     "motifRejet",
     "actions",
   ];

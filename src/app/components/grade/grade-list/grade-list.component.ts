@@ -33,7 +33,7 @@ import { GradeModalComponent } from "../grade-modal/grade-modal.component";
 })
 export class GradeListComponent implements OnInit {
   grades: Grade[] = [];
-  displayedColumns: string[] = ["code", "libelle", "description", "actions"];
+  displayedColumns: string[] = ["code", "libelle", "actions"];
   searchCode: string = "";
   isLoading: boolean = false;
 

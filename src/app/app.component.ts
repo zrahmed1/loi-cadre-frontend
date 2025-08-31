@@ -8,7 +8,7 @@ import { MatIconModule } from "@angular/material/icon";
 import { MatListModule } from "@angular/material/list";
 import { CommonModule } from "@angular/common";
 import { Observable } from "rxjs";
-import { Utilisateur } from "./models/utilisateur";
+import { AuthResponse } from "./services/auth.service";
 import { MatSnackBar, MatSnackBarModule } from "@angular/material/snack-bar";
 
 @Component({
@@ -28,18 +28,19 @@ import { MatSnackBar, MatSnackBarModule } from "@angular/material/snack-bar";
   styleUrls: ["./app.component.scss"],
 })
 export class AppComponent implements OnInit {
-  currentUser$: Observable<Utilisateur | null>;
+  currentUser$: Observable<AuthResponse | null>;
+  // nav links include optional 'roles' array describing who can see the link
   navLinks = [
     { path: "/dashboard", label: "Dashboard" },
     { path: "/grades", label: "Grades" },
-    { path: "/etablissements", label: "Etablissements" },
-    { path: "/departements", label: "Departements" },
-    { path: "/lois-cadres", label: "Lois Cadres" },
-    { path: "/mouvements", label: "Mouvements" },
-    { path: "/postes-budgetaires", label: "Postes Budgetaires" },
-    { path: "/signatures", label: "Signatures" },
-    { path: "/utilisateurs", label: "Utilisateurs" },
-    { path: "/rapports", label: "Rapports" },
+    { path: "/etablissements", label: "Etablissements", roles: ["ADMIN", "RESPONSABLE_RH"] },
+    { path: "/departements", label: "Departements", roles: ["ADMIN", "RESPONSABLE_RH", "CADRE_RH", "RS"] },
+    { path: "/lois-cadres", label: "Lois Cadres", roles: ["ADMIN", "RESPONSABLE_RH", "CADRE_RH"] },
+    { path: "/mouvements", label: "Mouvements", roles: ["ADMIN", "RESPONSABLE_RH", "CADRE_RH"] },
+    { path: "/postes-budgetaires", label: "Postes Budgetaires", roles: ["ADMIN", "RESPONSABLE_RH", "CADRE_RH"] },
+    { path: "/signatures", label: "Signatures", roles: ["ADMIN", "RESPONSABLE_RH", "RS"] },
+    { path: "/utilisateurs", label: "Utilisateurs", roles: ["ADMIN"] },
+    { path: "/rapports", label: "Rapports", roles: ["ADMIN", "RESPONSABLE_RH"] },
   ];
 
   constructor(
@@ -63,5 +64,11 @@ export class AppComponent implements OnInit {
     this.authService.logout();
     this.snackBar.open("Logged out successfully", "Close", { duration: 2000 });
     this.router.navigate(["/login"]);
+  }
+
+  // Determine if a nav link should be shown based on optional roles array
+  canShowLink(link: { roles?: string[] } ): boolean {
+    if (!link.roles || link.roles.length === 0) return true;
+    return this.authService.hasAnyRole(link.roles);
   }
 }

@@ -39,7 +39,12 @@ export class LoiCadreDetailComponent implements OnInit {
   }
 
   signer() {
-    this.signatureService.create(this.loiCadre!.id!, 1).subscribe(() => this.ngOnInit());
+    const signatureRequest = {
+      loiCadreId: this.loiCadre!.id!,
+      signataireId: 1, // This should be the current user's ID
+      status: 'EN_ATTENTE' as any // You might need to import StatutSignature
+    };
+    this.signatureService.create(signatureRequest).subscribe(() => this.ngOnInit());
   }
 
   exportPDF() {

@@ -18,7 +18,31 @@ export interface SignatureElectronique {
   signataire?: Utilisateur;
   dateSignature?: string; // ISO format (e.g., '2025-08-16T18:54:00')
   status: StatutSignature;
-  ordre: number;
   motifRejet?: string;
-  circuitId?: number;
+  // circuitId removed - backend does not expose this
+}
+
+// DTO interface for API responses
+export interface SignatureElectroniqueDto {
+  id: number;
+  signataireId: number;
+  signataireNom: string;
+  signatairePrenom: string;
+  loiCadreId?: number;
+  loiCadreAnnee?: number;
+  loiCadreVersion?: number;
+  mouvementId?: number;
+  mouvementDescription?: string;
+  dateSignature?: string;
+  status: StatutSignature;
+  motifRejet?: string;
+}
+
+// Request interface for create/update operations
+export interface SignatureRequest {
+  loiCadreId?: number;
+  mouvementId?: number;
+  signataireId: number;
+  status: StatutSignature;
+  motifRejet?: string;
 }

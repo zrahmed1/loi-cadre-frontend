@@ -56,8 +56,6 @@ export class SignatureFormComponent implements OnInit {
         mouvementId: [null],
         signataireId: ["", Validators.required],
         status: [StatutSignature.EN_ATTENTE, Validators.required],
-        ordre: ["", [Validators.required, Validators.min(1)]],
-        circuitId: ["", [Validators.required, Validators.min(1)]],
         motifRejet: [""],
       },
       { validators: this.atLeastOneIdValidator }
@@ -74,8 +72,6 @@ export class SignatureFormComponent implements OnInit {
         mouvementId: this.signature.mouvementId,
         signataireId: this.signature.signataireId,
         status: this.signature.status,
-        ordre: this.signature.ordre,
-        circuitId: this.signature.circuitId,
         motifRejet: this.signature.motifRejet,
       });
     }

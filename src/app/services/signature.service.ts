@@ -2,7 +2,7 @@ import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { Observable } from "rxjs";
 import { environment } from "../../environments/environment";
-import { SignatureElectronique } from "../models/signature-electronique";
+import { SignatureElectronique, SignatureElectroniqueDto, SignatureRequest } from "../models/signature-electronique";
 
 @Injectable({
   providedIn: "root",
@@ -12,63 +12,58 @@ export class SignatureService {
 
   constructor(private http: HttpClient) {}
 
-  getAll(): Observable<SignatureElectronique[]> {
-    return this.http.get<SignatureElectronique[]>(this.apiUrl);
+  getAll(): Observable<SignatureElectroniqueDto[]> {
+    return this.http.get<SignatureElectroniqueDto[]>(this.apiUrl);
   }
 
-  getById(id: number): Observable<SignatureElectronique> {
-    return this.http.get<SignatureElectronique>(`${this.apiUrl}/${id}`);
+  getById(id: number): Observable<SignatureElectroniqueDto> {
+    return this.http.get<SignatureElectroniqueDto>(`${this.apiUrl}/${id}`);
   }
 
-  getByLoiCadre(loiCadreId: number): Observable<SignatureElectronique[]> {
-    return this.http.get<SignatureElectronique[]>(
+  getByLoiCadre(loiCadreId: number): Observable<SignatureElectroniqueDto[]> {
+    return this.http.get<SignatureElectroniqueDto[]>(
       `${this.apiUrl}/loi/${loiCadreId}`
     );
   }
 
-  getByMouvement(mouvementId: number): Observable<SignatureElectronique[]> {
-    return this.http.get<SignatureElectronique[]>(
+  getByMouvement(mouvementId: number): Observable<SignatureElectroniqueDto[]> {
+    return this.http.get<SignatureElectroniqueDto[]>(
       `${this.apiUrl}/mouvement/${mouvementId}`
     );
   }
 
-  getByUtilisateur(utilisateurId: number): Observable<SignatureElectronique[]> {
-    return this.http.get<SignatureElectronique[]>(
+  getByUtilisateur(utilisateurId: number): Observable<SignatureElectroniqueDto[]> {
+    return this.http.get<SignatureElectroniqueDto[]>(
       `${this.apiUrl}/utilisateur/${utilisateurId}`
     );
   }
 
-  createLoiSignature(
-    loiCadreId: number,
-    utilisateurId: number,
-    circuitId: number
-  ): Observable<SignatureElectronique> {
-    return this.http.post<SignatureElectronique>(
-      `${this.apiUrl}/loi/${loiCadreId}/utilisateur/${utilisateurId}/circuit/${circuitId}`,
+  create(request: SignatureRequest): Observable<SignatureElectroniqueDto> {
+    return this.http.post<SignatureElectroniqueDto>(this.apiUrl, request);
+  }
+  createLoiSignature(loiCadreId: number, utilisateurId: number): Observable<SignatureElectroniqueDto> {
+    return this.http.post<SignatureElectroniqueDto>(
+      `${this.apiUrl}/loi/${loiCadreId}/utilisateur/${utilisateurId}`,
       {}
     );
   }
 
-  createMouvementSignature(
-    mouvementId: number,
-    utilisateurId: number,
-    circuitId: number
-  ): Observable<SignatureElectronique> {
-    return this.http.post<SignatureElectronique>(
-      `${this.apiUrl}/mouvement/${mouvementId}/utilisateur/${utilisateurId}/circuit/${circuitId}`,
+  createMouvementSignature(mouvementId: number, utilisateurId: number): Observable<SignatureElectroniqueDto> {
+    return this.http.post<SignatureElectroniqueDto>(
+      `${this.apiUrl}/mouvement/${mouvementId}/utilisateur/${utilisateurId}`,
       {}
     );
   }
 
-  validate(id: number): Observable<SignatureElectronique> {
-    return this.http.put<SignatureElectronique>(
+  validate(id: number): Observable<SignatureElectroniqueDto> {
+    return this.http.put<SignatureElectroniqueDto>(
       `${this.apiUrl}/${id}/signer`,
       {}
     );
   }
 
-  reject(id: number, motifRejet: string): Observable<SignatureElectronique> {
-    return this.http.put<SignatureElectronique>(
+  reject(id: number, motifRejet: string): Observable<SignatureElectroniqueDto> {
+    return this.http.put<SignatureElectroniqueDto>(
       `${this.apiUrl}/${id}/rejeter`,
       { motifRejet }
     );

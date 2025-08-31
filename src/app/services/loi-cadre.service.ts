@@ -2,10 +2,9 @@ import { Injectable } from "@angular/core";
 import { HttpClient, HttpParams } from "@angular/common/http";
 import { Observable } from "rxjs";
 import { environment } from "../../environments/environment";
-import { LoiCadre } from "../models/loi-cadre";
-import { Mouvement } from "../models/mouvement";
-import { PosteBudgetaire } from "../models/poste-budgetaire";
-import { StatutLoiCadre } from "../models/loi-cadre";
+import { LoiCadre, LoiCadreDto, StatutLoiCadre, LoiCadreRequest } from "../models/loi-cadre";
+import { MouvementRequest } from "../models/mouvement";
+import { PosteRequest } from "../models/poste-budgetaire";
 
 @Injectable({
   providedIn: "root",
@@ -15,57 +14,57 @@ export class LoiCadreService {
 
   constructor(private http: HttpClient) {}
 
-  getAll(): Observable<LoiCadre[]> {
-    return this.http.get<LoiCadre[]>(this.apiUrl);
+  getAll(): Observable<LoiCadreDto[]> {
+    return this.http.get<LoiCadreDto[]>(this.apiUrl);
   }
 
-  getById(id: number): Observable<LoiCadre> {
-    return this.http.get<LoiCadre>(`${this.apiUrl}/${id}`);
+  getById(id: number): Observable<LoiCadreDto> {
+    return this.http.get<LoiCadreDto>(`${this.apiUrl}/${id}`);
   }
 
-  getByAnnee(annee: number): Observable<LoiCadre[]> {
-    return this.http.get<LoiCadre[]>(`${this.apiUrl}/annee/${annee}`);
+  getByAnnee(annee: number): Observable<LoiCadreDto[]> {
+    return this.http.get<LoiCadreDto[]>(`${this.apiUrl}/annee/${annee}`);
   }
 
-  getByStatut(statut: StatutLoiCadre): Observable<LoiCadre[]> {
+  getByStatut(statut: StatutLoiCadre): Observable<LoiCadreDto[]> {
     const params = new HttpParams().set("statut", statut);
-    return this.http.get<LoiCadre[]>(`${this.apiUrl}/statut`, { params });
+    return this.http.get<LoiCadreDto[]>(`${this.apiUrl}/statut`, { params });
   }
 
-  create(loi: LoiCadre): Observable<LoiCadre> {
-    return this.http.post<LoiCadre>(this.apiUrl, loi);
+  create(request: LoiCadreRequest): Observable<LoiCadreDto> {
+    return this.http.post<LoiCadreDto>(this.apiUrl, request);
   }
 
-  update(id: number, loi: LoiCadre): Observable<LoiCadre> {
-    return this.http.put<LoiCadre>(`${this.apiUrl}/${id}`, loi);
+  update(id: number, request: LoiCadreRequest): Observable<LoiCadreDto> {
+    return this.http.put<LoiCadreDto>(`${this.apiUrl}/${id}`, request);
   }
 
   delete(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
 
-  valider(id: number): Observable<LoiCadre> {
-    return this.http.put<LoiCadre>(`${this.apiUrl}/${id}/valider`, {});
+  valider(id: number): Observable<LoiCadreDto> {
+    return this.http.put<LoiCadreDto>(`${this.apiUrl}/${id}/valider`, {});
   }
 
-  changerStatut(id: number, statut: StatutLoiCadre): Observable<LoiCadre> {
+  changerStatut(id: number, statut: StatutLoiCadre): Observable<LoiCadreDto> {
     const params = new HttpParams().set("statut", statut);
-    return this.http.put<LoiCadre>(
+    return this.http.put<LoiCadreDto>(
       `${this.apiUrl}/${id}/statut`,
       {},
       { params }
     );
   }
 
-  addMouvement(id: number, mouvement: Mouvement): Observable<LoiCadre> {
-    return this.http.post<LoiCadre>(
+  addMouvement(id: number, request: MouvementRequest): Observable<LoiCadreDto> {
+    return this.http.post<LoiCadreDto>(
       `${this.apiUrl}/${id}/mouvements`,
-      mouvement
+      request
     );
   }
 
-  addPoste(id: number, poste: PosteBudgetaire): Observable<LoiCadre> {
-    return this.http.post<LoiCadre>(`${this.apiUrl}/${id}/postes`, poste);
+  addPoste(id: number, request: PosteRequest): Observable<LoiCadreDto> {
+    return this.http.post<LoiCadreDto>(`${this.apiUrl}/${id}/postes`, request);
   }
 
   exportExcel(loiCadreId: number): Observable<Blob> {

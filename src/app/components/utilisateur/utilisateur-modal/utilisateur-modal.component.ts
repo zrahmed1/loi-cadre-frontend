@@ -9,7 +9,7 @@ import { MatButtonModule } from "@angular/material/button";
 import { catchError, throwError } from "rxjs";
 import { CommonModule } from "@angular/common";
 import { UtilisateurFormComponent } from "../utilisateur-form/utilisateur-form.component";
-import { Utilisateur } from "../../../models/utilisateur";
+import { Utilisateur, SaveUserRequest, UtilisateurRequest } from "../../../models/utilisateur";
 import { UtilisateurService } from "../../../services/utilisateur.service";
 
 @Component({
@@ -34,9 +34,29 @@ export class UtilisateurModalComponent {
   ) {}
 
   onSubmit(formValue: Utilisateur): void {
+    // Map form value to request interface
+    const updateRequest: UtilisateurRequest = {
+      nom: formValue.nom,
+      prenom: formValue.prenom,
+      email: formValue.email,
+      role: formValue.role,
+      active: formValue.active !== false, // default to true if not set
+      etablissementId: formValue.etablissementId,
+      departementId: formValue.departementId
+    };
+
+    const createRequest: SaveUserRequest = {
+      nom: formValue.nom,
+      prenom: formValue.prenom,
+      email: formValue.email,
+      motDePasse: formValue.motDePasse || '',
+      role: formValue.role,
+      etablissementId: formValue.etablissementId
+    };
+
     const operation = this.data.utilisateur
-      ? this.utilisateurService.update(this.data.utilisateur.id!, formValue)
-      : this.utilisateurService.create(formValue);
+      ? this.utilisateurService.update(this.data.utilisateur.id!, updateRequest)
+      : this.utilisateurService.create(createRequest);
 
     operation
       .pipe(

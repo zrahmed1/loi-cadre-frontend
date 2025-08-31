@@ -2,7 +2,7 @@ import { Injectable } from "@angular/core";
 import { HttpClient, HttpParams } from "@angular/common/http";
 import { Observable } from "rxjs";
 import { environment } from "../../environments/environment";
-import { Utilisateur, Role } from "../models/utilisateur";
+import { Utilisateur, UtilisateurDto, Role, SaveUserRequest, UtilisateurRequest } from "../models/utilisateur";
 
 @Injectable({
   providedIn: "root",
@@ -12,29 +12,29 @@ export class UtilisateurService {
 
   constructor(private http: HttpClient) {}
 
-  getAll(): Observable<Utilisateur[]> {
-    return this.http.get<Utilisateur[]>(this.apiUrl);
+  getAll(): Observable<UtilisateurDto[]> {
+    return this.http.get<UtilisateurDto[]>(this.apiUrl);
   }
 
-  getById(id: number): Observable<Utilisateur> {
-    return this.http.get<Utilisateur>(`${this.apiUrl}/${id}`);
+  getById(id: number): Observable<UtilisateurDto> {
+    return this.http.get<UtilisateurDto>(`${this.apiUrl}/${id}`);
   }
 
-  getByEtablissement(etablissementId: number): Observable<Utilisateur[]> {
-    return this.http.get<Utilisateur[]>(
+  getByEtablissement(etablissementId: number): Observable<UtilisateurDto[]> {
+    return this.http.get<UtilisateurDto[]>(
       `${this.apiUrl}/etablissement/${etablissementId}`
     );
   }
 
-  getByDepartement(departementId: number): Observable<Utilisateur[]> {
-    return this.http.get<Utilisateur[]>(
+  getByDepartement(departementId: number): Observable<UtilisateurDto[]> {
+    return this.http.get<UtilisateurDto[]>(
       `${this.apiUrl}/departement/${departementId}`
     );
   }
 
-  getByRole(role: Role): Observable<Utilisateur[]> {
+  getByRole(role: Role): Observable<UtilisateurDto[]> {
     const params = new HttpParams().set("role", role);
-    return this.http.get<Utilisateur[]>(`${this.apiUrl}/role`, { params });
+    return this.http.get<UtilisateurDto[]>(`${this.apiUrl}/role`, { params });
   }
 
   getByEmail(email: string): Observable<Utilisateur> {
@@ -42,12 +42,12 @@ export class UtilisateurService {
     return this.http.get<Utilisateur>(`${this.apiUrl}/email`, { params });
   }
 
-  create(utilisateur: Utilisateur): Observable<Utilisateur> {
-    return this.http.post<Utilisateur>(this.apiUrl, utilisateur);
+  create(request: SaveUserRequest): Observable<UtilisateurDto> {
+    return this.http.post<UtilisateurDto>(this.apiUrl, request);
   }
 
-  update(id: number, utilisateur: Utilisateur): Observable<Utilisateur> {
-    return this.http.put<Utilisateur>(`${this.apiUrl}/${id}`, utilisateur);
+  update(id: number, request: UtilisateurRequest): Observable<UtilisateurDto> {
+    return this.http.put<UtilisateurDto>(`${this.apiUrl}/${id}`, request);
   }
 
   delete(id: number): Observable<void> {

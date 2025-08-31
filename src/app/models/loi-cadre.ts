@@ -1,5 +1,5 @@
-import { Mouvement } from "./mouvement";
-import { PosteBudgetaire } from "./poste-budgetaire";
+import { Mouvement, MouvementDto } from "./mouvement";
+import { PosteBudgetaire, PosteBudgetaireDto } from "./poste-budgetaire";
 import { SignatureElectronique } from "./signature-electronique";
 
 export enum StatutLoiCadre {
@@ -18,4 +18,25 @@ export interface LoiCadre {
   dateModification?: string;
   postes?: PosteBudgetaire[];
   mouvements?: Mouvement[];
+}
+
+// DTO interface for API responses
+export interface LoiCadreDto {
+  id: number;
+  annee: number;
+  version: number;
+  statut: StatutLoiCadre;
+  postes?: PosteBudgetaireDto[];
+  mouvements?: MouvementDto[];
+  dateCreation: string;
+  dateModification: string;
+  totalPostes: number;
+  totalEffectifInitial: number;
+  totalEffectifFinal: number;
+}
+
+// Request interface for create/update operations
+export interface LoiCadreRequest {
+  annee: number;
+  version: number;
 }

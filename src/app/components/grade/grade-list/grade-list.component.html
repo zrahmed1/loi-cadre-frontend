@@ -43,10 +43,7 @@
       <th mat-header-cell *matHeaderCellDef>Libelle</th>
       <td mat-cell *matCellDef="let grade">{{ grade.libelle }}</td>
     </ng-container>
-    <ng-container matColumnDef="description">
-      <th mat-header-cell *matHeaderCellDef>Description</th>
-      <td mat-cell *matCellDef="let grade">{{ grade.description || "-" }}</td>
-    </ng-container>
+  <!-- description removed: backend does not provide this field -->
     <ng-container matColumnDef="actions">
       <th mat-header-cell *matHeaderCellDef>Actions</th>
       <td mat-cell *matCellDef="let grade">
@@ -71,7 +68,7 @@
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
     <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
     <tr class="mat-row" *matNoDataRow>
-      <td class="mat-cell" colspan="4">No grades found</td>
+      <td class="mat-cell" colspan="3">No grades found</td>
     </tr>
   </table>
 </div>

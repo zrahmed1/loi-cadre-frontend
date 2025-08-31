@@ -24,15 +24,5 @@
       >Libelle cannot exceed 100 characters</mat-error
     >
   </mat-form-field>
-  <mat-form-field appearance="fill">
-    <mat-label>Description</mat-label>
-    <textarea
-      matInput
-      formControlName="description"
-      aria-label="Grade description"
-    ></textarea>
-    <mat-error *ngIf="gradeForm.get('description')?.hasError('maxlength')"
-      >Description cannot exceed 500 characters</mat-error
-    >
-  </mat-form-field>
+  <!-- description removed because backend does not include it -->
 </form>

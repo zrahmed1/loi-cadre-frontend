@@ -91,16 +91,6 @@
         {{ signature.dateSignature | date }}
       </td>
     </ng-container>
-    <ng-container matColumnDef="ordre">
-      <th mat-header-cell *matHeaderCellDef>Ordre</th>
-      <td mat-cell *matCellDef="let signature">{{ signature.ordre }}</td>
-    </ng-container>
-    <ng-container matColumnDef="circuitId">
-      <th mat-header-cell *matHeaderCellDef>Circuit ID</th>
-      <td mat-cell *matCellDef="let signature">
-        {{ signature.circuitId || "-" }}
-      </td>
-    </ng-container>
     <ng-container matColumnDef="motifRejet">
       <th mat-header-cell *matHeaderCellDef>Motif Rejet</th>
       <td mat-cell *matCellDef="let signature">
@@ -141,7 +131,7 @@
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
     <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
     <tr class="mat-row" *matNoDataRow>
-      <td class="mat-cell" colspan="9">No signatures found</td>
+      <td class="mat-cell" colspan="7">No signatures found</td>
     </tr>
   </table>
 </div>

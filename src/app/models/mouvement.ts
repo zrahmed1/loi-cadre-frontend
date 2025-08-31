@@ -5,8 +5,9 @@ import { Utilisateur } from "./utilisateur";
 export enum TypeMouvement {
   CREATION = "CREATION",
   SUPPRESSION = "SUPPRESSION",
-  TRANSFORMATION = "TRANSFORMATION",
   TRANSFERT = "TRANSFERT",
+  TRANSFORMATION_DES_OCCUPES = "TRANSFORMATION_DES_OCCUPES",
+  TRANSFORMATION_DES_VACANTS = "TRANSFORMATION_DES_VACANTS",
 }
 
 export enum StatutMouvement {
@@ -31,4 +32,36 @@ export interface Mouvement {
   loiCadreId?: number;
   loiCadre?: LoiCadre;
   dateCreation?: string; // Added to match Mouvement.java
+}
+
+// DTO interface for API responses
+export interface MouvementDto {
+  id: number;
+  type: TypeMouvement;
+  posteOrigineId?: number;
+  posteOrigineCode?: string;
+  posteDestinationId?: number;
+  posteDestinationCode?: string;
+  dateEffet: string;
+  description?: string;
+  effectif: number;
+  status: StatutMouvement;
+  loiCadreId: number;
+  loiCadreAnnee: number;
+  loiCadreVersion: number;
+  creeParId: number;
+  creeParNom: string;
+  creeParPrenom: string;
+  dateCreation: string;
+}
+
+// Request interface for create/update operations
+export interface MouvementRequest {
+  type: TypeMouvement;
+  description?: string;
+  dateEffet: string;
+  posteOrigineId?: number;
+  posteDestinationId?: number;
+  effectif: number;
+  creeParId?: number;
 }

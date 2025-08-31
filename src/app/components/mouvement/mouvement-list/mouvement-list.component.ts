@@ -12,9 +12,10 @@ import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { FormsModule } from "@angular/forms";
 import { CommonModule } from "@angular/common";
 import { MouvementModalComponent } from "../mouvement-modal/mouvement-modal.component";
-import { LoiCadre } from "../../../models/loi-cadre";
+import { LoiCadre, LoiCadreDto } from "../../../models/loi-cadre";
 import {
   Mouvement,
+  MouvementDto,
   TypeMouvement,
   StatutMouvement,
 } from "../../../models/mouvement";
@@ -42,17 +43,17 @@ import { MouvementService } from "../../../services/mouvement.service";
   styleUrls: ["./mouvement-list.component.scss"],
 })
 export class MouvementListComponent implements OnInit {
-  mouvements: Mouvement[] = [];
+  mouvements: MouvementDto[] = [];
   displayedColumns: string[] = [
     "type",
     "description",
     "dateEffet",
-    "posteOrigine",
-    "posteDestination",
+    "posteOrigineCode",
+    "posteDestinationCode",
     "effectif",
     "status",
-    "loiCadre",
-    "creePar",
+    "loiCadreAnnee",
+    "creeParNom",
     "dateCreation",
     "actions",
   ];
@@ -61,7 +62,7 @@ export class MouvementListComponent implements OnInit {
   searchLoiCadreId: string = "";
   typeMouvementValues: TypeMouvement[] = Object.values(TypeMouvement);
   statutMouvementValues: StatutMouvement[] = Object.values(StatutMouvement);
-  loisCadres: LoiCadre[] = [];
+  loisCadres: LoiCadreDto[] = [];
   isLoading: boolean = false;
 
   constructor(
@@ -92,7 +93,7 @@ export class MouvementListComponent implements OnInit {
         })
       )
       .subscribe({
-        next: (mouvements) => {
+        next: (mouvements: MouvementDto[]) => {
           this.mouvements = mouvements;
           this.isLoading = false;
         },
@@ -101,7 +102,7 @@ export class MouvementListComponent implements OnInit {
 
   loadLoisCadres(): void {
     this.loiCadreService.getAll().subscribe({
-      next: (loisCadres) => {
+      next: (loisCadres: LoiCadreDto[]) => {
         this.loisCadres = loisCadres;
       },
       error: (err) =>
@@ -131,7 +132,7 @@ export class MouvementListComponent implements OnInit {
           })
         )
         .subscribe({
-          next: (mouvements) => {
+          next: (mouvements: MouvementDto[]) => {
             this.mouvements = mouvements;
             this.isLoading = false;
           },
@@ -159,7 +160,7 @@ export class MouvementListComponent implements OnInit {
           })
         )
         .subscribe({
-          next: (mouvements) => {
+          next: (mouvements: MouvementDto[]) => {
             this.mouvements = mouvements;
             this.isLoading = false;
           },
@@ -187,7 +188,7 @@ export class MouvementListComponent implements OnInit {
           })
         )
         .subscribe({
-          next: (mouvements) => {
+          next: (mouvements: MouvementDto[]) => {
             this.mouvements = mouvements;
             this.isLoading = false;
           },
@@ -218,10 +219,25 @@ export class MouvementListComponent implements OnInit {
     });
   }
 
-  openEditModal(mouvement: Mouvement): void {
+  openEditModal(mouvement: MouvementDto): void {
+    // Convert DTO back to the form model for editing
+    const formMouvement: Mouvement = {
+      id: mouvement.id,
+      type: mouvement.type,
+      description: mouvement.description,
+      dateEffet: mouvement.dateEffet,
+      posteOrigineId: mouvement.posteOrigineId,
+      posteDestinationId: mouvement.posteDestinationId,
+      effectif: mouvement.effectif,
+      status: mouvement.status,
+      loiCadreId: mouvement.loiCadreId,
+      creeParId: mouvement.creeParId,
+      dateCreation: mouvement.dateCreation
+    };
+    
     const dialogRef = this.dialog.open(MouvementModalComponent, {
       width: "600px",
-      data: { mouvement },
+      data: { mouvement: formMouvement },
       ariaLabel: "Edit Mouvement Dialog",
     });
 
@@ -257,17 +273,5 @@ export class MouvementListComponent implements OnInit {
           },
         });
     }
-  }
-
-  getPosteName(poste?: PosteBudgetaire): string {
-    return poste ? `${poste.description || "Poste"} (${poste.codePoste})` : "-";
-  }
-
-  getLoiCadreName(loiCadre?: LoiCadre): string {
-    return loiCadre ? `${loiCadre.annee} (v${loiCadre.version})` : "-";
-  }
-
-  getCreeParName(creePar?: Utilisateur): string {
-    return creePar ? `${creePar.nom} ${creePar.prenom || ""}` : "-";
   }
 }

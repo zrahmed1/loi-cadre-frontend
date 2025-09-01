@@ -6,8 +6,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
-import { ApiService } from '../api.service';
 import { EtablissementService } from '../etablissement.service';
+import { UtilisateurService } from '../utilisateur.service';
 import { Etablissement } from '../../models/etablissement';
 import { z } from 'zod';
 
@@ -97,13 +97,13 @@ export class DialogComponent {
   data: DialogData = inject(MAT_DIALOG_DATA);
   cdr = inject(ChangeDetectorRef);
 
-  roles: string[] = ['ADMIN', 'RESPONSABLE_RH', 'CADRE_RH', 'RS', 'CONSULTATION '];
+  roles: string[] = ['ADMIN', 'RESPONSABLE_RH', 'CADRE_RH', 'RS', 'CONSULTATION'];
   etablissements: Etablissement[] = [];
   errors: Record<string, string> = {};
 
   constructor(
-    private apiService: ApiService,
-    private etablissementService: EtablissementService
+    private etablissementService: EtablissementService,
+    private utilisateurService: UtilisateurService
   ) {
     this.etablissementService.getAll().subscribe(etabs => this.etablissements = etabs);
   }
@@ -135,15 +135,22 @@ export class DialogComponent {
       return;
     }
 
-    this.apiService.postData('/utilisateurs', this.data)
-      .then(response => {
-        console.log('Success:', response.data);
+    // Use UtilisateurService to create the user
+    this.utilisateurService.create({
+      nom: this.data.nom,
+      prenom: this.data.prenom,
+      email: this.data.email,
+      password: this.data.password,
+      role: this.data.role as any,
+    } as any).subscribe({
+      next: () => {
         alert('Formulaire soumis avec succès');
         this.dialogRef.close(this.data);
-      })
-      .catch(error => {
-        console.error('Error:', error);
+      },
+      error: (err: any) => {
+        console.error('Error:', err);
         alert('Erreur lors de la soumission');
-      });
+      }
+    });
   }
 }

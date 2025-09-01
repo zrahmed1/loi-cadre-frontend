@@ -7,10 +7,8 @@
         <mat-card-title>Effectif Summary</mat-card-title>
       </mat-card-header>
       <mat-card-content>
-        <div *ngIf="effectifChart">
-          ```chartjs
-          {{ effectifChart }}
-          ```
+        <div *ngIf="effectifSummaries && effectifSummaries.length > 0">
+          <canvas #effectifCanvas aria-label="Effectif summary chart"></canvas>
         </div>
         <table
           mat-table
@@ -68,6 +66,7 @@
         <button
           mat-button
           color="primary"
+          *ngIf="canManageMouvements()"
           (click)="navigateTo('mouvements')"
           aria-label="View mouvements"
         >
@@ -86,6 +85,7 @@
         <button
           mat-button
           color="primary"
+          *ngIf="canManageLoiCadres()"
           (click)="navigateTo('lois-cadres')"
           aria-label="View loi cadres"
         >
@@ -102,11 +102,29 @@
         <button
           mat-button
           color="primary"
+          *ngIf="canManageUtilisateurs()"
           (click)="navigateTo('utilisateurs')"
           aria-label="View utilisateurs"
         >
           View Utilisateurs
         </button>
+      </mat-card-content>
+    </mat-card>
+    <mat-card class="metric-card actions-card">
+      <mat-card-header>
+        <mat-card-title>Manage</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="actions-grid">
+          <button mat-button *ngIf="canManageGrades()" (click)="navigateTo('grades')">Grades</button>
+          <button mat-button *ngIf="canManageEtablissements()" (click)="navigateTo('etablissements')">Etablissements</button>
+          <button mat-button *ngIf="canManageDepartements()" (click)="navigateTo('departements')">Departements</button>
+          <button mat-button *ngIf="canManageLoiCadres()" (click)="navigateTo('lois-cadres')">Lois Cadres</button>
+          <button mat-button *ngIf="canManageMouvements()" (click)="navigateTo('mouvements')">Mouvements</button>
+          <button mat-button *ngIf="canManagePostes()" (click)="navigateTo('postes-budgetaires')">Postes Budgetaires</button>
+          <button mat-button *ngIf="canManageSignatures()" (click)="navigateTo('signatures')">Signatures</button>
+          <button mat-button *ngIf="canManageRapports()" (click)="navigateTo('rapports')">Rapports</button>
+        </div>
       </mat-card-content>
     </mat-card>
   </div>

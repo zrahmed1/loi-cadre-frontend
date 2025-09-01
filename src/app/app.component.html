@@ -6,9 +6,10 @@
   <mat-sidenav
     #sidenav
     mode="side"
-    opened="false"
+  opened="false"
     class="sidenav"
     aria-label="Navigation Menu"
+  *ngIf="!isLoginPage()"
   >
     <mat-nav-list>
       <ng-container *ngFor="let link of navLinks">
@@ -28,8 +29,9 @@
     <mat-toolbar color="primary">
       <button
         mat-icon-button
-        (click)="sidenav.toggle()"
+        (click)="toggleSidenav()"
         aria-label="Toggle navigation menu"
+        *ngIf="!isLoginPage()"
       >
         <mat-icon>menu</mat-icon>
       </button>

@@ -1,9 +1,10 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, ViewChild } from "@angular/core";
 import { Router, RouterModule } from "@angular/router";
 import { AuthService } from "./services/auth.service";
 import { MatToolbarModule } from "@angular/material/toolbar";
 import { MatButtonModule } from "@angular/material/button";
 import { MatSidenavModule } from "@angular/material/sidenav";
+import { MatSidenav } from '@angular/material/sidenav';
 import { MatIconModule } from "@angular/material/icon";
 import { MatListModule } from "@angular/material/list";
 import { CommonModule } from "@angular/common";
@@ -64,6 +65,21 @@ export class AppComponent implements OnInit {
     this.authService.logout();
     this.snackBar.open("Logged out successfully", "Close", { duration: 2000 });
     this.router.navigate(["/login"]);
+  }
+
+  // Return true when current route is login (used to hide sidebar on login page)
+  isLoginPage(): boolean {
+    try {
+      return this.router.url != null && this.router.url.startsWith('/login');
+    } catch (e) {
+      return false;
+    }
+  }
+
+  @ViewChild('sidenav') sidenav?: MatSidenav;
+
+  toggleSidenav(): void {
+    this.sidenav?.toggle();
   }
 
   // Determine if a nav link should be shown based on optional roles array

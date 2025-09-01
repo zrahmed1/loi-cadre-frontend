@@ -10,19 +10,20 @@ import { UtilisateurListComponent } from "./components/utilisateur/utilisateur-l
 import { RapportListComponent } from "./components/rapport/rapport-list/rapport-list.component";
 import { AuthLoginComponent } from "./components/auth/auth-login/auth-login.component";
 import { DashboardComponent } from "./components/dashboard/dashboard.component";
+import { AuthGuard } from './auth.guard';
 
 export const routes: Routes = [
   { path: "", redirectTo: "/dashboard", pathMatch: "full" },
-  { path: "dashboard", component: DashboardComponent },
+  { path: "dashboard", component: DashboardComponent, canActivate: [AuthGuard] },
   { path: "login", component: AuthLoginComponent },
-  { path: "grades", component: GradeListComponent },
-  { path: "etablissements", component: EtablissementListComponent },
-  { path: "departements", component: DepartementListComponent },
-  { path: "lois-cadres", component: LoiCadreListComponent },
-  { path: "mouvements", component: MouvementListComponent },
-  { path: "postes-budgetaires", component: PosteBudgetaireListComponent },
-  { path: "signatures", component: SignatureListComponent },
-  { path: "utilisateurs", component: UtilisateurListComponent },
-  { path: "rapports", component: RapportListComponent },
+  { path: "grades", component: GradeListComponent, canActivate: [AuthGuard], data: { roles: ['ADMIN'] } },
+  { path: "etablissements", component: EtablissementListComponent, canActivate: [AuthGuard], data: { roles: ['ADMIN'] } },
+  { path: "departements", component: DepartementListComponent, canActivate: [AuthGuard], data: { roles: ['ADMIN'] } },
+  { path: "lois-cadres", component: LoiCadreListComponent, canActivate: [AuthGuard], data: { roles: ['ADMIN','RESPONSABLE_RH','CADRE_RH'] } },
+  { path: "mouvements", component: MouvementListComponent, canActivate: [AuthGuard], data: { roles: ['ADMIN','RESPONSABLE_RH','CADRE_RH'] } },
+  { path: "postes-budgetaires", component: PosteBudgetaireListComponent, canActivate: [AuthGuard], data: { roles: ['ADMIN','RESPONSABLE_RH','CADRE_RH'] } },
+  { path: "signatures", component: SignatureListComponent, canActivate: [AuthGuard], data: { roles: ['ADMIN','RESPONSABLE_RH','CADRE_RH','RS'] } },
+  { path: "utilisateurs", component: UtilisateurListComponent, canActivate: [AuthGuard], data: { roles: ['ADMIN','RESPONSABLE_RH'] } },
+  { path: "rapports", component: RapportListComponent, canActivate: [AuthGuard], data: { roles: ['ADMIN','RESPONSABLE_RH'] } },
   { path: "**", redirectTo: "/dashboard" },
 ];

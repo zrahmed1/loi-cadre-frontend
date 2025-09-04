@@ -8,6 +8,7 @@ import {
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
 import { CommonModule } from "@angular/common";
+import { GradeFormatDirective } from '../../../directives/grade-format.directive';
 import { Grade } from "../../../models/grade";
 
 @Component({
@@ -18,6 +19,7 @@ import { Grade } from "../../../models/grade";
     ReactiveFormsModule,
     MatFormFieldModule,
     MatInputModule,
+  GradeFormatDirective,
   ],
   templateUrl: "./grade-form.component.html",
   styleUrls: ["./grade-form.component.scss"],

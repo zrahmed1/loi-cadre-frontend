@@ -38,6 +38,7 @@ import { UtilisateurService } from "../../../services/utilisateur.service";
 export class SignatureFormComponent implements OnInit {
   @Input() signature: SignatureElectronique | null = null;
   @Input() mode: "create" | "validate" | "reject" = "create";
+  @Input() createType?: 'loi' | 'mouvement';
   signatureForm: FormGroup;
   statutSignatureValues: StatutSignature[] = Object.values(StatutSignature);
   loisCadres$: Observable<LoiCadre[]>;
@@ -66,6 +67,13 @@ export class SignatureFormComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    // If createType is provided, null out the opposite field
+    if (this.createType === 'loi') {
+      this.signatureForm.patchValue({ mouvementId: null });
+    } else if (this.createType === 'mouvement') {
+      this.signatureForm.patchValue({ loiCadreId: null });
+    }
+    
     if (this.signature) {
       this.signatureForm.patchValue({
         loiCadreId: this.signature.loiCadreId,

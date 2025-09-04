@@ -13,6 +13,7 @@ import { CommonModule } from "@angular/common";
 import { Grade } from "../../../models/grade";
 import { GradeService } from "../../../services/grade.service";
 import { GradeModalComponent } from "../grade-modal/grade-modal.component";
+import { GradeFormatPipe } from '../../../pipes/grade-format.pipe';
 
 @Component({
   selector: "app-grade-list",
@@ -26,7 +27,8 @@ import { GradeModalComponent } from "../grade-modal/grade-modal.component";
     MatFormFieldModule,
     MatInputModule,
     MatProgressSpinnerModule,
-    GradeModalComponent,
+  GradeModalComponent,
+  GradeFormatPipe,
   ],
   templateUrl: "./grade-list.component.html",
   styleUrls: ["./grade-list.component.scss"],

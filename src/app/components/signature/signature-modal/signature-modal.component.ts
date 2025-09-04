@@ -33,6 +33,7 @@ export class SignatureModalComponent {
     public data: {
       signature: SignatureElectronique | null;
       mode: "create" | "validate" | "reject";
+      createType?: 'loi' | 'mouvement';
     },
     private signatureService: SignatureService,
     private snackBar: MatSnackBar

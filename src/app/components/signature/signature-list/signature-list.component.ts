@@ -41,6 +41,8 @@ import { SignatureModalComponent } from "../signature-modal/signature-modal.comp
 })
 export class SignatureListComponent implements OnInit {
   signatures: SignatureElectronique[] = [];
+  signaturesByLoi: SignatureElectronique[] = [];
+  signaturesByMouvement: SignatureElectronique[] = [];
   displayedColumns: string[] = [
     "status",
     "loiCadre",
@@ -92,6 +94,9 @@ export class SignatureListComponent implements OnInit {
       .subscribe({
         next: (signatures) => {
           this.signatures = signatures;
+          // split into two groups for display
+          this.signaturesByLoi = signatures.filter((s) => !!s.loiCadreId);
+          this.signaturesByMouvement = signatures.filter((s) => !!s.mouvementId);
           this.isLoading = false;
         },
       });
@@ -230,10 +235,10 @@ export class SignatureListComponent implements OnInit {
     this.loadSignatures();
   }
 
-  openCreateModal(): void {
+  openCreateModal(createType?: 'loi' | 'mouvement'): void {
     const dialogRef = this.dialog.open(SignatureModalComponent, {
       width: "600px",
-      data: { signature: null, mode: "create" },
+      data: { signature: null, mode: "create", createType },
       ariaLabel: "Create Signature Dialog",
     });
 
@@ -300,16 +305,14 @@ export class SignatureListComponent implements OnInit {
   }
 
   getLoiCadreName(loiCadre?: LoiCadre): string {
-    return loiCadre ? `${loiCadre.annee} (v${loiCadre.version})` : "-";
+  return loiCadre ? `${loiCadre.annee}` : "-";
   }
 
   getMouvementName(mouvement?: Mouvement): string {
-    return mouvement
-      ? `${mouvement.type} (${mouvement.description || "-"})`
-      : "-";
+  return mouvement ? `${mouvement.description || '-'}` : "-";
   }
 
   getSignataireName(signataire?: Utilisateur): string {
-    return signataire ? `${signataire.nom} ${signataire.prenom || ""}` : "-";
+  return signataire ? `${signataire.nom}${signataire.prenom ? ' ' + signataire.prenom : ''}` : "-";
   }
 }

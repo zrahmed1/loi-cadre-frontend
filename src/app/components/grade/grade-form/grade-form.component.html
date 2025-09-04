@@ -3,8 +3,9 @@
     <mat-label>Code (10 characters)</mat-label>
     <input
       matInput
-      formControlName="code"
-      placeholder="e.g., GGCCRRGGDD"
+  formControlName="code"
+  gradeFormat
+  placeholder="e.g., GG.CC.RR.GG.DD"
       aria-label="Grade code"
     />
     <mat-error *ngIf="gradeForm.get('code')?.hasError('required')"
